@@ -1,8 +1,8 @@
 /**
  * This is the main file that start running everything
  */
-import app from "./server.js";
-import dotenv from "dotenv";
+import app from './server.js';
+import dotenv from 'dotenv';
 
 const DEFAULT_PORT = 8000;
 dotenv.config();
