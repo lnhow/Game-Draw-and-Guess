@@ -1,0 +1,5 @@
+# npm
+node_modules
+
+# Run environment secrets
+.env
