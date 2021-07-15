@@ -1,10 +1,11 @@
 # Game-Draw-and-Guess
-This is the frontend folder for this for this project
+
+This is the frontend folder for this project
 
 # Known problems
-`react-scripts` dependencies show vulnerabilities: Ignored, it is only a devDependency
-For more details, see https://github.com/facebook/create-react-app/issues/11174 
 
+`react-scripts` dependencies show vulnerabilities: Ignored, it is only a devDependency
+For more details, see https://github.com/facebook/create-react-app/issues/11174
 
 # Getting Started with Create React App
 
