@@ -1,10 +1,15 @@
-import './App.css';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import Home from '../containers/home';
+import NotFound from './notFound';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">Welcome to Draw&Guess !</header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route component={NotFound} />
+      </Switch>
+    </BrowserRouter>
   );
 }
 
