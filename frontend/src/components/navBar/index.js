@@ -12,9 +12,9 @@ import useStyles from './styles.js';
 function Navbar() {
   const classes = useStyles();
   const user = {
-    result: {
-      name: 'Username',
-    },
+    // result: {
+    //   name: 'Username',
+    // },
   };
 
   return (
@@ -27,11 +27,11 @@ function Navbar() {
             to="/"
             variant="h6"
           >
-            Draw & Guess
+            Draw &amp; Guess
           </Typography>
         </Toolbar>
         <Toolbar className={classes.toolbar}>
-          {user ? (
+          {user.result ? (
             <Box display="flex" flexDirection="row">
               <Box
                 className={classes.profile}
@@ -49,12 +49,12 @@ function Navbar() {
                   {user.result.name}
                 </Typography>
               </Box>
-              <Button variant="outlined" size="small">
+              <Button component={Link} to="/logout" variant="outlined">
                 Logout
               </Button>
             </Box>
           ) : (
-            <Button component={Link} to="/auth" variant="outlined">
+            <Button component={Link} to="/login" variant="outlined">
               Login
             </Button>
           )}
