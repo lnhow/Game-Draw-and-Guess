@@ -1,9 +1,9 @@
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 
-import Home from '../containers/home';
+import Home from '../layouts/home';
 import Auth from './auth';
-import NotFound from './notFound';
+import ErrorPage from '../layouts/error';
 import Navbar from './navBar';
 
 function App() {
@@ -19,7 +19,9 @@ function App() {
           <Route exact path="/signup">
             <Auth isSignupMode={true} />
           </Route>
-          <Route component={NotFound} />
+          <Route>
+            <ErrorPage errorCode={404} message={'Not Found'} />
+          </Route>
         </Switch>
       </BrowserRouter>
     </ThemeProvider>

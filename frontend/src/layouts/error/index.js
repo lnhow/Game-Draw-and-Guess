@@ -1,7 +1,7 @@
 import { Container, Grid, Box } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
-function NotFound() {
+function ErrorPage({ errorCode, message }) {
   return (
     <Container>
       <Grid
@@ -14,8 +14,8 @@ function NotFound() {
       >
         <Grid item xs={3}>
           <Box>
-            <h1 className="errorCode">404</h1>
-            <h2>Not Found</h2>
+            <h1 className="errorCode">{errorCode}</h1>
+            <h2>{message}</h2>
             <Link to="/">Back to Home</Link>
           </Box>
         </Grid>
@@ -24,4 +24,4 @@ function NotFound() {
   );
 }
 
-export default NotFound;
+export default ErrorPage;

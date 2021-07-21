@@ -10,16 +10,13 @@ export default makeStyles((theme) => ({
     color: 'black',
     textDecoration: 'none',
     textAlign: 'center',
+    padding: theme.spacing(1),
   },
   toolbar: {
     justifyContent: 'space-between',
   },
-  purple: {
+  avatar: {
     color: theme.palette.getContrastText(theme.palette.secondary.main),
     backgroundColor: theme.palette.secondary.main,
-  },
-  profile: {
-    justifyContent: 'center',
-    marginRight: 8,
   },
 }));
