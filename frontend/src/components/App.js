@@ -1,28 +1,16 @@
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 
-import Home from '../layouts/home';
-import Auth from './auth';
-import ErrorPage from '../layouts/error';
 import Navbar from './navBar';
+import RouterApp from '../layouts/router/index'
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Navbar />
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/login">
-            <Auth isSignupMode={false} />
-          </Route>
-          <Route exact path="/signup">
-            <Auth isSignupMode={true} />
-          </Route>
-          <Route>
-            <ErrorPage errorCode={404} message={'Not Found'} />
-          </Route>
-        </Switch>
+
+        <RouterApp/>
       </BrowserRouter>
     </ThemeProvider>
   );

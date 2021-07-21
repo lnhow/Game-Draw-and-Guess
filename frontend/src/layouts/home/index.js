@@ -36,7 +36,7 @@ function Home() {
             variant="outlined"
             color="primary"
             component={Link}
-            to="/signup"
+            to="/sign-up"
           >
             Sign up
           </Button>
