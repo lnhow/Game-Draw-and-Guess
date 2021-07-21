@@ -7,11 +7,10 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { LockOutlined } from '@material-ui/icons/';
+import { Link } from 'react-router-dom';
 
 import Input from './input.js';
-
 import useStyles from './styles.js';
 
 const initialFormData = {
@@ -31,23 +30,32 @@ function Auth({ isSignupMode = false }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    if (isSignup) {
+      //Sign up
+    } else {
+      //Log in
+    }
   };
 
-  const handleChange = () => {};
-
-  const switchMode = () => {
-    setIsSignup(!isSignup);
+  const handleChange = (e) => {
+    //Update only e.target.name form data
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  //Toggle page mode between login & signup
+  const switchMode = () => {
+    setIsSignup(!isSignup);
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
           {isSignup ? 'Sign up' : 'Sign in'}
@@ -55,14 +63,12 @@ function Auth({ isSignupMode = false }) {
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             {isSignup && (
-              <>
-                <Input
-                  name="username"
-                  label="Username"
-                  handleChange={handleChange}
-                  autoFocus
-                />
-              </>
+              <Input
+                name="username"
+                label="Username"
+                handleChange={handleChange}
+                autoFocus
+              />
             )}
             <Input
               name="email"
@@ -97,7 +103,12 @@ function Auth({ isSignupMode = false }) {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Button onClick={switchMode}>
+              {/* Link to the same component, can't re-passing props */}
+              <Button
+                component={Link}
+                to={isSignup ? '/login' : '/signup'}
+                onClick={switchMode}
+              >
                 {isSignup
                   ? 'Already have an account? Sign in'
                   : "Don't have an account? Sign Up"}
