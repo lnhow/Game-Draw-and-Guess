@@ -8,6 +8,7 @@ import {
   Grid,
 } from '@material-ui/core';
 import { Formik, FastField, Form } from 'formik';
+import * as yup from 'yup';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
@@ -15,28 +16,38 @@ import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
 
+const SignUpSchema = yup.object().shape({
+  username: yup.string().required('field not empty'),
+  email: yup.string().email('field email').required('field not empty'),
+  password: yup
+    .string()
+    .min(3, 'field min 3')
+    .max(6, 'field max 6')
+    .required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match'),
+});
 
 function SignUp() {
   const classes = useStyles();
 
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [isSignup, setIsSignup] = useState(isSignupMode);
-  // const [formData, setFormData] = useState(initialFormData);
+  const handleSubmit = (values, actions) => {
+    // //////////Call API//////////////////////
+    console.log(actions.submitForm);
+    setTimeout(() => {
+      alert(JSON.stringify(values, null, 2));
+      // actions.setSubmitting(false);
+    }, 2000);
+    ////////////////End call API/////////////////////////////////////////
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log(formData);
-  // };
-
-  // const handleChange = () => {};
-
-  // const switchMode = () => {
-  //   setIsSignup(!isSignup);
-  // };
-
-  // const handleShowPassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
+    actions.resetForm({
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+  };
 
   const initialValues = {
     username: '',
@@ -54,47 +65,51 @@ function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Formik initialValues={initialValues}
-        onSubmit={(values)=>console.log(values)}>
-        {(formikProps) => {
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, action) => handleSubmit(values, action)}
+          validationSchema={SignUpSchema}
+        >
+          {(formikProps) => {
             return (
-            <Form>
+              <Form>
                 <FastField
-                name="username"
-                component={InputField}
-                placeholder="User Name"
-                type="text"
+                  name="username"
+                  component={InputField}
+                  placeholder="User Name"
+                  type="text"
                 />
                 <FastField
-                name="email"
-                component={InputField}
-                placeholder="Email Address"
-                type="email"
+                  name="email"
+                  component={InputField}
+                  placeholder="Email Address"
+                  type="email"
                 />
                 <FastField
-                name="password"
-                component={InputField}
-                placeholder="Password"
-                type="password"
+                  name="password"
+                  component={InputField}
+                  placeholder="Password"
+                  type="password"
                 />
                 <FastField
-                name="confirmPassword"
-                component={InputField}
-                placeholder="confirmPassword"
-                type="password"
+                  name="confirmPassword"
+                  component={InputField}
+                  placeholder="confirmPassword"
+                  type="password"
                 />
                 <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  disabled={!formikProps.isValid || !formikProps.dirty}
                 >
-                Sign Up
+                  Sign Up
                 </Button>
-            </Form>
+              </Form>
             );
-        }}
+          }}
         </Formik>
         <Grid container justifyContent="flex-end">
           <Grid item>

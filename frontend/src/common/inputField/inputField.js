@@ -1,25 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup } from '@material-ui/core';
-import { Label } from '@material-ui/icons';
-import Input from './input.js';
+import { Box, FormGroup, TextField, InputLabel } from '@material-ui/core';
+import { ErrorMessage } from 'formik';
 
 const InputField = (props) => {
-  const { field, type, disabled, placeholder, label } = props;
-  console.log({field})
-  const { name, value, onChange, onBlur } = field;
+  const { field, form, type, disabled, placeholder, label } = props;
+  const { name } = field;
+  const { errors, touched } = form;
+  const isError = touched[name] && errors[name];
 
   return (
-    <FormGroup>
-      {label && <Label for="name">Title</Label>}
-      <Input
-        id={name}
-        {...field}
-        label={placeholder}
-        // handleChange={handleChange}
-        type={type}
-        disabled={disabled}
-      />
+    <FormGroup spacing={3}>
+      <Box mb={2}>
+        <InputLabel shrink>{label}</InputLabel>
+      </Box>
+
+      <Box mb={2}>
+        <TextField
+          error={isError}
+          helperText={<ErrorMessage name={name} />}
+          id={name}
+          {...field}
+          label={placeholder}
+          type={type}
+          variant="outlined"
+          disabled={disabled}
+        />
+      </Box>
     </FormGroup>
   );
 };

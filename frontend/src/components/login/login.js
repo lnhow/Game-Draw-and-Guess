@@ -15,7 +15,6 @@ import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
 
-
 function Login() {
   const classes = useStyles();
 

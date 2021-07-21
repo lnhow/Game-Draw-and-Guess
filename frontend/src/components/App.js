@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 
 import Navbar from './navBar';
-import RouterApp from '../layouts/router/index'
+import RouterApp from '../layouts/router/index';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
 
-        <RouterApp/>
+        <RouterApp />
       </BrowserRouter>
     </ThemeProvider>
   );
