@@ -1,17 +1,22 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import { Provider } from 'react-redux';
 
 import Navbar from './navBar';
 import RouterApp from '../layouts/router/index';
 
+import store from '../redux/store';
+
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Navbar />
-        <RouterApp />
-      </BrowserRouter>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Navbar />
+          <RouterApp />
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   );
 }
 
