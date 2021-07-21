@@ -15,7 +15,6 @@ import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
 
-
 function SignUp() {
   const classes = useStyles();
 
@@ -55,45 +54,45 @@ function SignUp() {
           Sign up
         </Typography>
         <Formik initialValues={initialValues}>
-        {(formikProps) => {
+          {(formikProps) => {
             return (
-            <Form>
+              <Form>
                 <FastField
-                name="username"
-                component={InputField}
-                placeholder="User Name"
-                type="text"
+                  name="username"
+                  component={InputField}
+                  placeholder="User Name"
+                  type="text"
                 />
                 <FastField
-                name="email"
-                component={InputField}
-                placeholder="Email Address"
-                type="email"
+                  name="email"
+                  component={InputField}
+                  placeholder="Email Address"
+                  type="email"
                 />
                 <FastField
-                name="password"
-                component={InputField}
-                placeholder="Password"
-                type="password"
+                  name="password"
+                  component={InputField}
+                  placeholder="Password"
+                  type="password"
                 />
                 <FastField
-                name="confirmPassword"
-                component={InputField}
-                placeholder="confirmPassword"
-                type="password"
+                  name="confirmPassword"
+                  component={InputField}
+                  placeholder="confirmPassword"
+                  type="password"
                 />
                 <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
                 >
-                Sign Up
+                  Sign Up
                 </Button>
-            </Form>
+              </Form>
             );
-        }}
+          }}
         </Formik>
         <Grid container justifyContent="flex-end">
           <Grid item>
