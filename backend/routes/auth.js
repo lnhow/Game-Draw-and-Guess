@@ -3,6 +3,7 @@ import Account from '../models/User.js';
 import { registerValidation, loginValidation } from '../validation.cjs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import sendEmail from '../utils/email.js';
 
 const router = Router();
 
@@ -53,6 +54,63 @@ router.post('/login', async (req, res) => {
   //Creat and assign a token
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
   res.header('auth-token', token).send(token);
+});
+
+router.post('/forgotPassword', async (req, res) => {
+  //Get user based on Post email
+  const user = await Account.findOne({
+    email: req.body.email,
+  });
+
+  if (!user) return res.status(400).send('Email is not found');
+
+  //Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  //Send it to user's email
+  const resetURL = `${req.protocol}://${req.get(
+    'host',
+  )}/api/user/resetPassword/${resetToken}`;
+
+  const message = `Forgot your password? Submid a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ingore this email!`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your password reset token (valid for 10 min)',
+      message,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent to email!',
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+  }
+});
+
+router.patch('/resetPassword/:token', async (req, res) => {
+  //Get user based on Post email
+  const user = await Account.findOne({
+    email: req.body.email,
+  });
+
+  if (!user) return res.status(400).send('Email is not found');
+
+  //Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  try {
+    const savedUser = await user.save();
+    res.send({ user: user._id });
+  } catch (err) {
+    res.status(400).send(err);
+  }
+
+  //Send it to user's email
+  const resetURL = ``;
 });
 
 export default router;

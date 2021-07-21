@@ -5,13 +5,16 @@ import express from 'express';
 import cors from 'cors';
 import mainRoute from './routes/index.js';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 //Connect to DB
 mongoose
-  .connect(
-    'mongodb+srv://tien:1234567890@cluster-1.zwd9b.mongodb.net/accountDB',
-    { useNewUrlParser: true, useUnifiedTopology: true },
-  )
+  .connect(process.env.DB_CONNECT, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log('Connect successfully');
   });
