@@ -3,8 +3,7 @@ import nodemailer from 'nodemailer';
 const sendEmail = async (options) => {
   // Create a transporter
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -13,14 +12,20 @@ const sendEmail = async (options) => {
 
   //Define the email options
   const mailOptions = {
-    from: 'Someboy <hello@wtf.io',
+    from: 'DRAW&GUESS GAME <khuong11b13@gmail.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,
   };
 
   // Send email
-  await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions, function (err, data) {
+    if (err) {
+      console.log('Error Occurs', err);
+    } else {
+      console.log('Email sent!!');
+    }
+  });
 };
 
 export default sendEmail;

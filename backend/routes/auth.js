@@ -1,9 +1,14 @@
 import { Router } from 'express';
 import Account from '../models/User.js';
-import { registerValidation, loginValidation } from '../validation.cjs';
+import {
+  registerValidation,
+  loginValidation,
+  repasswordValidation,
+} from '../validation.cjs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
+import crypto from 'crypto';
 
 const router = Router();
 
@@ -53,7 +58,9 @@ router.post('/login', async (req, res) => {
 
   //Creat and assign a token
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-  res.header('auth-token', token).send(token);
+  res.header('auth-token', token).json({
+    token: token,
+  });
 });
 
 router.post('/forgotPassword', async (req, res) => {
@@ -73,12 +80,12 @@ router.post('/forgotPassword', async (req, res) => {
     'host',
   )}/api/user/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submid a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ingore this email!`;
+  const message = `Forgot your password? Click here to reset your password:\n ${resetURL}.\nIf you didn't forget your password, please ingore this email!`;
 
   try {
     await sendEmail({
       email: user.email,
-      subject: 'Your password reset token (valid for 10 min)',
+      subject: '[DRAW & GUESS GAME] - Reset your password',
       message,
     });
 
@@ -89,28 +96,47 @@ router.post('/forgotPassword', async (req, res) => {
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res
+      .status(500)
+      .send('There was an error sending the email. Try again later!');
   }
 });
 
 router.patch('/resetPassword/:token', async (req, res) => {
-  //Get user based on Post email
+  //Get user base on token
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
   const user = await Account.findOne({
-    email: req.body.email,
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
   });
-
-  if (!user) return res.status(400).send('Email is not found');
-
-  //Generate the random reset token
-  const resetToken = user.createPasswordResetToken();
-  try {
-    const savedUser = await user.save();
-    res.send({ user: user._id });
-  } catch (err) {
-    res.status(400).send(err);
+  //If token has not expired, and there is user, set the new password
+  if (!user) {
+    return res.status(400).send('Token is invalid or has expired');
   }
+  const { error } = repasswordValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-  //Send it to user's email
-  const resetURL = ``;
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
+  user.password = hashPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  //Update updatedAt property for the user
+
+  //Log the user in
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
 });
 
 export default router;

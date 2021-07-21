@@ -41,5 +41,12 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.updatedAt = Date.now() - 1000;
+  next();
+});
+
 const Account = mongoose.model('Account', userSchema);
 export default Account;
