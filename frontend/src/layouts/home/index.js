@@ -13,9 +13,11 @@ import { ExitToApp } from '@material-ui/icons';
 
 import Footer from '../../components/footer/index.js';
 import useStyles from './styles.js';
+import { useSelector } from 'react-redux'
 
 function Home() {
   const classes = useStyles();
+
 
   return (
     <Container component="main" className={classes.root}>

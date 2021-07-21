@@ -54,7 +54,8 @@ function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Formik initialValues={initialValues}>
+        <Formik initialValues={initialValues}
+        onSubmit={(values)=>console.log(values)}>
         {(formikProps) => {
             return (
             <Form>
