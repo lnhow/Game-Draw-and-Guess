@@ -17,7 +17,7 @@ const InputField = (props) => {
 
       <Box mb={2}>
         <TextField
-          error={isError}
+          error={!!isError}
           helperText={<ErrorMessage name={name} />}
           id={name}
           {...field}
