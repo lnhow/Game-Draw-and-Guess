@@ -7,7 +7,7 @@ import Navbar from './navBar';
 import RouterApp from '../layouts/router/index';
 
 import store from '../redux/store';
-import theme from './App.styles';
+import theme from '../app/app.styles';
 
 function App() {
   return (
