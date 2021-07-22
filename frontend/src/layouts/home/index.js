@@ -10,6 +10,8 @@ import {
   CssBaseline,
 } from '@material-ui/core';
 import { ExitToApp } from '@material-ui/icons';
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 
 import Footer from '../../components/footer/index.js';
 // import useStyles from './styles.js';
@@ -61,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   icon: {
-    marginLeft: '-60px',
-    marginTop: '20px',
+    color: 'white',
+    padding: '0px 5px',
   },
   input: {
     width: '90%',
@@ -128,6 +130,42 @@ const SignupButton = {
   },
 };
 
+const createButton = {
+  marginBottom: '0px',
+  backgroundColor: '#09f',
+  '&:hover': {
+    backgroundColor: '#028a0f',
+    boxShadow: 'none',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    backgroundColor: '#028a0f',
+    borderColor: '#5dbb63',
+  },
+  '&:focus': {
+    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
+  },
+};
+
+const quickPlayButton = {
+  marginBottom: '0px',
+  marginTop: '0px',
+  marginLeft: '10px',
+  backgroundColor: '#f97645',
+  '&:hover': {
+    backgroundColor: '#028a0f',
+    boxShadow: 'none',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    backgroundColor: '#028a0f',
+    borderColor: '#5dbb63',
+  },
+  '&:focus': {
+    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
+  },
+};
+
 const intro = {
   color: '#FFA500',
   weight: '400',
@@ -140,19 +178,15 @@ const gameName = {
   color: '#800080',
 };
 
+const textField = {
+  marginRight: '10px',
+};
 function Home() {
   const classes = useStyles();
 
   return (
     <Container component="main" className={classes.root}>
       <CssBaseline />
-      {/* <Grid container spacing={2}>
-        <Typography variant="h5" className={classes.welcome}>
-          WELCOME TO DRAW &amp; GUESS
-        </Typography>
-        <Typography variant="h6" className={classes.description}>
-          A massively multiplayer free to play pictionary game!
-        </Typography> */}
       <div>
         <Typography variant="h5" className={classes.welcome} style={gameName}>
           WELCOME TO <span className={classes.span}>DRAW&amp;GUESS</span>
@@ -164,20 +198,12 @@ function Home() {
 
       <div>
         <div className={classes.container}>
-          <Grid item>
+          <Grid>
             <Typography variant="h6" className={classes.text}>
               Don't have an account?
             </Typography>
-            {/* <Button
-            variant="outlined"
-            color="primary"
-            component={Link}
-            to="/sign-up"
-          >
-            Sign up
-          </Button> */}
             <LoginButton
-              href="/signup"
+              href="/sign-up"
               variant="contained"
               className={classes.margin}
               style={SignupButton}
@@ -187,14 +213,6 @@ function Home() {
             <Typography variant="h6" className={classes.text}>
               Already have an account?
             </Typography>
-            {/* <Button
-            variant="outlined"
-            color="primary"
-            component={Link}
-            to="/login"
-          >
-            Log in
-          </Button> */}
             <LoginButton
               href="/login"
               variant="contained"
@@ -209,24 +227,53 @@ function Home() {
             orientation="vertical"
             flexItem
           />
-
-          <Grid item>
-            <div>
+          <Grid item md={7} sm={12}>
+            <Grid
+              container
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
               <Paper className={classes.paper}>
                 <Typography variant="h6" className={classes.description}>
                   Easy to play
                 </Typography>
-                <Typography variant="h6">Game rule .....</Typography>
+                <Typography>Game rule .....</Typography>
               </Paper>
+            </Grid>
+            <Grid container direction="column">
+              <Paper className={classes.paper}>
+                <Typography variant="h6" className={classes.description}>
+                  See all available rooms
+                </Typography>
+                <LoginButton
+                  href="/rooms"
+                  variant="contained"
+                  className={classes.margin}
+                  style={createButton}
+                >
+                  <IconButton className={classes.icon}>
+                    <MeetingRoomIcon />
+                  </IconButton>
+                  Rooms
+                </LoginButton>
+              </Paper>
+            </Grid>
+            <Grid
+              container
+              direction="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
               <NumberInput id="roomId" name="roomId" classes={classes} />
-            </div>
+            </Grid>
           </Grid>
         </div>
       </div>
+
       <Grid item xs="12">
         <Footer />
       </Grid>
-      {/* </Grid> */}
     </Container>
   );
 }
@@ -234,7 +281,8 @@ function Home() {
 function NumberInput({ id, name, classes }) {
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h6">Join as Guest</Typography>
+      <Typography variant="h6">Quick Play</Typography>
+      <Typography variant="h6" className={classes.description}></Typography>
       <TextField
         variant="outlined"
         fullWidth
@@ -242,17 +290,31 @@ function NumberInput({ id, name, classes }) {
         placeholder="Enter room code"
         name={name}
         type="text"
+        style={textField}
         InputProps={
           //Props applied to the <Input/> element of material UI
           {
             endAdornment: (
-              <IconButton type="submit" aria-label="Join Roon">
+              <IconButton type="submit" aria-label="Join Room">
                 <ExitToApp />
               </IconButton>
             ),
           }
         }
       />
+      <Typography>OR</Typography>
+
+      <LoginButton
+        href=""
+        variant="contained"
+        className={classes.margin}
+        style={quickPlayButton}
+      >
+        <IconButton className={classes.icon}>
+          <SportsEsportsIcon />
+        </IconButton>
+        Random
+      </LoginButton>
     </Paper>
   );
 }
