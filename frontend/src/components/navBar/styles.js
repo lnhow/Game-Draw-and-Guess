@@ -11,6 +11,7 @@ export default makeStyles((theme) => ({
     textDecoration: 'none',
     textAlign: 'center',
     padding: theme.spacing(1),
+    fontFamily: '"Gorditas", cursive',
   },
   toolbar: {
     justifyContent: 'space-between',
