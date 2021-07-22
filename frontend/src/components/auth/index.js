@@ -8,10 +8,7 @@ import {
   Container,
 } from '@material-ui/core';
 import { LockOutlined } from '@material-ui/icons/';
-import { Link, useHistory } from 'react-router-dom';
-
-import { logIn, register } from '../../redux/actions/auth';
-import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Input from './input.js';
 import useStyles from './styles.js';
@@ -25,20 +22,18 @@ const initialFormData = {
 
 function Auth({ isSignupMode = false }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const history = useHistory();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isRegister, setIsSignup] = useState(isSignupMode);
+  const [isSignup, setIsSignup] = useState(isSignupMode);
   const [formData, setFormData] = useState(initialFormData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    if (isRegister) {
-      dispatch(register(formData, history));
+    if (isSignup) {
+      //Sign up
     } else {
-      dispatch(logIn(formData, history));
+      //Log in
     }
   };
 
@@ -53,7 +48,7 @@ function Auth({ isSignupMode = false }) {
 
   //Toggle page mode between login & signup
   const switchMode = () => {
-    setIsSignup(!isRegister);
+    setIsSignup(!isSignup);
   };
 
   return (
@@ -63,11 +58,11 @@ function Auth({ isSignupMode = false }) {
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
-          {isRegister ? 'Sign up' : 'Sign in'}
+          {isSignup ? 'Sign up' : 'Sign in'}
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            {isRegister && (
+            {isSignup && (
               <Input
                 name="username"
                 label="Username"
@@ -88,7 +83,7 @@ function Auth({ isSignupMode = false }) {
               type={showPassword ? 'text' : 'password'}
               handleShowPassword={handleShowPassword}
             />
-            {isRegister && (
+            {isSignup && (
               <Input
                 name="confirmPassword"
                 label="Confirm Password"
@@ -104,17 +99,17 @@ function Auth({ isSignupMode = false }) {
             color="primary"
             className={classes.submit}
           >
-            {isRegister ? 'Sign Up' : 'Sign In'}
+            {isSignup ? 'Sign Up' : 'Sign In'}
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
               {/* Link to the same component, can't re-passing props */}
               <Button
                 component={Link}
-                to={isRegister ? '/login' : '/signup'}
+                to={isSignup ? '/login' : '/signup'}
                 onClick={switchMode}
               >
-                {isRegister
+                {isSignup
                   ? 'Already have an account? Sign in'
                   : "Don't have an account? Sign Up"}
               </Button>
