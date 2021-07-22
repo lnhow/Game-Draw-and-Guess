@@ -3,7 +3,8 @@ import {
   loginValidation,
   repasswordValidation,
 } from '../validation.cjs';
-import Account from '../models/User.js';
+import accountsModel from '../models/accountsModel.cjs';
+import usersModel from '../models/usersModel.cjs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
@@ -15,7 +16,7 @@ authController.register = async (req, res) => {
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
-  const emailExist = await Account.findOne({
+  const emailExist = await accountsModel.findOne({
     email: req.body.email,
   });
   if (emailExist) return res.status(400).json({ msg: 'Email already exists' });
@@ -23,14 +24,22 @@ authController.register = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-  const user = new Account({
+  const account = new accountsModel({
     email: req.body.email,
     password: hashPassword,
   });
 
+  const user = new usersModel({
+    _accountId: account._id,
+  });
+
   try {
+    await account.save();
     await user.save();
-    res.status(201).json({ user: user._id });
+    res.status(201).json({
+      _accountId: account._id,
+      _userId: user._id,
+    });
   } catch (err) {
     res.status(400).json({ msg: err });
   }
@@ -40,39 +49,43 @@ authController.login = async (req, res) => {
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
-  const user = await Account.findOne({
+  const account = await accountsModel.findOne({
     email: req.body.email,
   });
-  if (!user) return res.status(400).json({ msg: 'Email is not found' });
+  if (!account) return res.status(400).json({ msg: 'Email is not found' });
 
-  const validPass = await bcrypt.compare(req.body.password, user.password);
+  const validPass = await bcrypt.compare(req.body.password, account.password);
   if (!validPass) return res.status(400).json({ msg: 'Invalid password' });
 
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+  const user = await usersModel.findOne({
+    _accountId: account._id,
+  });
+
+  const token = jwt.sign({ _userId: user._id }, process.env.TOKEN_SECRET);
   res.status(200).header('auth-token', token).json({
     token: token,
   });
 };
 
 authController.forgotPassword = async (req, res) => {
-  const user = await Account.findOne({
+  const account = await accountsModel.findOne({
     email: req.body.email,
   });
 
-  if (!user) return res.status(400).json({ msg: 'Email is not found' });
+  if (!account) return res.status(400).json({ msg: 'Email is not found' });
 
-  const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false });
+  const resetToken = account.createPasswordResetToken();
+  await account.save({ validateBeforeSave: false });
 
   const resetURL = `${req.protocol}://${req.get(
     'host',
-  )}/api/user/resetPassword/${resetToken}`;
+  )}/api/account/resetPassword/${resetToken}`;
 
   const message = `Forgot your password? Click here to reset your password:\n ${resetURL}.\nIf you didn't forget your password, please ingore this email!`;
 
   try {
     await sendEmail({
-      email: user.email,
+      email: account.email,
       subject: '[DRAW & GUESS GAME] - Reset your password',
       message,
     });
@@ -81,9 +94,9 @@ authController.forgotPassword = async (req, res) => {
       msg: 'Token sent to email!',
     });
   } catch (err) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
+    account.passwordResetToken = undefined;
+    account.passwordResetExpires = undefined;
+    await account.save({ validateBeforeSave: false });
 
     return res
       .status(500)
@@ -97,12 +110,12 @@ authController.resetPassword = async (req, res) => {
     .update(req.params.token)
     .digest('hex');
 
-  const user = await Account.findOne({
+  const account = await accountsModel.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
 
-  if (!user) {
+  if (!account) {
     return res.status(400).json({ msg: 'Token is invalid or has expired' });
   }
 
@@ -111,15 +124,19 @@ authController.resetPassword = async (req, res) => {
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
-  user.password = hashPassword;
+  account.password = hashPassword;
 
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-  await user.save();
+  account.passwordResetToken = undefined;
+  account.passwordResetExpires = undefined;
+  const user = await usersModel.findOne({
+    _accountId: account._id,
+  });
 
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+  await account.save();
+
+  const token = jwt.sign({ _userId: user._id }, process.env.TOKEN_SECRET);
   res.status(200).json({
-    userToken: token,
+    token: token,
   });
 };
 
