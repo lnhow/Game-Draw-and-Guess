@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, FormGroup, TextField, InputLabel } from '@material-ui/core';
+import {
+  Box,
+  FormGroup,
+  InputLabel,
+  OutlinedInput,
+  FormControl,
+  FormHelperText,
+} from '@material-ui/core';
 import { ErrorMessage } from 'formik';
 
 const InputField = (props) => {
@@ -14,18 +21,22 @@ const InputField = (props) => {
       <Box mb={2}>
         <InputLabel shrink>{label}</InputLabel>
       </Box>
-
       <Box mb={2}>
-        <TextField
-          error={!!isError}
-          helperText={<ErrorMessage name={name} />}
-          id={name}
-          {...field}
-          label={placeholder}
-          type={type}
-          variant="outlined"
-          disabled={disabled}
-        />
+        <FormControl variant="outlined">
+          <InputLabel>{placeholder}</InputLabel>
+          <OutlinedInput
+            id={name}
+            error={!!isError}
+            type={type}
+            {...field}
+            disabled={disabled}
+            labelWidth={100}
+            style={{ width: '30ch' }}
+          />
+          {/* <FormHelperText id={name}> */}
+          <ErrorMessage name={name} component={FormHelperText} />
+          {/* </FormHelperText> */}
+        </FormControl>
       </Box>
     </FormGroup>
   );

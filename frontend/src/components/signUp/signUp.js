@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Button,
@@ -6,6 +6,7 @@ import {
   Typography,
   Container,
   Grid,
+  Box,
 } from '@material-ui/core';
 import { Formik, FastField, Form } from 'formik';
 import * as yup from 'yup';
@@ -15,14 +16,17 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
+import UserApi from '../../api/userApi.js';
+import { useHistory } from 'react-router-dom';
+import InputPassword from '../../common/inputPassword/inputPassword.js';
 
 const SignUpSchema = yup.object().shape({
-  username: yup.string().required('field not empty'),
-  email: yup.string().email('field email').required('field not empty'),
+  username: yup.string().required('Username not empty'),
+  email: yup.string().email('not an email').required('Email not empty'),
   password: yup
     .string()
-    .min(3, 'field min 3')
-    .max(6, 'field max 6')
+    .min(6, 'password min 6')
+    .max(20, 'password max 20')
     .required('Password is required'),
   confirmPassword: yup
     .string()
@@ -32,22 +36,31 @@ const SignUpSchema = yup.object().shape({
 
 function SignUp() {
   const classes = useStyles();
+  const history = useHistory();
+  const [conflictDataSever, setConflictDataSever] = useState('');
 
-  const handleSubmit = (values, actions) => {
-    // //////////Call API//////////////////////
-    console.log(actions.submitForm);
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2));
-      // actions.setSubmitting(false);
-    }, 2000);
-    ////////////////End call API/////////////////////////////////////////
+  const handleSubmit = async (values, actions) => {
+    const infoUser = {
+      email: values.email,
+      password: values.password,
+      username: values.username,
+    };
 
-    actions.resetForm({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    });
+    try {
+      //Call Api Should I use useEffect?
+      await UserApi.register(infoUser);
+      setConflictDataSever('');
+      actions.resetForm({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      });
+      history.push('/login');
+    } catch (error) {
+      setConflictDataSever(error['response'].data.msg);
+      console.log({ error: error.message });
+    }
   };
 
   const initialValues = {
@@ -66,6 +79,9 @@ function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        <Box my={2}>
+          <h3 style={{ color: 'red' }}>{conflictDataSever}</h3>
+        </Box>
         <Formik
           initialValues={initialValues}
           onSubmit={(values, action) => handleSubmit(values, action)}
@@ -88,13 +104,13 @@ function SignUp() {
                 />
                 <FastField
                   name="password"
-                  component={InputField}
+                  component={InputPassword}
                   placeholder="Password"
                   type="password"
                 />
                 <FastField
                   name="confirmPassword"
-                  component={InputField}
+                  component={InputPassword}
                   placeholder="confirmPassword"
                   type="password"
                 />
@@ -104,7 +120,12 @@ function SignUp() {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
-                  disabled={!formikProps.isValid || !formikProps.dirty}
+                  disabled={
+                    !formikProps.isValid ||
+                    !formikProps.dirty ||
+                    formikProps.isSubmitting
+                  }
+                  onDoubleClick={(e) => e.preventDefault()}
                 >
                   Sign Up
                 </Button>
