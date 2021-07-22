@@ -25,14 +25,13 @@ router.post('/register', async (req, res) => {
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
   const user = new Account({
-    username: req.body.username,
     email: req.body.email,
     password: hashPassword,
   });
 
   try {
     await user.save();
-    res.json({ user: user._id });
+    res.status(201).json({ user: user._id });
   } catch (err) {
     res.status(400).json({ msg: err });
   }
@@ -51,7 +50,7 @@ router.post('/login', async (req, res) => {
   if (!validPass) return res.status(400).json({ msg: 'Invalid password' });
 
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-  res.header('auth-token', token).json({
+  res.status(200).header('auth-token', token).json({
     token: token,
   });
 });
