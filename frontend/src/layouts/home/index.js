@@ -21,7 +21,7 @@ function Home() {
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <Grid container spacing={2}>
-        <Grid item md="5" sm="12">
+        <Grid item md={5} sm={12}>
           <Typography variant="h5" className={classes.welcome}>
             WELCOME TO DRAW &amp; GUESS
           </Typography>
@@ -52,7 +52,7 @@ function Home() {
             Log in
           </Button>
         </Grid>
-        <Grid item md="7" sm="12">
+        <Grid item md={7} sm={12}>
           <div>
             <Paper className={classes.paper}>
               <Typography variant="h6">Easy to play</Typography>
@@ -60,7 +60,7 @@ function Home() {
             <NumberInput id="roomId" name="roomId" classes={classes} />
           </div>
         </Grid>
-        <Grid item xs="12">
+        <Grid item xs={12}>
           <Footer />
         </Grid>
       </Grid>

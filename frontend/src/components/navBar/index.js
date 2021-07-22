@@ -10,30 +10,33 @@ import { LOGOUT } from '../../redux/actions/types';
 
 function Navbar() {
   const classes = useStyles();
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+  //const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
 
-  const logout = () => {
-    dispatch({ type: LOGOUT });
+  // const logout = () => {
+  //   dispatch({ type: LOGOUT });
 
-    history.push('/auth');
+  //   history.push('/auth');
 
-    setUser(null);
-  };
+  //   setUser(null);
+  // };
 
   useEffect(() => {
     // const token = user?.token;
-
     // if (token) {
     //   const decodedToken = decode(token);
-
     //   if (decodedToken.exp * 1000 < new Date().getTime()) logout();
     // }
-
-    setUser(JSON.parse(localStorage.getItem('profile')));
+    //setUser(JSON.parse(localStorage.getItem('profile')));
   }, [location]);
+
+  const user = {
+    result: {
+      name: 'asffgg',
+    },
+  };
 
   return (
     <header>
