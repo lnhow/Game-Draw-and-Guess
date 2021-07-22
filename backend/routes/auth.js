@@ -13,17 +13,14 @@ import crypto from 'crypto';
 const router = Router();
 
 router.post('/register', async (req, res) => {
-  //Validate data before push data to db
   const { error } = registerValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json({ msg: error.details[0].message });
 
-  //Checking if the user is already in database
   const emailExist = await Account.findOne({
     email: req.body.email,
   });
-  if (emailExist) return res.status(400).send('Email already exists');
+  if (emailExist) return res.status(400).json({ msg: 'Email already exists' });
 
-  //Hash passwords
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -34,29 +31,25 @@ router.post('/register', async (req, res) => {
   });
 
   try {
-    const savedUser = await user.save();
-    res.send({ user: user._id });
+    await user.save();
+    res.json({ user: user._id });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).json({ msg: err });
   }
 });
 
-//LOGIN
 router.post('/login', async (req, res) => {
-  //Validate data before push data to db
   const { error } = loginValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json({ msg: error.details[0].message });
 
-  //Checking if the email exists
   const user = await Account.findOne({
     email: req.body.email,
   });
-  if (!user) return res.status(400).send('Email is not found');
-  //Password is correct
-  const validPass = await bcrypt.compare(req.body.password, user.password);
-  if (!validPass) return res.status(400).send('Invalid password');
+  if (!user) return res.status(400).json({ msg: 'Email is not found' });
 
-  //Creat and assign a token
+  const validPass = await bcrypt.compare(req.body.password, user.password);
+  if (!validPass) return res.status(400).json({ msg: 'Invalid password' });
+
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
   res.header('auth-token', token).json({
     token: token,
@@ -64,18 +57,15 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/forgotPassword', async (req, res) => {
-  //Get user based on Post email
   const user = await Account.findOne({
     email: req.body.email,
   });
 
-  if (!user) return res.status(400).send('Email is not found');
+  if (!user) return res.status(400).json({ msg: 'Email is not found' });
 
-  //Generate the random reset token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  //Send it to user's email
   const resetURL = `${req.protocol}://${req.get(
     'host',
   )}/api/user/resetPassword/${resetToken}`;
@@ -90,8 +80,7 @@ router.post('/forgotPassword', async (req, res) => {
     });
 
     res.status(200).json({
-      status: 'success',
-      message: 'Token sent to email!',
+      msg: 'Token sent to email!',
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -100,12 +89,11 @@ router.post('/forgotPassword', async (req, res) => {
 
     return res
       .status(500)
-      .send('There was an error sending the email. Try again later!');
+      .json({ msg: 'There was an error sending the email. Try again later!' });
   }
 });
 
 router.patch('/resetPassword/:token', async (req, res) => {
-  //Get user base on token
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
@@ -115,27 +103,25 @@ router.patch('/resetPassword/:token', async (req, res) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  //If token has not expired, and there is user, set the new password
+
   if (!user) {
-    return res.status(400).send('Token is invalid or has expired');
+    return res.status(400).json({ msg: 'Token is invalid or has expired' });
   }
+
   const { error } = repasswordValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json({ msg: error.details[0].message });
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
   user.password = hashPassword;
+
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
 
-  //Update updatedAt property for the user
-
-  //Log the user in
   const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
   res.status(200).json({
-    status: 'success',
-    token,
+    userToken: token,
   });
 });
 

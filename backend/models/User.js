@@ -48,5 +48,4 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-const Account = mongoose.model('Account', userSchema);
-export default Account;
+export default mongoose.model('Account', userSchema);

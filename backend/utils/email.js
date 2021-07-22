@@ -10,7 +10,6 @@ const sendEmail = async (options) => {
     },
   });
 
-  //Define the email options
   const mailOptions = {
     from: 'DRAW&GUESS GAME <khuong11b13@gmail.com>',
     to: options.email,
@@ -18,7 +17,6 @@ const sendEmail = async (options) => {
     text: options.message,
   };
 
-  // Send email
   await transporter.sendMail(mailOptions, function (err, data) {
     if (err) {
       console.log('Error Occurs', err);

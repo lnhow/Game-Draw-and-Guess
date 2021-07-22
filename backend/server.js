@@ -22,7 +22,11 @@ const app = express();
 
 import authRoute from './routes/auth.js';
 
-app.use(cors()); // Allow Cross Origin Resource Sharing
+const corsOptions = {
+  exposedHeaders: 'auth-token',
+};
+
+app.use(cors(corsOptions)); // Allow Cross Origin Resource Sharing
 app.use(express.json()); // Accept JSON request
 
 app.use('/', mainRoute);
