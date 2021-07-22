@@ -3,6 +3,7 @@ import ErrorPage from '../error';
 import SignUp from '../../components/signUp/signUp';
 import Login from '../../components/login/login';
 import RoomCreate from '../room/create';
+import RoomSingle from '../room/single';
 import Home from '../../layouts/home';
 
 export default function router() {
@@ -19,6 +20,9 @@ export default function router() {
         <Switch>
           <Route exact path="/room/create">
             <RoomCreate />
+          </Route>
+          <Route path="/room/:id">
+            <RoomSingle />
           </Route>
           <Route>
             <ErrorPage errorCode={404} message={'Not Found'} />
