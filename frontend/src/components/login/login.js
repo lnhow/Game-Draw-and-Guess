@@ -17,9 +17,11 @@ import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
 
 import userApi from '../../api/userApi';
+import jwt from 'jsonwebtoken';
 import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
+
 
 const LoginSchema = yup.object().shape({
   email: yup.string().email('not an email').required('Email not empty'),
@@ -43,6 +45,15 @@ function Login() {
 
   const handleSubmit = async (values, actions) => {
     try {
+      // console.log('vo day')
+      // const dataToken = {
+      //   id:'123',
+      //   username:'hieu',
+      //   avatar:'img.png'
+      // }
+      // const token = jwt.sign(dataToken,'123')
+      // const values = jwt.verify(token,'123')
+      // console.log(values)
       const reponses = await userApi.login(values);
       setCookie('user', reponses.token);
       setConflictDataSever('');
@@ -52,7 +63,7 @@ function Login() {
       });
       history.push('/');
     } catch (error) {
-      setConflictDataSever(error['response'].data.msg);
+      setConflictDataSever(error?.['response']?.data?.msg);
       console.log({ error: error.message });
     }
   };

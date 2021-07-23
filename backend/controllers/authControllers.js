@@ -14,6 +14,8 @@ const authController = { register, login, forgotPassword, resetPassword };
 
 async function register(req, res) {
   const { error } = registerValidation(req.body);
+
+
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
   const emailExist = await accountsModel.findOne({

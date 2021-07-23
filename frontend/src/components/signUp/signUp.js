@@ -41,9 +41,8 @@ function SignUp() {
 
   const handleSubmit = async (values, actions) => {
     const infoUser = {
-      email: values.email,
-      password: values.password,
-      username: values.username,
+      ...values,
+      passwordConfirm:values.confirmPassword
     };
 
     try {
