@@ -2,7 +2,7 @@ import {
   registerValidation,
   loginValidation,
   repasswordValidation,
-} from '../validation.cjs';
+} from '../utils/validation.cjs';
 import accountsModel from '../models/accountsModel.cjs';
 import usersModel from '../models/usersModel.cjs';
 import bcrypt from 'bcryptjs';
@@ -10,9 +10,9 @@ import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
 
-const authController = {};
+const authController = { register, login, forgotPassword, resetPassword };
 
-authController.register = async (req, res) => {
+async function register(req, res) {
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
@@ -27,6 +27,7 @@ authController.register = async (req, res) => {
   const account = new accountsModel({
     email: req.body.email,
     password: hashPassword,
+    username: req.body.username,
   });
 
   const user = new usersModel({
@@ -36,16 +37,26 @@ authController.register = async (req, res) => {
   try {
     await account.save();
     await user.save();
-    res.status(201).json({
-      _accountId: account._id,
+    const dataToken = {
       _userId: user._id,
-    });
+      username: user.username,
+      avatar: user.avatar,
+    };
+
+    const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
+    res
+      .status(201)
+      .header('auth-token', token)
+      .cookie('auth-token', token, { httpOnly: true })
+      .json({
+        token: token,
+      });
   } catch (err) {
     res.status(400).json({ msg: err });
   }
-};
+}
 
-authController.login = async (req, res) => {
+async function login(req, res) {
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
@@ -61,13 +72,19 @@ authController.login = async (req, res) => {
     _accountId: account._id,
   });
 
-  const token = jwt.sign({ _userId: user._id }, process.env.TOKEN_SECRET);
-  res.status(200).header('auth-token', token).json({
+  const dataToken = {
+    _userId: user._id,
+    username: user.username,
+    avatar: user.avatar,
+  };
+
+  const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
+  res.status(200).cookie('auth-token', token, { httpOnly: true }).json({
     token: token,
   });
-};
+}
 
-authController.forgotPassword = async (req, res) => {
+async function forgotPassword(req, res) {
   const account = await accountsModel.findOne({
     email: req.body.email,
   });
@@ -102,9 +119,9 @@ authController.forgotPassword = async (req, res) => {
       .status(500)
       .json({ msg: 'There was an error sending the email. Try again later!' });
   }
-};
+}
 
-authController.resetPassword = async (req, res) => {
+async function resetPassword(req, res) {
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
@@ -138,6 +155,6 @@ authController.resetPassword = async (req, res) => {
   res.status(200).json({
     token: token,
   });
-};
+}
 
 export default authController;
