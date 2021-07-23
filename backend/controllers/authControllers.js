@@ -79,9 +79,13 @@ async function login(req, res) {
   };
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-  res.status(200).cookie('auth-token', token, { httpOnly: true }).json({
-    token: token,
-  });
+  res
+    .status(200)
+    .header('auth-token', token)
+    .cookie('auth-token', token, { httpOnly: true })
+    .json({
+      token: token,
+    });
 }
 
 async function forgotPassword(req, res) {
