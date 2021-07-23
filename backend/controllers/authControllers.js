@@ -10,11 +10,15 @@ import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
 
-const authController = { register, login, forgotPassword, resetPassword };
+const authController = {
+  register,
+  login,
+  forgotPassword,
+  resetPassword,
+};
 
 async function register(req, res) {
   const { error } = registerValidation(req.body);
-
 
   if (error) return res.status(400).json({ msg: error.details[0].message });
 
@@ -29,20 +33,20 @@ async function register(req, res) {
   const account = new accountsModel({
     email: req.body.email,
     password: hashPassword,
-    username: req.body.username,
   });
 
   const user = new usersModel({
     _accountId: account._id,
+    username: req.body.username,
   });
 
   try {
     await account.save();
     await user.save();
+
     const dataToken = {
       _userId: user._id,
       username: user.username,
-      avatar: user.avatar,
     };
 
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
@@ -77,7 +81,6 @@ async function login(req, res) {
   const dataToken = {
     _userId: user._id,
     username: user.username,
-    avatar: user.avatar,
   };
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
@@ -90,12 +93,13 @@ async function login(req, res) {
     });
 }
 
-async function forgotPassword(req, res) {
+async function forgotPassword(req, res, next) {
   const account = await accountsModel.findOne({
     email: req.body.email,
   });
 
-  if (!account) return res.status(400).json({ msg: 'Email is not found' });
+  if (!account)
+    return next(res.status(400).json({ msg: 'Email is not found' }));
 
   const resetToken = account.createPasswordResetToken();
   await account.save({ validateBeforeSave: false });
@@ -157,10 +161,19 @@ async function resetPassword(req, res) {
 
   await account.save();
 
-  const token = jwt.sign({ _userId: user._id }, process.env.TOKEN_SECRET);
-  res.status(200).json({
-    token: token,
-  });
+  const dataToken = {
+    _userId: user._id,
+    username: user.username,
+  };
+
+  const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
+  res
+    .status(200)
+    .header('auth-token', token)
+    .cookie('auth-token', token, { httpOnly: true })
+    .json({
+      token: token,
+    });
 }
 
 export default authController;
