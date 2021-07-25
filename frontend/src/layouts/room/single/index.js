@@ -1,4 +1,4 @@
-import { Container, Box, Button, Grid, Paper } from '@material-ui/core';
+import { Container, Box, Button, Paper } from '@material-ui/core';
 import { useState, useEffect, useRef } from 'react';
 
 import useStyles from './styles';
@@ -10,7 +10,7 @@ import ListPlayers from './listPlayers';
 import ChatMessages from './chat/messages';
 import ChatInputBox from './chat/inputBox';
 
-import AspectRatioBox from '../../../common/aspectRatioBox';
+// import AspectRatioBox from '../../../common/aspectRatioBox';
 import { getRoomPlayers } from '../../../helpers/api';
 import { connectToSocket } from '../../../helpers/socketio';
 
@@ -92,7 +92,6 @@ function SingleRoom() {
         {/* <Grid item md={3} xs={12}> */}
         <Box style={{ marginLeft: 16, width: 284, height: 700 }}>
           <Box style={{ width: '100%', height: '100%' }}>
-            {' '}
             {/*style={{height: '88vh', width: '100%'}}>*/}
             <Paper
               elevation={2}
