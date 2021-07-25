@@ -15,7 +15,7 @@ export default function router() {
       <Route exact path="/sign-up">
         <SignUp />
       </Route>
-      <Route path="/rooms">
+      <Route path="/room">
         <Room />
       </Route>
       <Route>

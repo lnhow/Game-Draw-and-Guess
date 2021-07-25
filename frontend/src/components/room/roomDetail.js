@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    width: '220px',
+    width: '230px',
     borderRadius: '15px',
     backgroundColor: '#FFE203',
   },
@@ -33,65 +33,81 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '180px',
   },
   icon: {
+    cursor: 'default',
     '&:hover': {
       backgroundColor: 'transparent',
     },
   },
 }));
 
-function RoomDetail() {
-  const classes = useStyles();
+const Room = ({
+  currentPlayer,
+  maxPlayer,
+  language,
+  point,
+  roomName,
+  roomId,
+}) => (
+  <Grid item justify="center">
+    <Paper className={useStyles().paper}>
+      <div className={useStyles().avatar}>
+        <Avatar
+          alt="Remy Sharp"
+          src="https://icon-library.com/images/doraemon-icon/doraemon-icon-19.jpg"
+        />
+      </div>
+      <Typography variant="h6" className={useStyles().roomName}>
+        {roomName}
+        <span className={useStyles().roomId}>&emsp;#{roomId}</span>
+      </Typography>
+      <RoomInfo
+        curPlayer={currentPlayer}
+        maxiPlayer={maxPlayer}
+        lang={language}
+        pts={point}
+      />
+    </Paper>
+  </Grid>
+);
 
-  return (
-    <Grid item xs={3} justify="center">
-      <Paper className={classes.paper}>
-        <div className={classes.avatar}>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://icon-library.com/images/doraemon-icon/doraemon-icon-19.jpg"
-          />
-        </div>
-        <Typography variant="h6" className={classes.roomName}>
-          roomName
-          <span className={classes.roomId}>&emsp;#roomId</span>
-        </Typography>
-        <RoomSetting />
-      </Paper>
-    </Grid>
-  );
-}
-
-function RoomSetting() {
-  const classes = useStyles();
-
-  return (
+const RoomInfo = ({ curPlayer, maxiPlayer, lang, pts }) => (
+  <div className={useStyles().div}>
     <Grid container spacing={1}>
       <Grid item xs>
-        <Paper className={classes.setting}>
-          <IconButton className={classes.icon}>
+        <Paper className={useStyles().setting}>
+          <IconButton className={useStyles().icon}>
             <PersonIcon />
           </IconButton>
-          <Typography>10/10</Typography>
+          <Typography>
+            {curPlayer}/{maxiPlayer}
+          </Typography>
         </Paper>
       </Grid>
       <Grid item xs>
-        <Paper className={classes.setting}>
-          <IconButton className={classes.icon}>
+        <Paper className={useStyles().setting}>
+          <IconButton className={useStyles().icon}>
             <LanguageIcon />
           </IconButton>
-          <Typography>EN</Typography>
+          <Typography>{lang}</Typography>
         </Paper>
       </Grid>
       <Grid item xs>
-        <Paper className={classes.setting}>
-          <IconButton className={classes.icon}>
+        <Paper className={useStyles().setting}>
+          <IconButton className={useStyles().icon}>
             <EmojiEventsIcon />
           </IconButton>
-          <Typography>120</Typography>
+          <Typography>{pts}</Typography>
         </Paper>
       </Grid>
     </Grid>
-  );
-}
+  </div>
+);
 
-export default RoomDetail;
+RoomInfo.default = {
+  currentPlayer: '0',
+  maxPlayer: '0',
+  language: '',
+  point: '',
+};
+
+export default Room;

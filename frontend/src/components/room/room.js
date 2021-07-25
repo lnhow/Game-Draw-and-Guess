@@ -3,22 +3,19 @@ import {
   Grid,
   GridList,
   Typography,
-  Button,
-  TextField,
   IconButton,
   CssBaseline,
   GridListTile,
 } from '@material-ui/core';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import SearchIcon from '@material-ui/icons/Search';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import { Scrollbars } from 'react-custom-scrollbars';
-
-import Footer from '../footer/index.js';
-import RoomDetail from './roomDetail.js';
-
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { FuncButton } from '../../common/Button.js';
+import Input from '../../components/auth/input.js';
+import Footer from '../../components/footer/index.js';
+import Room from './roomDetail.js';
+import { useState, useEffect } from 'react';
+import { roomData } from './roomData.js';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,50 +103,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginButton = withStyles({
-  root: {
-    color: 'white',
-    marginBottom: '40px',
-    boxShadow: 'none',
-    textTransform: 'none',
-    fontSize: 18,
-    padding: '6px 40px',
-    border: '4px solid #001B4D',
-    borderRadius: '25px',
-    lineHeight: 1.5,
-    backgroundColor: '#0063cc',
-    fontFamily: '"Gorditas", cursive',
-    '&:hover': {
-      backgroundColor: '#0069d9',
-      boxShadow: 'none',
-    },
-    '&:active': {
-      boxShadow: 'none',
-      backgroundColor: '#0062cc',
-      borderColor: '#005cbf',
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
-
-const SignupButton = {
-  backgroundColor: '#03AC13',
-  '&:hover': {
-    backgroundColor: '#028a0f',
-    boxShadow: 'none',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#028a0f',
-    borderColor: '#5dbb63',
-  },
-  '&:focus': {
-    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-  },
-};
-
 const gameName = {
   fontSize: '40px',
   color: 'black',
@@ -160,8 +113,31 @@ const back = {
   color: '#FFE203',
 };
 
-function Room() {
+function Rooms() {
   const classes = useStyles();
+
+  const [data, setData] = useState([]);
+
+  const getData = () => {
+    fetch('roomData.json', {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    })
+      .then(function (response) {
+        console.log(response);
+        return response.json();
+      })
+      .then(function (myJson) {
+        console.log(myJson);
+        setData(myJson);
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <Container component="main" className={classes.root}>
@@ -186,61 +162,38 @@ function Room() {
             )}
           >
             <GridList cols={4} cellHeight={200} spacing={10}>
-              <GridListTile className={classes.gridTile}>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
-              <GridListTile>
-                <RoomDetail />
-              </GridListTile>
+              {roomData.map((data, key) => {
+                return (
+                  <GridListTile>
+                    <Room
+                      key={key}
+                      currentPlayer={data.currentPlayer}
+                      maxPlayer={data.maxPlayer}
+                      language={data.language}
+                      point={data.point}
+                      roomName={data.roomName}
+                      roomId={data.roomId}
+                    />
+                  </GridListTile>
+                );
+              })}
             </GridList>
           </Scrollbars>
         </div>
 
         <div className={classes.center}>
           <Grid item>
-            <LoginButton
-              href=""
-              variant="contained"
-              className={classes.margin}
-              style={SignupButton}
-            >
-              <IconButton className={classes.icon}>
-                <MeetingRoomIcon />
-              </IconButton>
-              New room
-            </LoginButton>
-            <LoginButton
-              href="/room/waiting"
-              variant="contained"
-              disableRipple
-              className={classes.margin}
-            >
-              <IconButton className={classes.icon}>
-                <SportsEsportsIcon />
-              </IconButton>
-              Play
-            </LoginButton>
+            <FuncButton
+              link="/room/create"
+              text="New room"
+              name="room"
+            ></FuncButton>
+            <FuncButton
+              link="/room/:id"
+              text="Play"
+              bgcolor="#028a0f"
+              name="esport"
+            ></FuncButton>
           </Grid>
         </div>
       </div>
@@ -252,27 +205,7 @@ function Room() {
 }
 
 function NumberInput({ id, name, classes }) {
-  return (
-    <TextField
-      variant="outlined"
-      fullWidth
-      id={id}
-      placeholder="Search room"
-      name={name}
-      type="text"
-      className={classes.search}
-      InputProps={
-        //Props applied to the <Input/> element of material UI
-        {
-          endAdornment: (
-            <IconButton type="submit" aria-label="Search Room" href="">
-              <SearchIcon />
-            </IconButton>
-          ),
-        }
-      }
-    />
-  );
+  return <Input name="search" placeholder="Search room" />;
 }
 
-export default Room;
+export default Rooms;

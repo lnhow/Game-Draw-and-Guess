@@ -3,20 +3,14 @@ import {
   Divider,
   Grid,
   Typography,
-  Button,
   Paper,
-  TextField,
-  IconButton,
   CssBaseline,
 } from '@material-ui/core';
-import { ExitToApp } from '@material-ui/icons';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-
+import { FuncButton } from '../../common/Button.js';
+import Input from '../../components/auth/input.js';
 import Footer from '../../components/footer/index.js';
-// import useStyles from './styles.js';
 
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,87 +79,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginButton = withStyles({
-  root: {
-    color: 'white',
-    marginBottom: '40px',
-    marginTop: '10px',
-    boxShadow: 'none',
-    textTransform: 'none',
-    fontSize: 18,
-    padding: '6px 40px',
-    border: '4px solid #001B4D',
-    borderRadius: '25px',
-    lineHeight: 1.5,
-    backgroundColor: '#0063cc',
-    fontFamily: '"Gorditas", cursive',
-    '&:hover': {
-      backgroundColor: '#0069d9',
-      boxShadow: 'none',
-    },
-    '&:active': {
-      boxShadow: 'none',
-      backgroundColor: '#0062cc',
-      borderColor: '#005cbf',
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
-
-const SignupButton = {
-  backgroundColor: '#03AC13',
-  '&:hover': {
-    backgroundColor: '#028a0f',
-    boxShadow: 'none',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#028a0f',
-    borderColor: '#5dbb63',
-  },
-  '&:focus': {
-    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-  },
-};
-
-const createButton = {
-  marginBottom: '0px',
-  backgroundColor: '#09f',
-  '&:hover': {
-    backgroundColor: '#028a0f',
-    boxShadow: 'none',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#028a0f',
-    borderColor: '#5dbb63',
-  },
-  '&:focus': {
-    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-  },
-};
-
-const quickPlayButton = {
-  marginBottom: '0px',
-  marginTop: '0px',
-  marginLeft: '10px',
-  backgroundColor: '#f97645',
-  '&:hover': {
-    backgroundColor: '#028a0f',
-    boxShadow: 'none',
-  },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#028a0f',
-    borderColor: '#5dbb63',
-  },
-  '&:focus': {
-    boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
-  },
-};
-
 const intro = {
   color: '#FFA500',
   weight: '400',
@@ -178,9 +91,6 @@ const gameName = {
   color: '#800080',
 };
 
-const textField = {
-  marginRight: '10px',
-};
 function Home() {
   const classes = useStyles();
 
@@ -202,25 +112,15 @@ function Home() {
             <Typography variant="h6" className={classes.text}>
               Don't have an account?
             </Typography>
-            <LoginButton
-              href="/sign-up"
-              variant="contained"
-              className={classes.margin}
-              style={SignupButton}
-            >
-              Sign up
-            </LoginButton>
+            <FuncButton
+              link="/sign-up"
+              text="Sign up"
+              bgcolor="#028a0f"
+            ></FuncButton>
             <Typography variant="h6" className={classes.text}>
               Already have an account?
             </Typography>
-            <LoginButton
-              href="/login"
-              variant="contained"
-              disableRipple
-              className={classes.margin}
-            >
-              Log in
-            </LoginButton>
+            <FuncButton link="/login" text="Log in"></FuncButton>
           </Grid>
           <Divider
             className={classes.divider}
@@ -246,17 +146,12 @@ function Home() {
                 <Typography variant="h6" className={classes.description}>
                   See all available rooms
                 </Typography>
-                <LoginButton
-                  href="/rooms"
-                  variant="contained"
-                  className={classes.margin}
-                  style={createButton}
-                >
-                  <IconButton className={classes.icon}>
-                    <MeetingRoomIcon />
-                  </IconButton>
-                  Rooms
-                </LoginButton>
+                <FuncButton
+                  link="/room"
+                  text="Rooms"
+                  bgcolor="#09f"
+                  name="room"
+                ></FuncButton>
               </Paper>
             </Grid>
             <Grid
@@ -265,7 +160,22 @@ function Home() {
               justifyContent="flex-start"
               alignItems="center"
             >
-              <NumberInput id="roomId" name="roomId" classes={classes} />
+              <Paper className={classes.paper}>
+                <Typography variant="h6">Quick Play</Typography>
+                <Input
+                  id="roomId"
+                  name="roomId"
+                  placeholder="Enter room code"
+                  link="/room/:id"
+                />
+                <Typography>OR</Typography>
+                <FuncButton
+                  link="/room/:id"
+                  text="Random"
+                  bgcolor="#F97645"
+                  name="esport"
+                ></FuncButton>
+              </Paper>
             </Grid>
           </Grid>
         </div>
@@ -275,47 +185,6 @@ function Home() {
         <Footer />
       </Grid>
     </Container>
-  );
-}
-
-function NumberInput({ id, name, classes }) {
-  return (
-    <Paper className={classes.paper}>
-      <Typography variant="h6">Quick Play</Typography>
-      <Typography variant="h6" className={classes.description}></Typography>
-      <TextField
-        variant="outlined"
-        fullWidth
-        id={id}
-        placeholder="Enter room code"
-        name={name}
-        type="text"
-        style={textField}
-        InputProps={
-          //Props applied to the <Input/> element of material UI
-          {
-            endAdornment: (
-              <IconButton type="submit" aria-label="Join Room">
-                <ExitToApp />
-              </IconButton>
-            ),
-          }
-        }
-      />
-      <Typography>OR</Typography>
-
-      <LoginButton
-        href=""
-        variant="contained"
-        className={classes.margin}
-        style={quickPlayButton}
-      >
-        <IconButton className={classes.icon}>
-          <SportsEsportsIcon />
-        </IconButton>
-        Random
-      </LoginButton>
-    </Paper>
   );
 }
 
