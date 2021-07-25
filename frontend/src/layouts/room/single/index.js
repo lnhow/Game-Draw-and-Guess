@@ -1,110 +1,130 @@
-import { Container, Box, Button } from '@material-ui/core';
-import { useState } from 'react';
+import { Container, Box, Button, Grid, Paper } from '@material-ui/core';
+import { useState, useEffect, useRef } from 'react';
 
 import useStyles from './styles';
 
-import Sidebar from './sidebar';
 import PlayingScreen from './playing';
 import WaitingScreen from './waiting';
 
-const players = [
-  {
-    name: 'Abc(You)',
-    avatar: '',
-    points: 0,
-  },
-  {
-    name: 'WASD',
-    avatar: '',
-    points: 0,
-  },
-  {
-    name: 'Hihi',
-    avatar: '',
-    points: 0,
-  },
-  {
-    name: 'Person',
-    avatar: '',
-    points: 0,
-  },
-  {
-    name: 'Hacker',
-    avatar: '',
-    points: 10000,
-  },
-  {
-    name: 'Norm',
-    avatar: '',
-    points: 0,
-  },
-];
+import ListPlayers from './listPlayers';
+import ChatMessages from './chat/messages';
+import ChatInputBox from './chat/inputBox';
+
+import AspectRatioBox from '../../../common/aspectRatioBox';
+import { getRoomPlayers } from '../../../helpers/api';
+import { connectToSocket } from '../../../helpers/socketio';
+
+const user = { name: 'john doe' };
 
 function SingleRoom() {
-  const classes = useStyles();
+  const [players, setPlayers] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const socketRef = useRef();
+  const playScreenRef = useRef();
+
+  const classes = useStyles();
 
   const handleToggleMode = () => {
     setIsPlaying(!isPlaying);
   };
 
+  const submitMsg = (message) => {
+    if (message) {
+      socketRef.current.emit('message', { name: user.name, message });
+    }
+  };
+
+  const submitDraw = (drawData) => {
+    if (drawData) {
+      socketRef.current.emit('canvas-data', drawData);
+    }
+  };
+
+  useEffect(() => {
+    socketRef.current = connectToSocket();
+    socketRef.current.on('canvas-data', (drawData) => {
+      playScreenRef.current.loadDrawData(drawData);
+    });
+    return () => socketRef.current.disconnect();
+  }, [playScreenRef]);
+
+  useEffect(() => {
+    socketRef.current = connectToSocket();
+    socketRef.current.on('message', ({ name, message }) => {
+      setMessages([...messages, { name, message }]);
+    });
+    return () => socketRef.current.disconnect();
+  }, [messages]);
+
+  useEffect(() => {
+    getRoomPlayers('[id]')
+      .then((res) => {
+        setPlayers(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
   return (
-    <Container fixed>
-      <Box
-        display="flex"
-        style={{
-          width: SCREEN_WIDTH,
-          height: SCREEN_HEIGHT,
-          flexDirection: 'row',
-        }}
-      >
-        <Box flexDirection="column" style={{ width: MAIN_AREA_WIDTH }}>
-          {/* Main area */}
+    <Container fixed style={{ width: 1200, height: 700 }}>
+      {/* <Grid container spacing={2} className={classes.container}> */}
+      <Box display="flex" flexDirection="row">
+        {/* <Grid item md={9} xs={12}> */}
+        <Box style={{ width: 900, height: 700 }}>
+          {/* <AspectRatioBox ratio={16/10}> */}
           {isPlaying ? (
             <PlayingScreen
               classes={classes}
               topBarHeight={TOP_BAR_HEIGHT}
               drawAreaHeight={DRAW_AREA_HEIGHT}
-              spacing={SPACING}
+              submitHandler={submitDraw}
+              ref={playScreenRef}
             />
           ) : (
             <WaitingScreen onStartGame={handleToggleMode} />
           )}
-
-          {/* Main area */}
+          {/* </AspectRatioBox> */}
         </Box>
-        <Box style={{ width: SIDE_BAR_WIDTH, marginLeft: SPACING }}>
-          <Sidebar
-            players={players}
-            classes={classes}
-            sizeConfig={DRAW_AREA_DIMENSIONS}
-          />
+        {/* </Grid> */}
+        {/* <Grid item md={3} xs={12}> */}
+        <Box style={{ marginLeft: 16, width: 284, height: 700 }}>
+          <Box style={{ width: '100%', height: '100%' }}>
+            {' '}
+            {/*style={{height: '88vh', width: '100%'}}>*/}
+            <Paper
+              elevation={2}
+              style={{ height: '100%' }}
+              className={classes.backgroundPaper}
+            >
+              <Box style={{ height: PARTICIPANTS_LIST_HEIGHT }}>
+                <ListPlayers players={players} />
+              </Box>
+              <Box style={{ height: CHAT_HEIGHT }}>
+                <Box className={classes.outer}>
+                  <ChatMessages messages={messages} />
+                  <ChatInputBox
+                    list={messages}
+                    handleSubmitMessage={submitMsg}
+                  />
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
         </Box>
+        {/* </Grid> */}
       </Box>
+      {/* </Grid> */}
       <Button onClick={handleToggleMode}>Toggle mode</Button>
     </Container>
   );
 }
 
-/* 
-  Time wasted trying to make this responsive: 10h
-  Try if you can, but if fail then please increment the time
-  If you are successful then please remove this comment
-*/
-const SCREEN_WIDTH = 1200,
-  SCREEN_HEIGHT = 700;
-const SPACING = 16;
-//MAIN_AREA_WIDTH + SPACING + SIDE_BAR_AREA_WIDTH = SCREEN_WIDTH
-const MAIN_AREA_WIDTH = 900;
-const SIDE_BAR_WIDTH = 284;
-//TOP_BAR_HEIGHT + SPACING + DRAW_AREA_HEIGHT = SCREEN_HEIGHT
 const TOP_BAR_HEIGHT = 84;
 const DRAW_AREA_HEIGHT = 600;
-const DRAW_AREA_DIMENSIONS = {
-  CANVAS_WIDTH: 800,
-  CANVAS_HEIGHT: 600,
-  CANVAS_TOOLBAR_WIDTH: 80,
-  SPACING: 8,
-};
+const PARTICIPANTS_LIST_HEIGHT = '40%';
+const CHAT_HEIGHT = '60%';
 
 export default SingleRoom;

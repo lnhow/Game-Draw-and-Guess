@@ -49,7 +49,6 @@ function RoomCreate(props) {
   useEffect(() => {
     getCategories()
       .then((res) => {
-        console.log(res.data);
         setCategories(res.data);
       })
       .catch((e) => {

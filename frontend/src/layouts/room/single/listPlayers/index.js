@@ -5,13 +5,9 @@ import useStyles from './styles';
 function ListPlayers({ players }) {
   const classes = useStyles();
   return (
-    <Paper
-      elevation={2}
-      className={classes.listPlayers}
-      style={{ height: '100%' }}
-    >
+    <Paper elevation={2} className={classes.listPlayers}>
       {players.map((player) => (
-        <SinglePlayer player={player} />
+        <SinglePlayer key={player._id} player={player} />
       ))}
     </Paper>
   );

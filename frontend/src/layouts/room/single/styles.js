@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 
 export default makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
+  container: {
+    margin: theme.spacing(1),
   },
   paper: {
     textAlign: 'center',
@@ -10,5 +10,14 @@ export default makeStyles((theme) => ({
   },
   backgroundPaper: {
     background: theme.palette.background.accent,
+  },
+  media: {
+    width: '100%',
+    height: (props) => `${100 * props.ratio}%`,
+  },
+  outer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
   },
 }));
