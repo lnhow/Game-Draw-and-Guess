@@ -164,7 +164,7 @@ function Rooms() {
             <GridList cols={4} cellHeight={200} spacing={10}>
               {roomData.map((data, key) => {
                 return (
-                  <GridListTile>
+                  <GridListTile key={key}>
                     <Room
                       key={key}
                       currentPlayer={data.currentPlayer}
@@ -197,7 +197,7 @@ function Rooms() {
           </Grid>
         </div>
       </div>
-      <Grid item xs="12">
+      <Grid item xs={12}>
         <Footer />
       </Grid>
     </Container>
