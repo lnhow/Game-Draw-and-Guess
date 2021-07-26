@@ -4,11 +4,15 @@ import SignUp from '../../components/signUp/signUp';
 import Login from '../../components/login/login';
 import Home from '../../layouts/home';
 import Room from '../../components/room/room';
+import HomeLoggin from '../home/homeloggin';
 
 export default function router() {
   return (
     <Switch>
       <Route exact path="/" component={Home} />
+      <Route exact path="/home">
+        <HomeLoggin />
+      </Route>
       <Route exact path="/login">
         <Login />
       </Route>
