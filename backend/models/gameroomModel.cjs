@@ -23,4 +23,4 @@ const gameroomsSchema = new Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model('gameRoom', gameroomsSchema);
+module.exports = mongoose.model('gameroom', gameroomsSchema);
