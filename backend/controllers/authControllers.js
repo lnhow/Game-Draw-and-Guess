@@ -15,10 +15,10 @@ const authController = {
   login,
   forgotPassword,
   resetPassword,
+  logout,
 };
 
 async function register(req, res) {
-  console.log(res.cookie('auth-token'))
   const { error } = registerValidation(req.body);
 
   if (error) return res.status(400).json({ msg: error.details[0].message });
@@ -83,7 +83,6 @@ async function login(req, res) {
     _userId: user._id,
     username: user.username,
   };
- 
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
@@ -158,6 +157,7 @@ async function resetPassword(req, res) {
 
   account.passwordResetToken = undefined;
   account.passwordResetExpires = undefined;
+
   const user = await usersModel.findOne({
     _accountId: account._id,
   });
@@ -177,6 +177,11 @@ async function resetPassword(req, res) {
     .json({
       token: token,
     });
+}
+
+async function logout(req, res) {
+  res.clearCookie('auth-token');
+  res.json({ msg: 'You have been logout!' });
 }
 
 export default authController;
