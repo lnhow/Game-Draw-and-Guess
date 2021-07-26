@@ -4,13 +4,14 @@ export default makeStyles((theme) => ({
   appBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    background: 'rgba(0,0,0,0)',
+    backgroundColor: theme.palette.primary.main,
   },
   heading: {
-    color: 'black',
+    color: 'white',
     textDecoration: 'none',
     textAlign: 'center',
     padding: theme.spacing(1),
+    fontFamily: '"Gorditas", cursive',
   },
   toolbar: {
     justifyContent: 'space-between',
