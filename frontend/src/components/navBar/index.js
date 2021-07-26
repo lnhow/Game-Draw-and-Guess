@@ -28,7 +28,7 @@ function NavbarTitle({ classes }) {
         className={classes.heading}
         component={Link}
         to="/"
-        variant="h6"
+        variant="h4"
       >
         Draw &amp; Guess
       </Typography>

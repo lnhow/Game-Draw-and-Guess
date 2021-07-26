@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
     gridGap: theme.spacing(3),
-    marginLeft: theme.spacing(40),
+    marginLeft: theme.spacing(35),
     marginRight: theme.spacing(20),
     marginTop: theme.spacing(10),
     marginBottom: theme.spacing(1),
@@ -78,6 +78,11 @@ const useStyles = makeStyles((theme) => ({
     color: '#616161',
     textAlign: 'initial',
   },
+  username: {
+    marginLeft: theme.spacing(2),
+    border: '3px solid #c1c1c1',
+    padding: theme.spacing(1),
+  },
 }));
 
 const intro = {
@@ -92,8 +97,14 @@ const gameName = {
   color: '#800080',
 };
 
-function Home() {
+function HomeLoggin() {
   const classes = useStyles();
+
+  const user = {
+    result: {
+      name: 'Username',
+    },
+  };
 
   return (
     <Container component="main" className={classes.root}>
@@ -110,18 +121,16 @@ function Home() {
       <div>
         <div className={classes.container}>
           <Grid>
+            <img src="" alt="avatar" />
             <Typography variant="h6" className={classes.text}>
-              Don't have an account?
+              Username
+              <input
+                type="text"
+                value={user.result.name}
+                readOnly
+                className={classes.username}
+              />
             </Typography>
-            <FuncButton
-              link="/sign-up"
-              text="Sign up"
-              bgcolor="#028a0f"
-            ></FuncButton>
-            <Typography variant="h6" className={classes.text}>
-              Already have an account?
-            </Typography>
-            <FuncButton link="/login" text="Log in"></FuncButton>
           </Grid>
           <Divider
             className={classes.divider}
@@ -189,4 +198,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomeLoggin;
