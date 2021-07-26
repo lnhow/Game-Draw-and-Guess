@@ -4,8 +4,14 @@ const uuid = require('uuid');
 
 const gameroomsSchema = new Schema(
   {
-    _roomId: uuid,
-    hostUserId: uuid,
+    _hostUserId: {
+      type: String,
+      default: uuid.v1,
+    },
+    _categoryId: {
+      type: String,
+      default: uuid.v1,
+    },
     roomName: String,
     maxPlayer: Number,
     timePerRound: Number,
@@ -17,6 +23,4 @@ const gameroomsSchema = new Schema(
   { timestamps: true },
 );
 
-const gameroom = mongoose.model('gameroom', gameroomsSchema);
-
-module.exports = gameroom;
+module.exports = mongoose.model('gameroom', gameroomsSchema);

@@ -23,8 +23,6 @@ accountsSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  console.log({ resetToken }, this.passwordResetToken);
-
   const tenMinute = 10 * 60 * 1000;
   this.passwordResetExpires = Date.now() + tenMinute;
 
