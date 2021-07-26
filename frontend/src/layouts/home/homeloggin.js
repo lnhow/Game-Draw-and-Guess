@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
     gridGap: theme.spacing(3),
-    marginLeft: theme.spacing(40),
+    marginLeft: theme.spacing(35),
     marginRight: theme.spacing(20),
     marginTop: theme.spacing(10),
     marginBottom: theme.spacing(1),
