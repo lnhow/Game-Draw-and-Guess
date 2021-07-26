@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Button,
@@ -6,39 +6,56 @@ import {
   Grid,
   Typography,
   Container,
+  Box,
 } from '@material-ui/core';
 import { Formik, FastField, Form } from 'formik';
-
+import * as yup from 'yup';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
 
+import userApi from '../../api/userApi';
+import jwt from 'jsonwebtoken';
+import { useHistory } from 'react-router-dom';
+import InputPassword from '../../common/inputPassword/inputPassword.js';
+
+const LoginSchema = yup.object().shape({
+  email: yup.string().email('not an email').required('Email not empty'),
+  password: yup
+    .string()
+    .min(6, 'password min 6')
+    .max(20, 'password max 20')
+    .required('Password is required'),
+});
+
 function Login() {
   const classes = useStyles();
+  const history = useHistory();
+  const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
 
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [isSignup, setIsSignup] = useState(isSignupMode);
-  // const [formData, setFormData] = useState(initialFormData);
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log(formData);
-  // };
-
-  // const handleChange = () => {};
-
-  // const switchMode = () => {
-  //   setIsSignup(!isSignup);
-  // };
-
-  // const handleShowPassword = () => {
-  //   setShowPassword(!showPassword);
-  // };
   const initialValues = {
     email: '',
     password: '',
+  };
+
+  const handleSubmit = async (values, actions) => {
+    try {
+      const reponses = await userApi.login(values);
+      console.log(process.env.TOKEN_SECRET);
+      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
+      console.log(infoUser);
+      setMessageConflictDataSever('');
+      actions.resetForm({
+        email: '',
+        password: '',
+      });
+      history.push('/');
+    } catch (error) {
+      setMessageConflictDataSever(error?.['response']?.data?.msg);
+      console.log({ error: error.message });
+    }
   };
 
   return (
@@ -50,7 +67,14 @@ function Login() {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Formik initialValues={initialValues}>
+        <Box my={2}>
+          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
+        </Box>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, actions) => handleSubmit(values, actions)}
+          validationSchema={LoginSchema}
+        >
           {(formikProps) => {
             return (
               <Form>
@@ -62,7 +86,7 @@ function Login() {
                 />
                 <FastField
                   name="password"
-                  component={InputField}
+                  component={InputPassword}
                   placeholder="Password"
                   type="password"
                 />
@@ -72,6 +96,12 @@ function Login() {
                   variant="contained"
                   color="primary"
                   className={classes.submit}
+                  disabled={
+                    !formikProps.isValid ||
+                    !formikProps.dirty ||
+                    formikProps.isSubmitting
+                  }
+                  onDoubleClick={(e) => e.preventDefault()}
                 >
                   Sign In
                 </Button>
