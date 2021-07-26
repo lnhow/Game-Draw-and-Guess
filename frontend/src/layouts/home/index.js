@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(10),
-    width: '300px'
+    width: '300px',
   },
   welcome: {
     fontFamily: '"Gorditas", cursive',
@@ -183,7 +183,7 @@ function Home() {
         </div>
       </div>
 
-      <Grid item xs="12">
+      <Grid item xs={12}>
         <Footer />
       </Grid>
     </Container>
