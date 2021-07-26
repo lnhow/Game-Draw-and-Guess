@@ -11,12 +11,13 @@ import {
 import { Formik, FastField, Form } from 'formik';
 import * as yup from 'yup';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../features/User/userSlice.js';
 
 import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
-import { useCookies } from 'react-cookie'
-
+import { useCookies } from 'react-cookie';
 
 import userApi from '../../api/userApi';
 import jwt from 'jsonwebtoken';
@@ -36,8 +37,8 @@ function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
-  const [,setCookie] = useCookies(['cookie-name'])
-  
+  const [, setCookie] = useCookies(['cookie-name']);
+  const dispatch = useDispatch();
 
   const initialValues = {
     email: '',
@@ -47,10 +48,10 @@ function Login() {
   const handleSubmit = async (values, actions) => {
     try {
       const reponses = await userApi.login(values);
-      console.log(process.env.TOKEN_SECRET);
+      console.log(process.env.REACT_APP_TOKEN_SECRET);
       const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
-      console.log(infoUser.username);
-      setCookie('user',reponses.token)
+      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
+      setCookie('user', reponses.token);
       setMessageConflictDataSever('');
       actions.resetForm({
         email: '',

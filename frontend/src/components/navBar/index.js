@@ -2,16 +2,16 @@ import { Typography, AppBar, Toolbar, Button, Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import useStyles from './styles.js';
 import ProfileMenu from './profileMenu';
-// import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 
 function Navbar() {
-  // const User = useSelector((state) => state.user)
-  // console.log('Username: ',User)
+  const User = useSelector((state) => state.user)
+  console.log('Username: ',User)
   const classes = useStyles();
   const user = {
-    idLogin:false
+    idLogin:User.isLogin,
+    name:User.username
   };
-  user.name = 'Username'
   
 
   return (

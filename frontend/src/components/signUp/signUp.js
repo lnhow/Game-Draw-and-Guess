@@ -20,6 +20,8 @@ import UserApi from '../../api/userApi.js';
 import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
 import jwt from 'jsonwebtoken';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../features/User/userSlice.js';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -39,9 +41,10 @@ function SignUp() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
+  const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
-    const infoUser = {
+    const infoUserRequest = {
       username:values.username,
       email: values.email,
       password:values.password,
@@ -50,10 +53,10 @@ function SignUp() {
 
     try {
       //Call Api Should I use useEffect?
-      const reponses = await UserApi.register(infoUser);
-      const reponsesVerify = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
+      const reponses = await UserApi.register(infoUserRequest);
+      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
+      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
       //store username and avatar ->redux
-      console.log('reponsesVerify',reponsesVerify)
       setMessageConflictDataSever('');
       actions.resetForm({
         username: '',

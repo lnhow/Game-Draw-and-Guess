@@ -10,7 +10,9 @@ import { FuncButton } from '../../common/Button.js';
 import Input from '../../components/auth/input.js';
 import Footer from '../../components/footer/index.js';
 
+
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,14 +99,9 @@ const gameName = {
   color: '#800080',
 };
 
-function HomeLoggin() {
+function HomeLogin() {
   const classes = useStyles();
-
-  const user = {
-    result: {
-      name: 'Username',
-    },
-  };
+  const User = useSelector((state) => state.user)
 
   return (
     <Container component="main" className={classes.root}>
@@ -121,12 +118,12 @@ function HomeLoggin() {
       <div>
         <div className={classes.container}>
           <Grid>
-            <img src="" alt="avatar" />
+            <img src={User.avatar} alt="avatar" />
             <Typography variant="h6" className={classes.text}>
               Username
               <input
                 type="text"
-                value={user.result.name}
+                value={User.username}
                 readOnly
                 className={classes.username}
               />
@@ -198,4 +195,4 @@ function HomeLoggin() {
   );
 }
 
-export default HomeLoggin;
+export default HomeLogin;

@@ -10,6 +10,7 @@ import { FuncButton } from '../../common/Button.js';
 import Input from '../../components/auth/input.js';
 import Footer from '../../components/footer/index.js';
 
+
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
