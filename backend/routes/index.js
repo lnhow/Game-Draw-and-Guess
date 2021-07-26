@@ -4,14 +4,8 @@ import verify from '../middlewares/verifyToken.js';
 
 const router = Router();
 
-
-router.get('/', verify, async (req, res) => {
-  const user = await Account.findOne({ _id: req.user._id });
-  res.send(user);
-});
-router.get('/', verify, async (req, res) => {
-  const user = await Account.findOne({ _id: req.user._id });
-  res.send(user);
+router.get('/main',async (req, res) => {
+  console.log(res.cookie('auth-token'))
 });
 router.get('/', verify, async (req, res) => {
   const user = await usersModel.findOne({ _id: req.user._id });

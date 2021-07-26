@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import UserApi from '../../api/userApi.js';
 import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
+import jwt from 'jsonwebtoken';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -37,27 +38,32 @@ const SignUpSchema = yup.object().shape({
 function SignUp() {
   const classes = useStyles();
   const history = useHistory();
-  const [conflictDataSever, setConflictDataSever] = useState('');
+  const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
 
   const handleSubmit = async (values, actions) => {
     const infoUser = {
-      ...values,
+      username:values.username,
+      email: values.email,
+      password:values.password,
       passwordConfirm:values.confirmPassword
     };
 
     try {
       //Call Api Should I use useEffect?
-      await UserApi.register(infoUser);
-      setConflictDataSever('');
+      const reponses = await UserApi.register(infoUser);
+      const reponsesVerify = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
+      //store username and avatar ->redux
+      console.log('reponsesVerify',reponsesVerify)
+      setMessageConflictDataSever('');
       actions.resetForm({
         username: '',
         email: '',
         password: '',
         confirmPassword: '',
       });
-      history.push('/login');
+      history.push('/');
     } catch (error) {
-      setConflictDataSever(error['response'].data.msg);
+      setMessageConflictDataSever(error['response'].data.msg);
       console.log({ error: error.message });
     }
   };
@@ -79,7 +85,7 @@ function SignUp() {
           Sign up
         </Typography>
         <Box my={2}>
-          <h3 style={{ color: 'red' }}>{conflictDataSever}</h3>
+          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
         </Box>
         <Formik
           initialValues={initialValues}

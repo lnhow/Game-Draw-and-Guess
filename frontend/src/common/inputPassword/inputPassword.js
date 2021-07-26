@@ -15,7 +15,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const InputPassword = (props) => {
-  const { field, form, type, disabled, placeholder, label } = props;
+  const { field, form, disabled, placeholder, label } = props;
   const { name } = field;
   const { errors, touched } = form;
   const isError = touched[name] && errors[name];
@@ -64,14 +64,13 @@ InputPassword.propTypes = {
   field: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
 
-  type: PropTypes.string,
+  
   disabled: PropTypes.bool,
   label: PropTypes.string,
   placeholder: PropTypes.string,
 };
 
 InputPassword.default = {
-  type: 'text',
   disabled: false,
   label: '',
   placeholder: '',

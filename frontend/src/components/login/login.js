@@ -18,10 +18,8 @@ import { Link } from 'react-router-dom';
 
 import userApi from '../../api/userApi';
 import jwt from 'jsonwebtoken';
-import { useCookies } from 'react-cookie';
 import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
-
 
 const LoginSchema = yup.object().shape({
   email: yup.string().email('not an email').required('Email not empty'),
@@ -34,9 +32,8 @@ const LoginSchema = yup.object().shape({
 
 function Login() {
   const classes = useStyles();
-  const [, setCookie] = useCookies(['user']);
   const history = useHistory();
-  const [conflictDataSever, setConflictDataSever] = useState('');
+  const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
 
   const initialValues = {
     email: '',
@@ -45,25 +42,18 @@ function Login() {
 
   const handleSubmit = async (values, actions) => {
     try {
-      // console.log('vo day')
-      // const dataToken = {
-      //   id:'123',
-      //   username:'hieu',
-      //   avatar:'img.png'
-      // }
-      // const token = jwt.sign(dataToken,'123')
-      // const values = jwt.verify(token,'123')
-      // console.log(values)
       const reponses = await userApi.login(values);
-      setCookie('user', reponses.token);
-      setConflictDataSever('');
+      console.log(process.env.TOKEN_SECRET);
+      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
+      console.log(infoUser);
+      setMessageConflictDataSever('');
       actions.resetForm({
         email: '',
         password: '',
       });
       history.push('/');
     } catch (error) {
-      setConflictDataSever(error?.['response']?.data?.msg);
+      setMessageConflictDataSever(error?.['response']?.data?.msg);
       console.log({ error: error.message });
     }
   };
@@ -78,7 +68,7 @@ function Login() {
           Login
         </Typography>
         <Box my={2}>
-          <h3 style={{ color: 'red' }}>{conflictDataSever}</h3>
+          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
         </Box>
         <Formik
           initialValues={initialValues}

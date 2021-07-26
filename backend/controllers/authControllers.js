@@ -13,6 +13,7 @@ import crypto from 'crypto';
 const authController = { register, login, forgotPassword, resetPassword };
 
 async function register(req, res) {
+  console.log(res.cookie('auth-token'))
   const { error } = registerValidation(req.body);
 
 
@@ -79,8 +80,10 @@ async function login(req, res) {
     username: user.username,
     avatar: user.avatar,
   };
+ 
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
+
   res
     .status(200)
     .header('auth-token', token)

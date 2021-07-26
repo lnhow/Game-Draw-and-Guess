@@ -9,6 +9,7 @@ import RouterApp from '../layouts/router/index';
 import store from '../redux/store';
 import theme from '../app/app.styles';
 
+
 function App() {
   return (
     <Provider store={store}>
@@ -16,6 +17,7 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <Navbar />
+
           <RouterApp />
         </BrowserRouter>
       </ThemeProvider>
