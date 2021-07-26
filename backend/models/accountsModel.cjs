@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const crypto = require('crypto');
-const usersModel = require('./usersModel.cjs');
 
 const accountsSchema = new Schema(
   {
@@ -11,6 +10,7 @@ const accountsSchema = new Schema(
     isBlocked: Boolean,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    passwordChangedAt: Date,
   },
   { timestamps: true },
 );
@@ -31,11 +31,22 @@ accountsSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+accountsSchema.methods.changePasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  return false;
+};
+
 accountsSchema.pre('save', async function (next) {
   try {
     if (!this.isModified('password') || this.isNew) return next();
-    const user = usersModel.findOne({ _accountId: this._accountId });
-    user.updatedAt = Date.now() - 1000;
+    this.passwordChangedAt = Date.now() - 1000;
 
     next();
   } catch (error) {

@@ -4,12 +4,13 @@ import verify from '../middlewares/verifyToken.js';
 
 const router = Router();
 
-router.get('/main',async (req, res) => {
-  console.log(res.cookie('auth-token'))
-});
 router.get('/', verify, async (req, res) => {
-  const user = await usersModel.findOne({ _id: req.user._id });
-  res.json({ user });
+  try {
+    const user = await usersModel.findOne({ _id: req.user._id });
+    res.json({ user });
+  } catch (err) {
+    res.json({ msg: 'Not found' });
+  }
 });
 
 export default router;

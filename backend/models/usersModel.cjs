@@ -20,7 +20,7 @@ const usersSchema = new Schema(
 usersSchema.pre('save', async function (next) {
   try {
     if (!this.isModified() || this.isNew) return next();
-    this.updatedAt = Date.now() - 1000;
+    this.updatedAt = Date.now();
     next();
   } catch (error) {
     next(error);
