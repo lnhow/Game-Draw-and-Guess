@@ -10,16 +10,21 @@ import {
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { ExitToApp } from '@material-ui/icons';
+import { useSelector } from 'react-redux'
 
 import Footer from '../../components/footer/index.js';
 import useStyles from './styles.js';
 
 function Home() {
   const classes = useStyles();
+  const User = useSelector((state) => state.user)
+  console.log('User ',User)
+
 
   return (
     <Container component="main" className={classes.root}>
       <CssBaseline />
+      {/* {User} */}
       <Grid container spacing={2}>
         <Grid item md={5} sm={12}>
           <Typography variant="h5" className={classes.welcome}>

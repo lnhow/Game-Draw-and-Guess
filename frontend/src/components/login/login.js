@@ -15,6 +15,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
+import { useCookies } from 'react-cookie'
+
 
 import userApi from '../../api/userApi';
 import jwt from 'jsonwebtoken';
@@ -34,6 +36,8 @@ function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
+  const [,setCookie] = useCookies(['cookie-name'])
+  
 
   const initialValues = {
     email: '',
@@ -45,13 +49,14 @@ function Login() {
       const reponses = await userApi.login(values);
       console.log(process.env.TOKEN_SECRET);
       const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
-      console.log(infoUser);
+      console.log(infoUser.username);
+      setCookie('user',reponses.token)
       setMessageConflictDataSever('');
       actions.resetForm({
         email: '',
         password: '',
       });
-      history.push('/');
+      history.push('/home');
     } catch (error) {
       setMessageConflictDataSever(error?.['response']?.data?.msg);
       console.log({ error: error.message });

@@ -61,7 +61,7 @@ function SignUp() {
         password: '',
         confirmPassword: '',
       });
-      history.push('/');
+      history.push('/home');
     } catch (error) {
       setMessageConflictDataSever(error['response'].data.msg);
       console.log({ error: error.message });

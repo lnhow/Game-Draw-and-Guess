@@ -2,14 +2,17 @@ import { Typography, AppBar, Toolbar, Button, Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import useStyles from './styles.js';
 import ProfileMenu from './profileMenu';
+// import { useSelector } from 'react-redux'
 
 function Navbar() {
+  // const User = useSelector((state) => state.user)
+  // console.log('Username: ',User)
   const classes = useStyles();
   const user = {
-    // result: {
-    //   name: 'Username',
-    // },
+    idLogin:false
   };
+  user.name = 'Username'
+  
 
   return (
     <header>
@@ -39,19 +42,19 @@ function NavbarTitle({ classes }) {
 function UserToolbar({ classes, user }) {
   return (
     <Toolbar className={classes.toolbar}>
-      {user.result ? (
+      {user.idLogin ? (
         <ProfileMenu
           component={
             <>
               <Avatar
                 className={classes.avatar}
-                alt={user.result.name}
-                src={user.result.imageUrl}
+                alt={user.name}
+                src={user.imageUrl}
               >
-                {user.result.name.charAt(0)}
+                {user.name.charAt(0)}
               </Avatar>
               <Typography className={classes.heading} variant="body2">
-                {user.result.name}
+                {user.name}
               </Typography>
             </>
           }

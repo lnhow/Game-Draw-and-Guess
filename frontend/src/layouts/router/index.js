@@ -14,9 +14,17 @@ export default function router() {
       <Route exact path="/sign-up">
         <SignUp />
       </Route>
+      <Route path="/home">
+            <HomepageLogin />
+          </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />
       </Route>
+      
     </Switch>
   );
+}
+
+function HomepageLogin() {
+  return <h2>Home</h2>;
 }
