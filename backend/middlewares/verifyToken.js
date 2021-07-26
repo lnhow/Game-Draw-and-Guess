@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
 import usersModel from '../models/usersModel.cjs';
 import accountsModel from '../models/accountsModel.cjs';
+import cookie from 'cookie';
 
 export default async function auth(req, res, next) {
-  const token = req.header('auth-token');
+  // const token = req.header('auth_token');
+  const token = cookie.parse(req.headers.cookie).auth_token;
   if (!token) return next(res.status(401).send('Access Denied'));
 
   try {
