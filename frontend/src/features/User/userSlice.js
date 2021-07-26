@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AVATAR_DEFAULT, NUMBER_RANDOM } from '../../common/constant';
 
+
+
+
 const initialState = {
 isLogin:false,
   username: 'user_' + NUMBER_RANDOM,

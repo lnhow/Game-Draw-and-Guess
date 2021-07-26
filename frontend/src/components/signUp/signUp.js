@@ -22,6 +22,7 @@ import InputPassword from '../../common/inputPassword/inputPassword.js';
 import jwt from 'jsonwebtoken';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../features/User/userSlice.js';
+import { useCookies } from 'react-cookie';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -41,6 +42,7 @@ function SignUp() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
+  const [, setCookie] = useCookies(['cookie-name']);
   const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
@@ -56,6 +58,7 @@ function SignUp() {
       const reponses = await UserApi.register(infoUserRequest);
       const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
       dispatch(updateUser({ isLogin:true,username: infoUser.username }));
+      setCookie('user', {toke:reponses.token,username:infoUser.username});
       //store username and avatar ->redux
       setMessageConflictDataSever('');
       actions.resetForm({

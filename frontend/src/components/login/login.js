@@ -51,7 +51,7 @@ function Login() {
       console.log(process.env.REACT_APP_TOKEN_SECRET);
       const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
       dispatch(updateUser({ isLogin:true,username: infoUser.username }));
-      setCookie('user', reponses.token);
+      setCookie('user', {toke:reponses.token,username:infoUser.username});
       setMessageConflictDataSever('');
       actions.resetForm({
         email: '',
