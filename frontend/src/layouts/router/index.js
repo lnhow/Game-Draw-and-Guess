@@ -22,21 +22,14 @@ export default function router() {
       <Route exact path="/sign-up">
         <SignUp />
       </Route>
-      <Route path="/room">
-        <Switch>
-          <Route exact path="/">
-            <Room />
-          </Route>
-          <Route exact path="/room/create">
-            <RoomCreate />
-          </Route>
-          <Route path="/room/:id">
-            <RoomSingle />
-          </Route>
-          <Route>
-            <ErrorPage errorCode={404} message={'Not Found'} />
-          </Route>
-        </Switch>
+      <Route exact path="/room">
+        <Room />
+      </Route>
+      <Route exact path="/room/create">
+        <RoomCreate />
+      </Route>
+      <Route path="/room/:id">
+        <RoomSingle />
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />
