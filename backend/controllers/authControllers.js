@@ -53,8 +53,8 @@ async function register(req, res) {
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
     res
       .status(201)
-      .header('auth-token', token)
-      .cookie('auth-token', token, { httpOnly: true })
+      .header('auth_token', token)
+      .cookie('auth_token', token, { httpOnly: true })
       .json({
         token: token,
       });
@@ -88,8 +88,8 @@ async function login(req, res) {
 
   res
     .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
+    .header('auth_token', token)
+    .cookie('auth_token', token, { httpOnly: true })
     .json({
       token: token,
     });
@@ -172,15 +172,15 @@ async function resetPassword(req, res) {
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
   res
     .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
+    .header('auth_token', token)
+    .cookie('auth_token', token, { httpOnly: true })
     .json({
       token: token,
     });
 }
 
 async function logout(req, res) {
-  res.clearCookie('auth-token');
+  res.clearCookie('auth_token');
   res.json({ msg: 'You have been logout!' });
 }
 

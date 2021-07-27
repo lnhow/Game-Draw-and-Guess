@@ -4,9 +4,10 @@ import queryString from 'query-string';
 
 // Please have a look at here `https://github.com/axios/axios#request-config` for the full list of configs
 
-const baseURL = process.env.REACT_APP_API
-  ? process.env.REACT_APP_API
-  : 'http://localhost:5000/api';
+const baseURL =
+  (process.env.REACT_APP_API
+    ? process.env.REACT_APP_API
+    : 'http://localhost:5000') + '/api';
 
 const axiosClient = axios.create({
   baseURL,

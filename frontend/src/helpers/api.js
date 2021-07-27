@@ -1,9 +1,19 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_API
+export const baseURL = process.env.REACT_APP_API
   ? process.env.REACT_APP_API
-  : 'http://localhost:5000/api';
+  : 'http://localhost:5000';
 
-const api = axios.create({ baseURL });
+const apiURL = baseURL + '/api';
+
+const api = axios.create({ apiURL });
 
 export default api;
+
+export const getCategories = () => {
+  return axios.get('/data/categories.json');
+};
+
+export const getRoomPlayers = (roomId) => {
+  return axios.get('/data/playerRoom.json');
+};
