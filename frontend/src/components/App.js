@@ -9,18 +9,17 @@ import RouterApp from '../layouts/router/index';
 // import store from '../redux/store';
 import theme from '../app/app.styles';
 
-
 function App() {
   return (
     // <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <Navbar />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Navbar />
 
-          <RouterApp />
-        </BrowserRouter>
-      </ThemeProvider>
+        <RouterApp />
+      </BrowserRouter>
+    </ThemeProvider>
     // </Provider>
   );
 }

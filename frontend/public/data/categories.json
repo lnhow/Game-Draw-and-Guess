@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "123456789",
+    "categoryName": "Animal"
+  },
+  {
+    "_id": "1234567890",
+    "categoryName": "Car"
+  },
+  {
+    "_id": "12345678901",
+    "categoryName": "Bike"
+  }
+]
