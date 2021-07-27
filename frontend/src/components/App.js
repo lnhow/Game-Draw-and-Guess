@@ -1,10 +1,26 @@
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { CssBaseline } from '@material-ui/core';
+// import { Provider } from 'react-redux';
+
+import Navbar from './navBar';
+import RouterApp from '../layouts/router/index';
+
+// import store from '../redux/store';
+import theme from '../app/app.styles';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">Welcome to Draw&Guess !</header>
-    </div>
+    // <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Navbar />
+
+        <RouterApp />
+      </BrowserRouter>
+    </ThemeProvider>
+    // </Provider>
   );
 }
 

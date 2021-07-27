@@ -1,21 +1,43 @@
 /**
  * This file is used to setup server
  */
-import express from "express";
-import cors from "cors";
-import mainRoute from "./routes/index.js";
+import express from 'express';
+import cors from 'cors';
+import mainRoute from './routes/index.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+//Connect to DB
+mongoose
+  .connect(process.env.DB_CONNECT, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Connect successfully');
+  });
 const app = express();
 
-app.use(cors()); // Allow Cross Origin Resource Sharing
+import authRoute from './routes/auth.js';
+import roomRoute from './routes/room.js';
+
+const corsOptions = {
+  exposedHeaders: 'auth-token',
+};
+
+app.use(cors(corsOptions)); // Allow Cross Origin Resource Sharing
 app.use(express.json()); // Accept JSON request
 
-app.use("/", mainRoute);
+app.use('/', mainRoute);
+app.use('/api/user', authRoute);
+app.use('/api/room', roomRoute);
 
 // Route not exist
-app.use("*", (req, res) => {
+app.use('*', (req, res) => {
   res.status(404).json({
-    error: "not found",
+    error: 'not found',
   });
 });
 

@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "1",
+    "name": "Abc(You)",
+    "avatar": "",
+    "points": 0
+  },
+  {
+    "_id": "2",
+    "name": "WASD",
+    "avatar": "",
+    "points": 0
+  },
+  {
+    "_id": "3",
+    "name": "Hihi",
+    "avatar": "",
+    "points": 0
+  },
+  {
+    "_id": "4",
+    "name": "Person",
+    "avatar": "",
+    "points": 0
+  },
+  {
+    "_id": "5",
+    "name": "Hacker",
+    "avatar": "",
+    "points": 10000
+  },
+  {
+    "_id": "6",
+    "name": "Norm",
+    "avatar": "",
+    "points": 0
+  }
+]
