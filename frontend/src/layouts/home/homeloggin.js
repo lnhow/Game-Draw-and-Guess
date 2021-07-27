@@ -13,10 +13,7 @@ import Footer from '../../components/footer/index.js';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import { useCookies } from 'react-cookie';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateUser } from '../../features/User/userSlice.js';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,14 +103,7 @@ const gameName = {
 function HomeLogin() {
   const classes = useStyles();
   const User = useSelector((state) => state.user)
-  const [cookies, , removeCookie] = useCookies(['cookie-name']);
-  const dispatch = useDispatch();
-
-  useEffect(()=>{
-    if(cookies.user){
-      dispatch(updateUser({ isLogin:true,username: cookies.user.username }))
-    }
-  },[cookies.user,dispatch])
+  
 
   return (
     <Container component="main" className={classes.root}>
