@@ -1,17 +1,22 @@
-const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
 const categorySchema = new Schema(
   {
-    _categoryId: ObjectId,
-    categoryName: String,
-    createdAt: Date,
-    isDeleted: Boolean,
-    deletedAt: Date,
+    categoryName: {
+      type: String,
+      required: true,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true, //Auto create createdAt & updatedAt
+  },
 );
+
+//Plugins
+//Soft delete plugin: create (deleted & deletedAt) & handle soft delete
+categorySchema.plugin(mongoose_delete, { deletedAt: true });
 
 const category = mongoose.model('category', categorySchema);
 
