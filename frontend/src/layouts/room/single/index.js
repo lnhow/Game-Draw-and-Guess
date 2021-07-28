@@ -1,5 +1,6 @@
 import { Container, Box, Button, Paper } from '@material-ui/core';
 import { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom'; //Temporarily use URL params as room name
 
 import useStyles from './styles';
 
@@ -11,12 +12,13 @@ import ChatMessages from './chat/messages';
 import ChatInputBox from './chat/inputBox';
 
 // import AspectRatioBox from '../../../common/aspectRatioBox';
-import { getRoomPlayers } from '../../../helpers/api';
 import { connectToSocket } from '../../../helpers/socketio';
 
 const user = { name: 'john doe' };
 
 function SingleRoom() {
+  const { id } = useParams();
+  const [room, setRoom] = useState(null);
   const [players, setPlayers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -43,30 +45,35 @@ function SingleRoom() {
   };
 
   useEffect(() => {
+    const room = id;
     socketRef.current = connectToSocket();
+
+    setRoom(room);
+
+    socketRef.current.emit('join', { name: user.name, room }, (error) => {
+      if (error) {
+        alert(error);
+      }
+    });
+  }, [id]);
+
+  useEffect(() => {
     socketRef.current.on('canvas-data', (drawData) => {
       playScreenRef.current.loadDrawData(drawData);
     });
-    return () => socketRef.current.disconnect();
-  }, [playScreenRef]);
+  }, []);
 
   useEffect(() => {
-    socketRef.current = connectToSocket();
+    socketRef.current.on('room-users', ({ users }) => {
+      setPlayers(users);
+    });
+  }, []);
+
+  useEffect(() => {
     socketRef.current.on('message', ({ name, message }) => {
       setMessages([...messages, { name, message }]);
     });
-    return () => socketRef.current.disconnect();
   }, [messages]);
-
-  useEffect(() => {
-    getRoomPlayers('[id]')
-      .then((res) => {
-        setPlayers(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
 
   return (
     <Container fixed style={{ width: 1200, height: 700 }}>
