@@ -9,6 +9,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 
 const authController = {
   register,
@@ -21,12 +22,20 @@ const authController = {
 async function register(req, res) {
   const { error } = registerValidation(req.body);
 
-  if (error) return res.status(400).json({ msg: error.details[0].message });
+  if (error)
+    return res.status(400).json({
+      is_err: true,
+      message: error.details[0].message,
+    });
 
   const emailExist = await accountsModel.findOne({
     email: req.body.email,
   });
-  if (emailExist) return res.status(400).json({ msg: 'Email already exists' });
+  if (emailExist)
+    return res.status(400).json({
+      is_err: true,
+      message: 'Email already exists',
+    });
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
@@ -37,7 +46,7 @@ async function register(req, res) {
   });
 
   const user = new usersModel({
-    _accountId: account._id,
+    accountId: mongoose.Types.ObjectId(account._id),
     username: req.body.username,
   });
 
@@ -46,7 +55,7 @@ async function register(req, res) {
     await user.save();
 
     const dataToken = {
-      _userId: user._id,
+      userId: user._id,
       username: user.username,
     };
 
@@ -56,31 +65,50 @@ async function register(req, res) {
       .header('auth_token', token)
       .cookie('auth_token', token, { httpOnly: true })
       .json({
-        token: token,
+        is_err: false,
+        message: 'Register success',
+        data: {
+          token: token,
+        },
       });
   } catch (err) {
-    res.status(400).json({ msg: err });
+    res.status(400).json({
+      is_err: true,
+      message: err,
+    });
   }
 }
 
 async function login(req, res) {
   const { error } = loginValidation(req.body);
-  if (error) return res.status(400).json({ msg: error.details[0].message });
+  if (error)
+    return res.status(400).json({
+      is_err: true,
+      message: error.details[0].message,
+    });
 
   const account = await accountsModel.findOne({
     email: req.body.email,
   });
-  if (!account) return res.status(400).json({ msg: 'Email is not found' });
+  if (!account)
+    return res.status(400).json({
+      is_err: true,
+      message: 'Email is not found',
+    });
 
   const validPass = await bcrypt.compare(req.body.password, account.password);
-  if (!validPass) return res.status(400).json({ msg: 'Invalid password' });
+  if (!validPass)
+    return res.status(400).json({
+      is_err: true,
+      message: 'Invalid password',
+    });
 
   const user = await usersModel.findOne({
-    _accountId: account._id,
+    accountId: mongoose.Types.ObjectId(account._id),
   });
 
   const dataToken = {
-    _userId: user._id,
+    userId: user._id,
     username: user.username,
   };
 
@@ -91,7 +119,11 @@ async function login(req, res) {
     .header('auth_token', token)
     .cookie('auth_token', token, { httpOnly: true })
     .json({
-      token: token,
+      is_err: false,
+      message: 'Login success',
+      data: {
+        token: token,
+      },
     });
 }
 
@@ -101,7 +133,12 @@ async function forgotPassword(req, res, next) {
   });
 
   if (!account)
-    return next(res.status(400).json({ msg: 'Email is not found' }));
+    return next(
+      res.status(400).json({
+        is_err: true,
+        message: 'Email is not found',
+      }),
+    );
 
   const resetToken = account.createPasswordResetToken();
   await account.save({ validateBeforeSave: false });
@@ -120,16 +157,18 @@ async function forgotPassword(req, res, next) {
     });
 
     res.status(200).json({
-      msg: 'Token sent to email!',
+      is_err: false,
+      message: 'Token sent to email!',
     });
   } catch (err) {
     account.passwordResetToken = undefined;
     account.passwordResetExpires = undefined;
     await account.save({ validateBeforeSave: false });
 
-    return res
-      .status(500)
-      .json({ msg: 'There was an error sending the email. Try again later!' });
+    return res.status(500).json({
+      is_err: true,
+      message: 'There was an error sending the email. Try again later!',
+    });
   }
 }
 
@@ -145,11 +184,18 @@ async function resetPassword(req, res) {
   });
 
   if (!account) {
-    return res.status(400).json({ msg: 'Token is invalid or has expired' });
+    return res.status(400).json({
+      is_err: true,
+      message: 'Token is invalid or has expired',
+    });
   }
 
   const { error } = repasswordValidation(req.body);
-  if (error) return res.status(400).json({ msg: error.details[0].message });
+  if (error)
+    return res.status(400).json({
+      is_err: true,
+      message: error.details[0].message,
+    });
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
@@ -159,13 +205,13 @@ async function resetPassword(req, res) {
   account.passwordResetExpires = undefined;
 
   const user = await usersModel.findOne({
-    _accountId: account._id,
+    accountId: mongoose.Types.ObjectId(account._id),
   });
 
   await account.save();
 
   const dataToken = {
-    _userId: user._id,
+    userId: user._id,
     username: user.username,
   };
 
@@ -175,13 +221,20 @@ async function resetPassword(req, res) {
     .header('auth_token', token)
     .cookie('auth_token', token, { httpOnly: true })
     .json({
-      token: token,
+      is_err: false,
+      message: 'Reset password success',
+      data: {
+        token: token,
+      },
     });
 }
 
 async function logout(req, res) {
   res.clearCookie('auth_token');
-  res.json({ msg: 'You have been logout!' });
+  res.json({
+    is_err: false,
+    message: 'You have been logout!',
+  });
 }
 
 export default authController;
