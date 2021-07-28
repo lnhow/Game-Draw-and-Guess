@@ -19,6 +19,6 @@ const wordSchema = new Schema(
 //Soft delete plugin: create (deleted & deletedAt) & handle soft delete
 wordSchema.plugin(mongoose_delete, { deletedAt: true });
 
-const word = mongoose.model('word', wordSchema);
+const words = mongoose.model('words', wordSchema);
 
-module.exports = word;
+module.exports = words;

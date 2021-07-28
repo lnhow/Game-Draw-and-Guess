@@ -4,5 +4,10 @@ import verify from '../middlewares/verifyToken.js';
 
 const router = Router();
 router.get('/', verify, roomControllers.findingRoom);
+router.post('/room/create', roomControllers.createRoom);
+router.get('/room/:id', roomControllers.getSingleRoom);
+router.get('/room/:id', roomControllers.getSingleRoom);
+router.delete('/room/:id', roomControllers.deleteRoom);
+router.put('/room/:id', roomControllers.updateRoom);
 
 export default router;
