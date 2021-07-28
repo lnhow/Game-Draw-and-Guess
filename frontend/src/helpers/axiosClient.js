@@ -17,6 +17,8 @@ const axiosClient = axios.create({
   paramsSerializer: (params) => queryString.stringify(params),
 });
 axiosClient.interceptors.request.use(async (config) => {
+
+  // localStorage
   // Handle token here ...
   // axios.defaults.withCredentials = true
   return config;

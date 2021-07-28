@@ -5,7 +5,7 @@ import { CssBaseline } from '@material-ui/core';
 
 import Navbar from './navBar';
 import RouterApp from '../layouts/router/index';
-import { useCookies } from 'react-cookie';
+import jwt from 'jsonwebtoken';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../features/User/userSlice.js';
@@ -16,14 +16,16 @@ import theme from '../app/app.styles';
 
 function App() {
 
-  const [cookies] = useCookies(['cookie-name']);
   const dispatch = useDispatch();
+  const tokenForUser = localStorage.getItem('user');
+  
 
   useEffect(()=>{
-    if(cookies.user){
-      dispatch(updateUser({ isLogin:true,username: cookies.user.username }))
+    if(tokenForUser){
+      const infoUser = jwt.verify(tokenForUser, process.env.REACT_APP_TOKEN_SECRET);
+      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
     }
-  },[cookies.user,dispatch])
+  },[tokenForUser,dispatch])
 
   return (
     // <Provider store={store}>

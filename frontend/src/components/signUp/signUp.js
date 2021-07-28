@@ -22,7 +22,6 @@ import InputPassword from '../../common/inputPassword/inputPassword.js';
 import jwt from 'jsonwebtoken';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../features/User/userSlice.js';
-import { useCookies } from 'react-cookie';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -42,24 +41,25 @@ function SignUp() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
-  const [, setCookie] = useCookies(['cookie-name']);
   const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
     const infoUserRequest = {
-      username:values.username,
+      username: values.username,
       email: values.email,
-      password:values.password,
-      passwordConfirm:values.confirmPassword
+      password: values.password,
+      passwordConfirm: values.confirmPassword,
     };
 
     try {
-      //Call Api Should I use useEffect?
       const reponses = await UserApi.register(infoUserRequest);
-      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
-      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
-      setCookie('user', {toke:reponses.token,username:infoUser.username});
-      //store username and avatar ->redux
+      const infoUser = jwt.verify(
+        reponses.token,
+        process.env.REACT_APP_TOKEN_SECRET,
+      );
+      dispatch(updateUser({ isLogin: true, username: infoUser.username }));
+      await localStorage.setItem('user', reponses.token);
+
       setMessageConflictDataSever('');
       actions.resetForm({
         username: '',

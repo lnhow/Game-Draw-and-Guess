@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Drop down menu component
@@ -20,6 +21,7 @@ import { Link } from 'react-router-dom';
 export default function ProfileMenu({ component, listDropDownItem }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
+  const history = useHistory();
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -42,6 +44,11 @@ export default function ProfileMenu({ component, listDropDownItem }) {
 
     prevOpen.current = open;
   }, [open]);
+
+  const handleLogOut = ()=>{
+    localStorage.removeItem('user')
+    return history.push('/login');
+  }
 
   return (
     <div>
@@ -69,7 +76,7 @@ export default function ProfileMenu({ component, listDropDownItem }) {
                     <AccountCircle />
                     Profile
                   </MenuItem>
-                  <MenuItem component={Link} to="/logout">
+                  <MenuItem component={Link} onClick={handleLogOut}>
                     <PowerSettingsNew />
                     Logout
                   </MenuItem>
