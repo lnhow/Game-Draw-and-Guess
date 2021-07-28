@@ -5,7 +5,7 @@ const uuid = require('uuid');
 const usersSchema = new Schema(
   {
     username: String,
-    accountId: {
+    _accountId: {
       type: String,
       default: uuid.v1,
     },
