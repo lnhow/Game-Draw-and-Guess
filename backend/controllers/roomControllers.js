@@ -1,9 +1,11 @@
 import gameroomModel from '../models/gameroomModel.cjs';
+import { createRoomValidation } from '../utils/validation.cjs';
+
+const mongoose_delete = require('mongoose-delete');
 
 const roomController = {
   findingRoom,
   createRoom,
-  getSingleRoom,
   deleteRoom,
   updateRoom,
 };
@@ -18,31 +20,28 @@ async function findingRoom(req, res) {
 }
 
 async function createRoom(req, res) {
+  const { error } = createRoomValidation(req.body);
+
+  if (error) return res.status(400).json({ msg: error.details[0].message });
+
+  const gameroom = new gameroomModel(req.body);
+
   try {
-    const gameroom = new gameroomModel(req.body);
     await gameroom.save();
 
     res.status(200).json({
-      message: 'create room successfully',
-      gameroomInfo: gameroom,
+      msg: 'create room successfully',
+      roomId: gameroom._id,
+      hostId: gameroom.hostUserId,
     });
   } catch (err) {
-    res.status(500).json({ message: 'server error' });
-  }
-}
-
-async function getSingleRoom(req, res) {
-  try {
-    const gameroom = gameroomModel.findById(req.params.id);
-    res.json(gameroom);
-  } catch (err) {
-    res.status(500).json({ msg: 'Unavailable room!' });
+    res.status(500).json({ msg: 'server error' });
   }
 }
 
 async function updateRoom(req, res) {
   try {
-    const gameroom = gameroomModel.findByIdAndDelete(req.params.id);
+    const gameroom = gameroomModel.findByIdAndUpdate(req.params.id);
 
     if (!gameroom) {
       res.status(404).json({ msg: 'Room not found!' });
@@ -53,7 +52,12 @@ async function updateRoom(req, res) {
       gameroom.timePerRound = req.body.timePerRound;
       gameroom.private = req.body.private;
       gameroom.save();
-      res.status(200).json({ gameroom, msg: 'Update room successfully!' });
+      res.status(200).json({
+        roomId: gameroom._id,
+        roomName: gameroom.roomName,
+        hostId: gameroom.hostUserId,
+        msg: 'Update room successfully!',
+      });
     }
   } catch (err) {
     res.status(500).json({ msg: 'Invalid room. Cannot update room!' });
@@ -62,7 +66,15 @@ async function updateRoom(req, res) {
 
 async function deleteRoom(req, res) {
   try {
-    gameroomModel.findByIdAndDelete(req.params.id);
+    const gameroom = gameroomModel.findById(req.params.id);
+
+    if (!gameroom) {
+      res.status(404).json({ msg: 'Room does not exist!' });
+    }
+
+    gameroom.plugin(mongoose_delete, { deletedAt: true });
+    await gameroom.save();
+
     res.status(200).json({ msg: 'Delete room successfully!' });
   } catch (err) {
     res.status(500).json({ msg: 'Invalid room. Cannot delete room!' });
