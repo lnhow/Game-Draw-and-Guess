@@ -9,7 +9,12 @@ export const addUser = ({ id, name, room }) => {
       return { error: 'Username and room are required.' };
     }
 
-    const user = { id, name: normalizedUsername, room: normalizedRoomName };
+    const user = {
+      id,
+      name: normalizedUsername,
+      room: normalizedRoomName,
+      points: 0,
+    };
 
     users.push(user);
 
