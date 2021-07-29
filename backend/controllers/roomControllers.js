@@ -26,7 +26,7 @@ async function getCategories(req, res) {
       categories: formattedCategories,
     });
   } catch (err) {
-    res.status(500).json({ message: 'error from server' });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 }
 
