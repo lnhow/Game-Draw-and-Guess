@@ -4,7 +4,7 @@
 import * as http from 'http';
 import app from './server.js';
 import dotenv from 'dotenv';
-import socketIoConfig from './config/socketIo.config.js';
+import socketIoConfig from './socket/index.socket.js';
 
 dotenv.config();
 const port = process.env.PORT ? process.env.PORT : process.env.DEFAULT_PORT;
