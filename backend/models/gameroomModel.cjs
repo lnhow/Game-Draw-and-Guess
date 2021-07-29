@@ -16,12 +16,14 @@ const gameroomSchema = new Schema(
     roomStatus: String,
   },
   {
-    timestamps: true, //Auto create createdAt & updatedAt
+    timestamps: true,
   },
 );
 
-//Plugins
-//Soft delete plugin: create (deleted & deletedAt) & handle soft delete
-gameroomSchema.plugin(mongoose_delete, { deletedAt: true });
+
+gameroomSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
 
 module.exports = mongoose.model('gameroom', gameroomSchema);
