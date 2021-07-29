@@ -8,7 +8,10 @@ const wordSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'categories',
     },
-    word: String,
+    word: {
+      type: Schema.Types.String,
+      unique: true,
+    },
   },
   {
     timestamps: true,
@@ -21,6 +24,6 @@ wordSchema.plugin(mongoose_delete, {
   overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
 });
 
-const word = mongoose.model('word', wordSchema);
+const words = mongoose.model('words', wordSchema);
 
-module.exports = word;
+module.exports = words;

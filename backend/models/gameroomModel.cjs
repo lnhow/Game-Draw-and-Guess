@@ -10,10 +10,14 @@ const gameroomSchema = new Schema(
     categoryId: {
       type: mongoose.Types.ObjectId,
     },
-    roomName: String,
+    roomName: {
+      type: Schema.Types.String,
+      unique: true,
+    },
     maxPlayer: Number,
     timePerRound: Number,
     roomStatus: String,
+    isPrivate: Boolean,
   },
   {
     timestamps: true,
