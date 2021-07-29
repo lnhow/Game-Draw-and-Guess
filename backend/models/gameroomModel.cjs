@@ -8,8 +8,7 @@ const gameroomSchema = new Schema(
       type: Schema.Types.ObjectId,
     },
     categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'categories',
+      type: mongoose.Types.ObjectId,
     },
     roomName: {
       type: Schema.Types.String,
@@ -21,12 +20,14 @@ const gameroomSchema = new Schema(
     isPrivate: Boolean,
   },
   {
-    timestamps: true, //Auto create createdAt & updatedAt
+    timestamps: true,
   },
 );
 
-//Plugins
-//Soft delete plugin: create (deleted & deletedAt) & handle soft delete
-gameroomSchema.plugin(mongoose_delete, { deletedAt: true });
+
+gameroomSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
 
 module.exports = mongoose.model('gameroom', gameroomSchema);

@@ -1,8 +1,5 @@
 import axios from 'axios';
 import queryString from 'query-string';
-// Set up default config for http requests here
-
-// Please have a look at here `https://github.com/axios/axios#request-config` for the full list of configs
 
 const baseURL =
   (process.env.REACT_APP_API
@@ -17,8 +14,8 @@ const axiosClient = axios.create({
   paramsSerializer: (params) => queryString.stringify(params),
 });
 axiosClient.interceptors.request.use(async (config) => {
-  // Handle token here ...
-  // axios.defaults.withCredentials = true
+  if (getToken()) config.headers['auth-token'] = getToken();
+
   return config;
 });
 axiosClient.interceptors.response.use(
@@ -29,8 +26,12 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle errors
     throw error;
   },
 );
 export default axiosClient;
+
+function getToken() {
+  const tokenForUser = localStorage.getItem('user');
+  return tokenForUser;
+}

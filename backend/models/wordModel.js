@@ -14,13 +14,15 @@ const wordSchema = new Schema(
     },
   },
   {
-    timestamps: true, //Auto create createdAt & updatedAt
+    timestamps: true,
   },
 );
 
-//Plugins
-//Soft delete plugin: create (deleted & deletedAt) & handle soft delete
-wordSchema.plugin(mongoose_delete, { deletedAt: true });
+
+wordSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
 
 const words = mongoose.model('words', wordSchema);
 
