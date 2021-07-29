@@ -3,6 +3,7 @@ import * as UserData from '../data/users.data.js';
 const handleDisconnect = (io, socket) => {
   const user = UserData.removeUser(socket.id);
   if (user) {
+    console.log(`User [${user.name}] disconnected from room [${user.room}]`);
     // Broadcast to room that user had left
     // Update list of users in room
     io.to(user.room).emit('room-users', {
