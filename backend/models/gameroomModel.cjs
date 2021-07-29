@@ -11,10 +11,14 @@ const gameroomSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'categories',
     },
-    roomName: String,
+    roomName: {
+      type: Schema.Types.String,
+      unique: true,
+    },
     maxPlayer: Number,
     timePerRound: Number,
     roomStatus: String,
+    isPrivate: Boolean,
   },
   {
     timestamps: true, //Auto create createdAt & updatedAt

@@ -8,7 +8,10 @@ const wordSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'categories',
     },
-    word: String,
+    word: {
+      type: Schema.Types.String,
+      unique: true,
+    },
   },
   {
     timestamps: true, //Auto create createdAt & updatedAt
