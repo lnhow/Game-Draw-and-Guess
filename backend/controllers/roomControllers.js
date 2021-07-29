@@ -1,7 +1,7 @@
 import gameroomModel from '../models/gameroomModel.cjs';
 import categoryModel from '../models/categoryModel.cjs';
 
-const roomController = { findingRoom, getCategoryForRoom };
+const roomController = { findingRoom, getCategories };
 
 async function findingRoom(req, res) {
   try {
@@ -12,20 +12,18 @@ async function findingRoom(req, res) {
   }
 }
 
-async function getCategoryForRoom(req, res) {
+async function getCategories(req, res) {
   try {
     const categories = await categoryModel.find();
-    if (categories.length === 0)
-      res.status(404).json({ message: "Can't find category" });
 
-    const categoriesRefactor = categories.map((category) => ({
+    const formattedCategories = categories.map((category) => ({
       id: category._id,
       name: category.categoryName,
     }));
 
     res.status(200).json({
       message: 'successfully',
-      categories: categoriesRefactor,
+      categories: formattedCategories,
     });
   } catch (err) {
     res.status(500).json({ message: 'error from server' });

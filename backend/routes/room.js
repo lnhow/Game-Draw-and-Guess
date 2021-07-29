@@ -2,7 +2,6 @@ import { Router } from 'express';
 import roomControllers from '../controllers/roomControllers.js';
 import verify from '../middlewares/verifyToken.js';
 
-// /api/room 
 const router = Router();
 router.get('/category', roomControllers.getCategoryForRoom);
 router.get('/', verify, roomControllers.findingRoom);
