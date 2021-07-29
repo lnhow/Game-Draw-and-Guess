@@ -1,7 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
-// import { Provider } from 'react-redux';
 
 import Navbar from './navBar';
 import RouterApp from '../layouts/router/index';
@@ -26,7 +25,6 @@ function App() {
   }, [tokenForUser, dispatch]);
 
   return (
-    // <Provider store={store}>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
@@ -35,7 +33,6 @@ function App() {
         <RouterApp />
       </BrowserRouter>
     </ThemeProvider>
-    // </Provider>
   );
 }
 

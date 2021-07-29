@@ -48,11 +48,11 @@ export default function ProfileMenu({ component, listDropDownItem }) {
     prevOpen.current = open;
   }, [open]);
 
-  const handleLogOut = ()=>{
-    localStorage.removeItem('user')
-    dispatch(updateUser({isLogin:false}));
+  const handleLogOut = () => {
+    localStorage.removeItem('user');
+    dispatch(updateUser({ isLogin: false }));
     return history.push('/login');
-  }
+  };
 
   return (
     <div>

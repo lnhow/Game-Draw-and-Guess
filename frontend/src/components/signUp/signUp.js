@@ -44,11 +44,12 @@ function SignUp() {
   const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
-    
     try {
       const reponses = await UserApi.register(values);
-      const infoUser = jwt.decode(reponses.token, {complete:true});
-      dispatch(updateUser({ isLogin: true, username: infoUser.payload.username }));
+      const infoUser = jwt.decode(reponses.token, { complete: true });
+      dispatch(
+        updateUser({ isLogin: true, username: infoUser.payload.username }),
+      );
       await localStorage.setItem('user', reponses.token);
 
       setMessageConflictDataSever('');
