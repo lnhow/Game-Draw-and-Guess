@@ -3,7 +3,6 @@ import roomControllers from '../controllers/roomControllers.js';
 import verify from '../middlewares/verifyToken.js';
 
 const router = Router();
-router.get('/category', roomControllers.getCategories);
 router.get('/', verify, roomControllers.findingRoom);
 router.post('/room/create', roomControllers.createRoom);
 router.delete('/room/:id', roomControllers.deleteRoom);
