@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const uuid = require('uuid');
 
 const usersSchema = new Schema(
   {
     username: String,
-    _accountId: {
-      type: String,
-      default: uuid.v1,
+    accountId: {
+      type: mongoose.Types.ObjectId,
+      ref: 'accounts',
     },
     avatar: String,
     createdAt: Date,

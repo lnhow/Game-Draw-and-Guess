@@ -8,8 +8,7 @@ const gameroomSchema = new Schema(
       type: Schema.Types.ObjectId,
     },
     categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'categories',
+      type: mongoose.Types.ObjectId,
     },
     roomName: String,
     maxPlayer: Number,
