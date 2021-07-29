@@ -1,7 +1,6 @@
 import gameroomModel from '../models/gameroomModel.cjs';
-import categoryModel from '../models/categoryModel.cjs';
 
-const roomController = { findingRoom, getCategories };
+const roomController = { findingRoom };
 
 async function findingRoom(req, res) {
   try {
@@ -23,7 +22,7 @@ async function findingRoom(req, res) {
       },
       { $project: { category: 0 } },
     ]);
-    // const all = await category.find();
+
     res.json({
       message: 'Get all rooms success',
       rooms: all,
@@ -32,24 +31,6 @@ async function findingRoom(req, res) {
     res.status(500).json({
       message: "Can't find any room!",
     });
-  }
-}
-
-async function getCategories(req, res) {
-  try {
-    const categories = await categoryModel.find();
-
-    const formattedCategories = categories.map((category) => ({
-      id: category._id,
-      name: category.categoryName,
-    }));
-
-    res.status(200).json({
-      message: 'successfully',
-      categories: formattedCategories,
-    });
-  } catch (err) {
-    res.status(500).json({ message: 'Internal Server Error' });
   }
 }
 

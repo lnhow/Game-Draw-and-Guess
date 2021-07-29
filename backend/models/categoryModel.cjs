@@ -10,12 +10,14 @@ const categorySchema = new Schema(
     },
   },
   {
-    timestamps: true, //Auto create createdAt & updatedAt
+    timestamps: true,
   },
 );
 
-//Plugins
-//Soft delete plugin: create (deleted & deletedAt) & handle soft delete
-categorySchema.plugin(mongoose_delete, { deletedAt: true });
+
+categorySchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
 
 module.exports = mongoose.model('category', categorySchema);

@@ -22,6 +22,7 @@ const app = express();
 
 import authRoute from './routes/auth.js';
 import roomRoute from './routes/room.js';
+import categoryRoute from './routes/category.js';
 
 const corsOptions = {
   exposedHeaders: 'auth-token',
@@ -32,6 +33,7 @@ app.use(express.json()); // Accept JSON request
 
 app.use('/', mainRoute);
 app.use('/api/user', authRoute);
+app.use('/api/room/category', categoryRoute);
 app.use('/api/room', roomRoute);
 
 // Route not exist
