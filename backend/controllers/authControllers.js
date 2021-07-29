@@ -24,7 +24,6 @@ async function register(req, res) {
 
   if (error)
     return res.status(400).json({
-      is_err: true,
       message: error.details[0].message,
     });
 
@@ -33,7 +32,6 @@ async function register(req, res) {
   });
   if (emailExist)
     return res.status(400).json({
-      is_err: true,
       message: 'Email already exists',
     });
 
@@ -65,15 +63,11 @@ async function register(req, res) {
       .header('auth_token', token)
       .cookie('auth_token', token, { httpOnly: true })
       .json({
-        is_err: false,
         message: 'Register success',
-        data: {
-          token: token,
-        },
+        token: token,
       });
   } catch (err) {
     res.status(400).json({
-      is_err: true,
       message: err,
     });
   }
@@ -83,7 +77,6 @@ async function login(req, res) {
   const { error } = loginValidation(req.body);
   if (error)
     return res.status(400).json({
-      is_err: true,
       message: error.details[0].message,
     });
 
@@ -92,14 +85,12 @@ async function login(req, res) {
   });
   if (!account)
     return res.status(400).json({
-      is_err: true,
       message: 'Email is not found',
     });
 
   const validPass = await bcrypt.compare(req.body.password, account.password);
   if (!validPass)
     return res.status(400).json({
-      is_err: true,
       message: 'Invalid password',
     });
 
@@ -119,11 +110,8 @@ async function login(req, res) {
     .header('auth_token', token)
     .cookie('auth_token', token, { httpOnly: true })
     .json({
-      is_err: false,
       message: 'Login success',
-      data: {
-        token: token,
-      },
+      token: token,
     });
 }
 
@@ -135,7 +123,6 @@ async function forgotPassword(req, res, next) {
   if (!account)
     return next(
       res.status(400).json({
-        is_err: true,
         message: 'Email is not found',
       }),
     );
@@ -157,7 +144,6 @@ async function forgotPassword(req, res, next) {
     });
 
     res.status(200).json({
-      is_err: false,
       message: 'Token sent to email!',
     });
   } catch (err) {
@@ -166,7 +152,6 @@ async function forgotPassword(req, res, next) {
     await account.save({ validateBeforeSave: false });
 
     return res.status(500).json({
-      is_err: true,
       message: 'There was an error sending the email. Try again later!',
     });
   }
@@ -185,7 +170,6 @@ async function resetPassword(req, res) {
 
   if (!account) {
     return res.status(400).json({
-      is_err: true,
       message: 'Token is invalid or has expired',
     });
   }
@@ -193,7 +177,6 @@ async function resetPassword(req, res) {
   const { error } = repasswordValidation(req.body);
   if (error)
     return res.status(400).json({
-      is_err: true,
       message: error.details[0].message,
     });
 
@@ -221,18 +204,14 @@ async function resetPassword(req, res) {
     .header('auth_token', token)
     .cookie('auth_token', token, { httpOnly: true })
     .json({
-      is_err: false,
       message: 'Reset password success',
-      data: {
-        token: token,
-      },
+      token: token,
     });
 }
 
 async function logout(req, res) {
   res.clearCookie('auth_token');
   res.json({
-    is_err: false,
     message: 'You have been logout!',
   });
 }

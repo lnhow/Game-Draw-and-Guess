@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import usersModel from '../models/usersModel.cjs';
 import accountsModel from '../models/accountsModel.cjs';
 import cookie from 'cookie';
+import mongoose from 'mongoose';
 
 export default async function auth(req, res, next) {
   // const token = req.header('auth_token');
@@ -12,7 +13,9 @@ export default async function auth(req, res, next) {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET);
     req.user = verified;
 
-    const currentUser = await usersModel.findOne({ _id: req.user._userId });
+    const currentUser = await usersModel.findOne({
+      _id: mongoose.Types.ObjectId(req.user.userId),
+    });
     if (!currentUser) {
       return next(
         res
@@ -22,7 +25,7 @@ export default async function auth(req, res, next) {
     }
 
     const currentAccount = await accountsModel.findOne({
-      _id: currentUser._accountId,
+      _id: mongoose.Types.ObjectId(currentUser.accountId),
     });
 
     if (currentAccount.changePasswordAfter(req.user.iat)) {
