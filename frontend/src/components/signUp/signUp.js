@@ -31,7 +31,7 @@ const SignUpSchema = yup.object().shape({
     .min(6, 'password min 6')
     .max(20, 'password max 20')
     .required('Password is required'),
-  confirmPassword: yup
+  passwordConfirm: yup
     .string()
     .required('Confirm Password is required')
     .oneOf([yup.ref('password')], 'Passwords must match'),
@@ -44,20 +44,11 @@ function SignUp() {
   const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
-    const infoUserRequest = {
-      username: values.username,
-      email: values.email,
-      password: values.password,
-      passwordConfirm: values.confirmPassword,
-    };
-
+    
     try {
-      const reponses = await UserApi.register(infoUserRequest);
-      const infoUser = jwt.verify(
-        reponses.token,
-        process.env.REACT_APP_TOKEN_SECRET,
-      );
-      dispatch(updateUser({ isLogin: true, username: infoUser.username }));
+      const reponses = await UserApi.register(values);
+      const infoUser = jwt.decode(reponses.token, {complete:true});
+      dispatch(updateUser({ isLogin: true, username: infoUser.payload.username }));
       await localStorage.setItem('user', reponses.token);
 
       setMessageConflictDataSever('');
@@ -65,7 +56,7 @@ function SignUp() {
         username: '',
         email: '',
         password: '',
-        confirmPassword: '',
+        passwordConfirm: '',
       });
       history.push('/home');
     } catch (error) {
@@ -78,7 +69,7 @@ function SignUp() {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    passwordConfirm: '',
   };
 
   return (
@@ -120,9 +111,9 @@ function SignUp() {
                   type="password"
                 />
                 <FastField
-                  name="confirmPassword"
+                  name="passwordConfirm"
                   component={InputPassword}
-                  placeholder="confirmPassword"
+                  placeholder="passwordConfirm"
                   type="password"
                 />
                 <Button

@@ -46,12 +46,8 @@ function Login() {
   const handleSubmit = async (values, actions) => {
     try {
       const reponses = await userApi.login(values);
-
-      const infoUser = jwt.verify(
-        reponses.token,
-        process.env.REACT_APP_TOKEN_SECRET,
-      );
-      dispatch(updateUser({ isLogin: true, username: infoUser.username }));
+      const infoUser = jwt.decode(reponses.token, {complete:true});
+      dispatch(updateUser({ isLogin: true, username: infoUser.payload.username }));
       await localStorage.setItem('user', reponses.token);
 
       setMessageConflictDataSever('');
