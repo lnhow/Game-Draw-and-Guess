@@ -17,7 +17,6 @@ import { updateUser } from '../../features/User/userSlice.js';
 import useStyles from './styles.js';
 import InputField from '../../common/inputField/inputField';
 import { Link } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
 
 import userApi from '../../api/userApi';
 import jwt from 'jsonwebtoken';
@@ -37,7 +36,6 @@ function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
-  const [, setCookie] = useCookies(['cookie-name']);
   const dispatch = useDispatch();
 
   const initialValues = {
@@ -48,10 +46,12 @@ function Login() {
   const handleSubmit = async (values, actions) => {
     try {
       const reponses = await userApi.login(values);
-      console.log(process.env.REACT_APP_TOKEN_SECRET);
-      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
-      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
-      setCookie('user', {toke:reponses.token,username:infoUser.username});
+      const infoUser = jwt.decode(reponses.token, { complete: true });
+      dispatch(
+        updateUser({ isLogin: true, username: infoUser.payload.username }),
+      );
+      await localStorage.setItem('user', reponses.token);
+
       setMessageConflictDataSever('');
       actions.resetForm({
         email: '',
