@@ -40,8 +40,8 @@ const createRoomValidation = (data) => {
   const schema = Joi.object({
     roomName: Joi.string().required().min(6),
     roomCategory: Joi.string().required(),
-    maxPlayer: Joi.string().required(),
-    timePerRound: Joi.string().required(),
+    maxPlayer: Joi.number().required(),
+    timePerRound: Joi.number().required(),
   });
   return schema.validate(data);
 };

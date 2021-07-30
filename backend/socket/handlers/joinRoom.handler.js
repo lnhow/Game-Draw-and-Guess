@@ -1,4 +1,7 @@
 import * as UserData from '../data/users.data.js';
+import * as RoomData from '../data/room.data.js';
+import gameroomModel from '../models/gameroomModel.cjs';
+
 /**
  * User want to join room
  */
@@ -15,6 +18,31 @@ const handleJoinRoom = (io, socket, { name, room }, callback) => {
   //If room not exists in map, call db to find room
   // -> room exists in db -> check roomStatus: CREATED -> hostUserId = userId join, return 1: host user
   //If room not exist in db, throw error msg: return 0
+
+  const checkExistRoom = () => {
+    let result = gameroomModel.findOne({ _id: roomId });
+    // if room exists in db
+    if (result) {
+      if (result.status === 'CREATED') {
+        result.hostUserId = UserData.id;
+        RoomData.addRoom({
+          category: result.category,
+          timePerRound: result.timePerRound,
+          hostUserId: result.hostUserId,
+          currentRound: result.currentRound,
+          status: 'CREATED',
+        });
+        result.status = 'WAITING';
+        result.save();
+
+        return 1;
+      } else {
+        return 0;
+      }
+    } else {
+      return 2;
+    }
+  };
 
   // If not error msg
   // If return 1: Save retrieved room from db -> room map & Update room status: WAITING to DB

@@ -49,12 +49,12 @@ async function createRoom(req, res) {
     await gameroom.save();
 
     res.status(200).json({
-      message: 'create room successfully',
+      message: 'Create room successfully',
       roomId: gameroom._id,
       hostId: gameroom.hostUserId,
     });
   } catch (err) {
-    res.status(500).json({ message: 'server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 }
 
@@ -67,7 +67,7 @@ async function updateRoom(req, res) {
     const gameroom = gameroomModel.findByIdAndUpdate(req.params.id);
 
     if (!gameroom) {
-      res.status(404).json({ message: 'Room not found!' });
+      res.status(404).json({ message: 'Room not found' });
     } else {
       gameroom.roomName = req.body.roomName;
       gameroom.hostUserId = req.body.hostUserId;
@@ -80,11 +80,11 @@ async function updateRoom(req, res) {
         roomId: gameroom._id,
         roomName: gameroom.roomName,
         hostId: gameroom.hostUserId,
-        message: 'Update room successfully!',
+        message: 'Update room successfully',
       });
     }
   } catch (err) {
-    res.status(500).json({ message: 'Invalid room. Cannot update room!' });
+    res.status(500).json({ message: 'Invalid room. Cannot update room' });
   }
 }
 
@@ -93,14 +93,14 @@ async function deleteRoom(req, res) {
     const gameroom = gameroomModel.findById(req.params.id);
 
     if (!gameroom) {
-      res.status(404).json({ message: 'Room does not exist!' });
+      res.status(404).json({ message: 'Room does not exist' });
     }
 
     await gameroom.save(gameroom.delete(req.params.id));
 
-    res.status(200).json({ message: 'Delete room successfully!' });
+    res.status(200).json({ message: 'Delete room successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Invalid room. Cannot delete room!' });
+    res.status(500).json({ message: 'Invalid room. Cannot delete room' });
   }
 }
 
