@@ -15,8 +15,11 @@ export default function Router() {
   return (
     <Switch>
       <Route path="/">
-        <Logined isLogin={User.isLogin} />
-        <PagePrivate isLogin={User.isLogin} />
+        {User.isLogin ? (
+          <PagePrivate isLogin={User.isLogin} />
+        ) : (
+          <Logined isLogin={User.isLogin} />
+        )}
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />
@@ -59,6 +62,9 @@ function Logined({ isLogin }) {
       </Route>
       <Route exact path="/sign-up">
         <SignUp />
+      </Route>
+      <Route>
+        <ErrorPage errorCode={404} message={'Not Found'} />
       </Route>
     </Switch>
   );
