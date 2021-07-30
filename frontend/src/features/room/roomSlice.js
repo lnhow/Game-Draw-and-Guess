@@ -35,7 +35,7 @@ export const RoomSlice = createSlice({
     },
 
     clearRoom(state) {
-      state = initialState;
+      return initialState;
     },
   },
 });

@@ -82,12 +82,6 @@ function SingleRoom() {
     });
   }, [dispatch]);
 
-  useEffect(() => {
-    socketRef.current.on('disconnect', () => {
-      dispatch(clearRoom());
-    });
-  }, [dispatch]);
-
   return (
     <GameRoomLayout
       submitDrawHandler={submitDraw}
