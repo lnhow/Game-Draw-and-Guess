@@ -52,6 +52,14 @@ function SingleRoom() {
       }
       dispatch(updateRoom({ roomId: room }));
     });
+
+    return function cleanUp() {
+      //componentsWillUnmount
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      dispatch(clearRoom());
+    };
   }, [id, user, dispatch]);
 
   useEffect(() => {
