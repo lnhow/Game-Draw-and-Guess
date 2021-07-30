@@ -1,6 +1,6 @@
 function ChatMessage(props) {
-  const { title, name, message, isSpecialMessage } = props.message;
-  const msgTitle = name ? name : title;
+  const { title, user, message, isSpecialMessage } = props.message;
+  const msgTitle = user ? user : title;
 
   return (
     <p style={{ margin: '0px 0px 8px 0px', textAlign: 'left' }}>
