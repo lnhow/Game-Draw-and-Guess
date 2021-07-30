@@ -39,9 +39,9 @@ async function findingRoom(req, res) {
 }
 
 async function createRoom(req, res) {
-  const { error } = createRoomValidation(req.body);
-
-  if (error) return res.status(400).json({ message: error.details[0].message });
+  // const { error } = createRoomValidation(req.body);
+  
+  // if (error) return res.status(400).json({ message: error.details[0].message });
 
   const gameroom = new gameroomModel(req.body);
 
