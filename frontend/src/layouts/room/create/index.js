@@ -14,7 +14,11 @@ import {
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import useStyles from './styles';
-import { getCategories } from '../../../helpers/api';
+import CategoryApi from '../../../api/categoryApi';
+import RoomApi from '../../../api/roomApi';
+import { CREATED } from '../../../common/constant';
+import { useSelector } from 'react-redux';
+import Alert from '../../../common/alert';
 
 const validationSchema = yup.object({
   roomName: yup
@@ -32,7 +36,9 @@ const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 function RoomCreate(props) {
   const [categories, setCategories] = useState([]);
+  const [displayAlert, setDisplayAlert] = useState('');
   const classes = useStyles();
+  const User = useSelector((state) => state.user);
   const formik = useFormik({
     initialValues: {
       roomName: '',
@@ -41,23 +47,42 @@ function RoomCreate(props) {
       category: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      const dataSubmit = {
+        ...values,
+        hostUserId: User.id,
+        roomStatus: CREATED,
+      };
+      try {
+        const reponses = await RoomApi.create(dataSubmit);
+        setDisplayAlert(<Alert onClose={handleCloseAlert} />);
+        console.log(reponses);
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
+  const handleCloseAlert = () => {
+    console.log('click redirect page');
+  };
+
   useEffect(() => {
-    getCategories()
-      .then((res) => {
-        setCategories(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    async function getCategories() {
+      try {
+        const reponses = await CategoryApi.get();
+        setCategories(reponses.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    getCategories();
   }, []);
 
   return (
     <Container component="main" maxWidth="xs">
+      {displayAlert}
       <Paper className={classes.paper}>
         <Typography component="h1" variant="h5">
           Create new room
@@ -92,8 +117,8 @@ function RoomCreate(props) {
                 }
               >
                 {categories.map((category) => (
-                  <MenuItem key={category._id} value={category._id}>
-                    {category.categoryName}
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
                   </MenuItem>
                 ))}
               </Select>
