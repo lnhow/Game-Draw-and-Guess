@@ -6,8 +6,8 @@ import handleMessage from './message.handler.js';
 const ConnectionHandler = (io, socket) => {
   //Callback for error handling
 
-  socket.on('join', ({ name, room }, callback) => {
-    handleJoinRoom(io, socket, { name, room }, callback);
+  socket.on('join', ({ id, name, room }, callback) => {
+    handleJoinRoom(io, socket, { id, name, room }, callback);
   });
 
   socket.on('message', ({ message }, callback) => {

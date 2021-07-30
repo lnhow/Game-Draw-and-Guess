@@ -13,10 +13,13 @@ import ChatInputBox from './chat/inputBox';
 
 // import AspectRatioBox from '../../../common/aspectRatioBox';
 import { connectToSocket } from '../../../helpers/socketio';
+import { useSelector } from 'react-redux';
 
-const user = { name: 'john doe' };
+// const user = { name: 'john doe' };
 
 function SingleRoom() {
+  const User = useSelector((state) => state.user);
+  console.log(User);
   const { id } = useParams();
   const [room, setRoom] = useState(null);
   const [players, setPlayers] = useState([]);
@@ -34,7 +37,7 @@ function SingleRoom() {
 
   const submitMsg = (message) => {
     if (message) {
-      socketRef.current.emit('message', { name: user.name, message });
+      socketRef.current.emit('message', { name: User.username, message });
     }
   };
 
@@ -50,11 +53,15 @@ function SingleRoom() {
 
     setRoom(room);
 
-    socketRef.current.emit('join', { name: user.name, room }, (error) => {
-      if (error) {
-        alert(error);
-      }
-    });
+    socketRef.current.emit(
+      'join',
+      { id: User.id, name: User.username, room },
+      (error) => {
+        if (error) {
+          alert(error);
+        }
+      },
+    );
   }, [id]);
 
   useEffect(() => {

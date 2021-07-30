@@ -1,12 +1,17 @@
 import * as UserData from '../data/users.data.js';
 
-const handleJoinRoom = (io, socket, { name, room }, callback) => {
+const handleJoinRoom = (io, socket, { id, name, room }, callback) => {
   console.log(`User [${name}] want to join room [${room}]`);
   //Temporarily use socket.id as user id
+
+  if (UserData.getUser(id)) {
+    console.log(false);
+  }
   const { user, error } = UserData.addUser({
-    id: socket.id,
+    socketId: socket.id,
     name,
     room,
+    id,
   });
 
   if (error) {
