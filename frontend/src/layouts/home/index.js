@@ -7,7 +7,7 @@ import {
   CssBaseline,
 } from '@material-ui/core';
 import { FuncButton } from '../../common/Button.js';
-import Input from '../../components/auth/input.js';
+import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
 
 
