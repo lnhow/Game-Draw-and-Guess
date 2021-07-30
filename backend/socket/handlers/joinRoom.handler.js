@@ -4,6 +4,9 @@ import * as UserData from '../data/users.data.js';
  */
 const handleJoinRoom = (io, socket, { name, room }, callback) => {
   console.log(`User [${name}] want to join room [${room}]`);
+  const hostId = '6102512706219fb15414d197';
+  const roomId = '60fe2664ef197c52240d1087';
+  console.log(hostId, roomId);
   //Temporarily use socket.id as user id
 
   //Check user already joins a room (in user map)
