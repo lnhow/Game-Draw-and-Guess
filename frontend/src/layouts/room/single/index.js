@@ -11,6 +11,7 @@ import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL 
 
 import GameRoomLayout from './layout';
 import { connectToSocket } from '../../../helpers/socketio';
+import { useSelector } from 'react-redux';
 
 function SingleRoom() {
   const user = useSelector((state) => state.user);
@@ -23,7 +24,6 @@ function SingleRoom() {
 
   const submitMsg = (message) => {
     if (message) {
-      console.log({ name: user.username, message });
       socketRef.current.emit('message', { name: user.username, message });
     }
   };
