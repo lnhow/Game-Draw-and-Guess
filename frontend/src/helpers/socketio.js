@@ -1,8 +1,10 @@
 import io from 'socket.io-client';
 import { baseURL } from './api';
 
+let socket = null;
 export const connectToSocket = () => {
-  return io.connect(baseURL, {
+  socket = io.connect(baseURL, {
     //config
   });
+  return socket;
 };
