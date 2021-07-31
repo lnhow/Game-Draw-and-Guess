@@ -8,10 +8,8 @@ import {
   clearRoom,
 } from '../../../features/room/roomSlice';
 import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL params as room name
-
 import GameRoomLayout from './layout';
 import { connectToSocket } from '../../../helpers/socketio';
-import { useSelector } from 'react-redux';
 
 function SingleRoom() {
   const user = useSelector((state) => state.user);
