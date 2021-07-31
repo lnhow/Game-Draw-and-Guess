@@ -1,29 +1,51 @@
-import * as UserData from '../data/users.data.js';
+import { subcribeCallback, isValidRoomId } from '../../utils/helpers.js';
 
-const handleJoinRoom = (io, socket, { id, name, room }, callback) => {
-  console.log(`User [${name}] want to join room [${room}]`);
-  //Temporarily use socket.id as user id
+import RoomSocket from '../controllers/room.js';
 
-  if (UserData.getUser(id)) {
-    console.log(false);
+const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
+  console.log(
+    `User [${user.id}. ${user.username}] want to join room [${roomId}]`,
+  );
+  const clientCallback = subcribeCallback(callback);
+
+  if (!isValidRoomId(roomId)) {
+    clientCallback(`Invalid roomId: ${roomId}`);
+    return;
   }
-  const { user, error } = UserData.addUser({
-    socketId: socket.id,
-    name,
-    room,
-    id,
+
+  if (RoomSocket.hasUserJoined(user.id)) {
+    clientCallback(`You has already joined a room`);
+    return;
+  }
+
+  if (!RoomSocket.hasRoomExisted(roomId)) {
+    //Room not exist in server data: New room, fetch from db
+    const result = await RoomSocket.addNewRoom(roomId, user.id);
+    if (result === 400) {
+      clientCallback(`Invalid roomId: ${roomId}`);
+      return;
+    } else if (result === 500) {
+      clientCallback(`Server internal Error. roomId: ${roomId}`);
+      return;
+    }
+  }
+
+  if (!RoomSocket.canRoomBeJoined(roomId)) {
+    clientCallback(`Room ${roomId} cannot be joined`);
+    return;
+  }
+
+  RoomSocket.addUserToRoom(socket.id, roomId, user);
+  socket.join(roomId);
+
+  console.log(`User [${user.id}] joined room [${roomId}]`);
+  io.to(socket.id).emit('room-info', {
+    info: RoomSocket.getRoomInfo(roomId),
   });
 
-  if (error) {
-    return callback(error);
-  }
-
-  socket.join(user.room);
-  console.log(`User [${user.name}] joined room [${user.room}]`);
   // Update list of users in room
-  io.to(user.room).emit('room-users', {
-    room: user.room,
-    users: UserData.getUsersInRoom(user.room),
+  io.to(roomId).emit('room-users', {
+    users: RoomSocket.getUsersInRoom(roomId),
   });
   callback();
 };

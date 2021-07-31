@@ -6,9 +6,13 @@ import handleMessage from './message.handler.js';
 const ConnectionHandler = (io, socket) => {
   //Callback for error handling
 
-  socket.on('join', ({ id, name, room }, callback) => {
-    handleJoinRoom(io, socket, { id, name, room }, callback);
+  socket.on('join', ({ user, roomId }, callback) => {
+    handleJoinRoom(io, socket, { user, roomId }, callback);
   });
+
+  // socket.on('start-game', (room, callback) => {
+  //   //Handle start game
+  // });
 
   socket.on('message', ({ message }, callback) => {
     handleMessage(io, socket, { message }, callback);

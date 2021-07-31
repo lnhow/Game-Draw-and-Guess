@@ -39,17 +39,24 @@ function SingleRoom() {
   }, [user, history]);
 
   useEffect(() => {
-    const room = id;
     socketRef.current = connectToSocket();
 
-    socketRef.current.emit('join', { name: user.username, room }, (error) => {
+    socketRef.current.emit('join', { user, roomId: id }, (error) => {
       if (error) {
         alert(error);
         //Redirect
         return;
       }
-      dispatch(updateRoom({ roomId: room }));
+      dispatch(updateRoom({ roomId: id }));
     });
+
+    return function cleanup() {
+      //componentWillUnmount
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      dispatch(clearRoom());
+    };
   }, [id, user, dispatch]);
 
   useEffect(() => {
@@ -62,6 +69,7 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('room-users', ({ users }) => {
+      console.log(users);
       dispatch(updateRoomUsers({ users }));
     });
   }, [dispatch]);
