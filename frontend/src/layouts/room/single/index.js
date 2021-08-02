@@ -39,17 +39,17 @@ function SingleRoom() {
   }, [user, history]);
 
   useEffect(() => {
-    const room = id;
     socketRef.current = connectToSocket();
 
-    socketRef.current.emit('join', { name: user.username, room }, (error) => {
+    socketRef.current.emit('join', { user, roomId: id }, (error) => {
       if (error) {
         alert(error);
         //Redirect
         return;
       }
-      dispatch(updateRoom({ roomId: room }));
+      dispatch(updateRoom({ roomId: id }));
     });
+
 
     return function cleanUp() {
       //componentsWillUnmount
@@ -70,6 +70,7 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('room-users', ({ users }) => {
+      console.log(users);
       dispatch(updateRoomUsers({ users }));
     });
   }, [dispatch]);

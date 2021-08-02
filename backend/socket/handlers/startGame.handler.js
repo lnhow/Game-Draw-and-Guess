@@ -1,5 +1,5 @@
 import gameroomModel from '../models/gameroomModel.cjs';
-var $ = require('jquery');
+// var $ = require('jquery');
 
 const handleStartGame = () => {
   //Check if host send command startGame

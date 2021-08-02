@@ -1,10 +1,10 @@
-import * as UserData from '../data/users.data.js';
+import RoomSocket from '../controllers/room.js';
 
 const handleMessage = (io, socket, { message }, callback) => {
-  const user = UserData.getUser(socket.id);
+  const user = RoomSocket.getUserBySocketId(socket.id);
   if (user) {
-    io.to(user.room).emit('message', {
-      user: user.name,
+    io.to(user.roomId).emit('message', {
+      user: user.username,
       message: message,
     });
   }

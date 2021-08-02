@@ -1,16 +1,18 @@
-import * as UserData from '../data/users.data.js';
+import RoomSocket from '../controllers/room.js';
 
 const handleDisconnect = (io, socket) => {
-  const user = UserData.removeUser(socket.id);
+  const user = RoomSocket.getUserBySocketId(socket.id);
+  const room = RoomSocket.removeUserFromRoom(socket.id);
+
   if (user) {
-    console.log(`User [${user.name}] disconnected from room [${user.room}]`);
-    // Broadcast to room that user had left
-    // Update list of users in room
-    io.to(user.room).emit('room-users', {
-      room: user.room,
-      users: UserData.getUsersInRoom(user.room),
-    });
+    console.log(`User [${user.id}. ${user.username}] left room [${room}]`);
   }
+  // Broadcast to room that user had left
+  // Update list of users in room
+  console.log(RoomSocket.getUsersInRoom(room));
+  io.to(room).emit('room-users', {
+    users: RoomSocket.getUsersInRoom(room),
+  });
 };
 
 export default handleDisconnect;
