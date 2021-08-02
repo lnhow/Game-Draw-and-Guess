@@ -21,7 +21,9 @@ function TopBar(props) {
         </Box>
         <Box>
           <span>Round [2] of [3]</span>
-          <h2 style={{ margin: 0, textAlign: 'center' }}>[Time left]</h2>
+          <h2 id="counter" style={{ margin: 0, textAlign: 'center' }}>
+            [Time left]
+          </h2>
         </Box>
       </Box>
     </Paper>

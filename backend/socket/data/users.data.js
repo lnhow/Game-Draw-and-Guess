@@ -1,3 +1,12 @@
+/**
+ * const users = new Map();
+ * <key>:<value>
+ * userId: {
+ *  roomId: ...
+ * }
+ */
+
+//Temporarily ONLY, do not use array
 const users = [];
 
 export const addUser = ({ id, name, room }) => {

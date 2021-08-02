@@ -1,12 +1,14 @@
 import * as UserData from '../data/users.data.js';
+import * as RoomData from '../data/room.data.js';
+import gameroomModel from '../models/gameroomModel.cjs';
 
 const handleJoinRoom = (io, socket, { id, name, room }, callback) => {
   console.log(`User [${name}] want to join room [${room}]`);
+  const hostId = '6102512706219fb15414d197';
+  const roomId = '60fe2664ef197c52240d1087';
+  console.log(hostId, roomId);
   //Temporarily use socket.id as user id
 
-  if (UserData.getUser(id)) {
-    console.log(false);
-  }
   const { user, error } = UserData.addUser({
     socketId: socket.id,
     name,
