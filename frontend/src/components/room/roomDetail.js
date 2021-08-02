@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
-import LanguageIcon from '@material-ui/icons/Language';
+import LockIcon from '@material-ui/icons/Lock';
 import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,14 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Room = ({
-  currentPlayer,
-  maxPlayer,
-  language,
-  point,
-  roomName,
-  roomId,
-}) => (
+const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
   <Grid item justify="center">
     <Paper className={useStyles().paper}>
       <div className={useStyles().avatar}>
@@ -63,14 +56,13 @@ const Room = ({
       <RoomInfo
         curPlayer={currentPlayer}
         maxiPlayer={maxPlayer}
-        lang={language}
-        pts={point}
+        pvt={isPrivate}
       />
     </Paper>
   </Grid>
 );
 
-const RoomInfo = ({ curPlayer, maxiPlayer, lang, pts }) => (
+const RoomInfo = ({ curPlayer, maxiPlayer, pvt }) => (
   <div className={useStyles().div}>
     <Grid container spacing={1}>
       <Grid item xs>
@@ -86,17 +78,13 @@ const RoomInfo = ({ curPlayer, maxiPlayer, lang, pts }) => (
       <Grid item xs>
         <Paper className={useStyles().setting}>
           <IconButton className={useStyles().icon}>
-            <LanguageIcon />
+            <LockIcon />
           </IconButton>
-          <Typography>{lang}</Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs>
-        <Paper className={useStyles().setting}>
-          <IconButton className={useStyles().icon}>
-            <EmojiEventsIcon />
-          </IconButton>
-          <Typography>{pts}</Typography>
+          {pvt === true ? (
+            <Typography>ON</Typography>
+          ) : (
+            <Typography>OFF</Typography>
+          )}
         </Paper>
       </Grid>
     </Grid>
@@ -106,8 +94,7 @@ const RoomInfo = ({ curPlayer, maxiPlayer, lang, pts }) => (
 RoomInfo.default = {
   currentPlayer: '0',
   maxPlayer: '0',
-  language: '',
-  point: '',
+  pvt: '',
 };
 
 export default Room;

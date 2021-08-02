@@ -1,19 +1,29 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
-const uuid = require('uuid');
 
 const wordSchema = new Schema(
   {
-    _wordId: uuid,
-    category: Object,
-    word: String,
-    createdAt: Date,
-    isDeleted: Boolean,
-    deletedAt: Date,
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: 'categories',
+    },
+    word: {
+      type: Schema.Types.String,
+      unique: true,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-const word = mongoose.model('word', wordSchema);
 
-module.exports = word;
+wordSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
+
+const words = mongoose.model('words', wordSchema);
+
+module.exports = words;

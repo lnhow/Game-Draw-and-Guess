@@ -1,26 +1,33 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
-const uuid = require('uuid');
 
-const gameroomsSchema = new Schema(
+const gameroomSchema = new Schema(
   {
-    _hostUserId: {
-      type: String,
-      default: uuid.v1,
+    hostUserId: {
+      type: Schema.Types.ObjectId,
     },
-    _categoryId: {
-      type: String,
-      default: uuid.v1,
+    categoryId: {
+      type: mongoose.Types.ObjectId,
     },
-    roomName: String,
+    roomName: {
+      type: Schema.Types.String,
+      unique: true,
+    },
     maxPlayer: Number,
     timePerRound: Number,
     roomStatus: String,
-    createdAt: Date,
-    isDeleted: Boolean,
-    deletedAt: Date,
+    isPrivate: Boolean,
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-module.exports = mongoose.model('gameroom', gameroomsSchema);
+
+gameroomSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
+
+module.exports = mongoose.model('gameroom', gameroomSchema);

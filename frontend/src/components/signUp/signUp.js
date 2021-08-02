@@ -22,7 +22,6 @@ import InputPassword from '../../common/inputPassword/inputPassword.js';
 import jwt from 'jsonwebtoken';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../features/User/userSlice.js';
-import { useCookies } from 'react-cookie';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -32,7 +31,7 @@ const SignUpSchema = yup.object().shape({
     .min(6, 'password min 6')
     .max(20, 'password max 20')
     .required('Password is required'),
-  confirmPassword: yup
+  passwordConfirm: yup
     .string()
     .required('Confirm Password is required')
     .oneOf([yup.ref('password')], 'Passwords must match'),
@@ -42,30 +41,27 @@ function SignUp() {
   const classes = useStyles();
   const history = useHistory();
   const [messageConflictDataSever, setMessageConflictDataSever] = useState('');
-  const [, setCookie] = useCookies(['cookie-name']);
   const dispatch = useDispatch();
 
   const handleSubmit = async (values, actions) => {
-    const infoUserRequest = {
-      username:values.username,
-      email: values.email,
-      password:values.password,
-      passwordConfirm:values.confirmPassword
-    };
-
     try {
-      //Call Api Should I use useEffect?
-      const reponses = await UserApi.register(infoUserRequest);
-      const infoUser = jwt.verify(reponses.token, 'nowis4amandiamstillcoding');
-      dispatch(updateUser({ isLogin:true,username: infoUser.username }));
-      setCookie('user', {toke:reponses.token,username:infoUser.username});
-      //store username and avatar ->redux
+      const reponses = await UserApi.register(values);
+      const infoUser = jwt.decode(reponses.token, { complete: true });
+      dispatch(
+        updateUser({
+          isLogin: true,
+          id: infoUser.payload.userId,
+          username: infoUser.payload.username,
+        }),
+      );
+      await localStorage.setItem('user', reponses.token);
+
       setMessageConflictDataSever('');
       actions.resetForm({
         username: '',
         email: '',
         password: '',
-        confirmPassword: '',
+        passwordConfirm: '',
       });
       history.push('/home');
     } catch (error) {
@@ -78,7 +74,7 @@ function SignUp() {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    passwordConfirm: '',
   };
 
   return (
@@ -120,9 +116,9 @@ function SignUp() {
                   type="password"
                 />
                 <FastField
-                  name="confirmPassword"
+                  name="passwordConfirm"
                   component={InputPassword}
-                  placeholder="confirmPassword"
+                  placeholder="passwordConfirm"
                   type="password"
                 />
                 <Button

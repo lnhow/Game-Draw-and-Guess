@@ -7,16 +7,11 @@ import {
   CssBaseline,
 } from '@material-ui/core';
 import { FuncButton } from '../../common/Button.js';
-import Input from '../../components/auth/input.js';
+import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
-
 
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import { useCookies } from 'react-cookie';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateUser } from '../../features/User/userSlice.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(10),
-    width: '300px'
+    width: '300px',
   },
   welcome: {
     fontFamily: '"Gorditas", cursive',
@@ -105,15 +100,7 @@ const gameName = {
 
 function HomeLogin() {
   const classes = useStyles();
-  const User = useSelector((state) => state.user)
-  const [cookies, , removeCookie] = useCookies(['cookie-name']);
-  const dispatch = useDispatch();
-
-  useEffect(()=>{
-    if(cookies.user){
-      dispatch(updateUser({ isLogin:true,username: cookies.user.username }))
-    }
-  },[cookies.user,dispatch])
+  const User = useSelector((state) => state.user);
 
   return (
     <Container component="main" className={classes.root}>

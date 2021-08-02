@@ -36,6 +36,17 @@ const repasswordValidation = (data) => {
   return schema.validate(data);
 };
 
+const createRoomValidation = (data) => {
+  const schema = Joi.object({
+    roomName: Joi.string().required().min(6),
+    roomCategory: Joi.string().required(),
+    maxPlayer: Joi.number().required(),
+    timePerRound: Joi.number().required(),
+  });
+  return schema.validate(data);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.repasswordValidation = repasswordValidation;
+module.exports.createRoomValidation = createRoomValidation;

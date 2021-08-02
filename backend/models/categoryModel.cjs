@@ -1,18 +1,23 @@
-const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
 const categorySchema = new Schema(
   {
-    _categoryId: ObjectId,
-    categoryName: String,
-    createdAt: Date,
-    isDeleted: Boolean,
-    deletedAt: Date,
+    categoryName: {
+      type: String,
+      required: true,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-const category = mongoose.model('category', categorySchema);
 
-module.exports = category;
+categorySchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
+
+module.exports = mongoose.model('category', categorySchema);

@@ -1,19 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const uuid = require('uuid');
 
-const gameroomsSchema = new Schema(
+const roomUsersSchema = new Schema(
   {
-    _id: uuid,
-    userId: uuid,
-    roomId: uuid,
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+    },
+    roomId: {
+      type: Schema.Types.ObjectId,
+      ref: 'gamerooms',
+    },
     point: Number,
-    createdAt: Date,
-    updatedAt: Date,
   },
-  { timestamps: true },
+  {
+    timestamps: true, //Auto create createdAt & updatedAt
+  },
 );
 
-const gameroom = mongoose.model('gameroom', gameroomsSchema);
-
-module.exports = gameroom;
+module.exports = mongoose.model('roomusers', roomUsersSchema);
