@@ -50,8 +50,9 @@ function SingleRoom() {
       dispatch(updateRoom({ roomId: id }));
     });
 
-    return function cleanup() {
-      //componentWillUnmount
+
+    return function cleanUp() {
+      //componentsWillUnmount
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
@@ -77,12 +78,6 @@ function SingleRoom() {
   useEffect(() => {
     socketRef.current.on('message', ({ user, message }) => {
       dispatch(addMessage({ user, message }));
-    });
-  }, [dispatch]);
-
-  useEffect(() => {
-    socketRef.current.on('disconnect', () => {
-      dispatch(clearRoom());
     });
   }, [dispatch]);
 
