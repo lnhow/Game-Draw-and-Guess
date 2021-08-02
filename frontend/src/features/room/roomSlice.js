@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { RoomStates, RoomScreenStates } from '../../common/constant';
 
 const initialState = {
   roomId: null,
@@ -19,7 +20,9 @@ export const RoomSlice = createSlice({
       const { roomId, roomState, roomRound, hostUserId } = action.payload;
 
       if (roomId) state.roomId = roomId;
-      if (roomState) state.roomState = roomState;
+      if (roomState) {
+        state.roomState = convertRoomToScreenState(roomState);
+      }
       if (roomRound) state.roomRound = roomRound;
       if (hostUserId) state.hostUserId = hostUserId;
     },
@@ -39,6 +42,17 @@ export const RoomSlice = createSlice({
     },
   },
 });
+
+const convertRoomToScreenState = (roomState) => {
+  if (roomState === RoomStates.WAITING) {
+    return RoomScreenStates.WAITING;
+  } else if (roomState === RoomStates.PLAYING) {
+    return RoomScreenStates.GAME_STARTED;
+  } else if (roomState === RoomStates.ENDED) {
+    return RoomScreenStates.GAME_ENDED;
+  }
+  return roomState; //No need to convert
+};
 
 export const { updateRoom, updateRoomUsers, addMessage, clearRoom } =
   RoomSlice.actions;

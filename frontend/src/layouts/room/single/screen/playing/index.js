@@ -9,7 +9,6 @@ const DEFAULT_DRAW_AREA_HEIGHT = 600;
 const DEFAULT_SPACING = 16;
 
 function PlayingScreen(props, ref) {
-  const classes = props.classes;
   const topbarHeight = props.topbarHeight
     ? props.topbarHeight
     : DEFAULT_TOP_BAR_HEIGHT;
@@ -31,14 +30,10 @@ function PlayingScreen(props, ref) {
   return (
     <Grid container style={{ width: '100%' }}>
       <Grid item xs={12} style={{ height: topbarHeight }}>
-        <TopBar classes={classes} />
+        <TopBar />
       </Grid>
       <Grid item xs={12} style={{ height: drawAreaHeight, marginTop: spacing }}>
-        <Canvas
-          ref={canvasRef}
-          classes={classes}
-          submitHandler={submitHandler}
-        />
+        <Canvas ref={canvasRef} submitHandler={submitHandler} />
       </Grid>
     </Grid>
   );

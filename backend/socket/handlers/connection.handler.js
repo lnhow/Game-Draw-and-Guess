@@ -2,6 +2,7 @@ import handleDisconnect from './disconnect.handler.js';
 import handleJoinRoom from './joinRoom.handler.js';
 import handleCanvasData from './drawData.handler.js';
 import handleMessage from './message.handler.js';
+import handleStartGame from './startGame.handler.js';
 
 const ConnectionHandler = (io, socket) => {
   //Callback for error handling
@@ -10,9 +11,10 @@ const ConnectionHandler = (io, socket) => {
     handleJoinRoom(io, socket, { user, roomId }, callback);
   });
 
-  // socket.on('start-game', (room, callback) => {
-  //   //Handle start game
-  // });
+  socket.on('request-start-game', (callback) => {
+    //Handle start game
+    handleStartGame(io, socket, callback);
+  });
 
   socket.on('message', ({ message }, callback) => {
     handleMessage(io, socket, { message }, callback);

@@ -47,6 +47,13 @@ const RoomServices = {
     });
   },
 
+  updateRoomState(roomId, roomState) {
+    const room = roomMap.get(roomId);
+    if (room) {
+      room.status = roomState;
+    }
+  },
+
   removeRoom(roomId) {
     return roomMap.delete(roomId);
   },

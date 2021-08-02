@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-
 import { useSelector, useDispatch } from 'react-redux';
 import {
   updateRoom,
@@ -8,11 +7,14 @@ import {
   clearRoom,
 } from '../../../features/room/roomSlice';
 import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL params as room name
-import GameRoomLayout from './layout';
+import GameRoomLayout from './layout/gameRoomLayout';
+import LoadingPage from '../../loading';
+import { RoomScreenStates } from '../../../common/constant';
 import { connectToSocket } from '../../../helpers/socketio';
 
 function SingleRoom() {
   const user = useSelector((state) => state.user);
+  const roomId = useSelector((state) => state.room.roomId);
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
@@ -32,6 +34,11 @@ function SingleRoom() {
     }
   };
 
+  const submitStartGame = () => {
+    console.log('request-start-game');
+    socketRef.current.emit('request-start-game');
+  };
+
   useEffect(() => {
     if (!user) {
       history.push('/login');
@@ -40,16 +47,13 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current = connectToSocket();
-
     socketRef.current.emit('join', { user, roomId: id }, (error) => {
       if (error) {
         alert(error);
         //Redirect
         return;
       }
-      dispatch(updateRoom({ roomId: id }));
     });
-
 
     return function cleanUp() {
       //componentsWillUnmount
@@ -81,12 +85,39 @@ function SingleRoom() {
     });
   }, [dispatch]);
 
+  useEffect(() => {
+    socketRef.current.on('room-info', ({ info }) => {
+      console.log(info);
+      dispatch(
+        updateRoom({
+          roomState: info.roomState,
+          roomRound: info.roomRound + 1, //Room round start at 0: falsy
+          hostUserId: info.hostUserId,
+          roomId: info.roomId,
+        }),
+      );
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    socketRef.current.on('room-start-game', () => {
+      dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
+    });
+  }, [dispatch]);
+
   return (
-    <GameRoomLayout
-      submitDrawHandler={submitDraw}
-      submitMessageHandler={submitMsg}
-      ref={playScreenRef}
-    />
+    <div>
+      {roomId ? (
+        <GameRoomLayout
+          submitDrawHandler={submitDraw}
+          submitMessageHandler={submitMsg}
+          submitStartGameHandler={submitStartGame}
+          ref={playScreenRef}
+        />
+      ) : (
+        <LoadingPage text="Joining Room" />
+      )}
+    </div>
   );
 }
 

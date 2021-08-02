@@ -1,7 +1,8 @@
 import { Paper, Box } from '@material-ui/core';
+import useStyles from './styles';
 
-function TopBar(props) {
-  const classes = props.classes;
+function TopBar() {
+  const classes = useStyles();
 
   return (
     <Paper

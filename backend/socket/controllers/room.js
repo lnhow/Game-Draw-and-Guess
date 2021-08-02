@@ -41,6 +41,10 @@ export const removeRoom = (roomId) => {
   return RoomServices.removeRoom(roomId);
 };
 
+export const getRoom = (roomId) => {
+  return RoomServices.getRoom(roomId);
+};
+
 export const getRoomInfo = (roomId) => {
   const room = RoomServices.getRoom(roomId);
   return {
@@ -49,6 +53,10 @@ export const getRoomInfo = (roomId) => {
     roomRound: room.currentRound,
     hostUserId: room.hostUserId,
   };
+};
+
+export const updateRoomState = (roomId, roomState) => {
+  RoomServices.updateRoomState(roomId, roomState);
 };
 
 export const hasRoomExisted = (roomId) => {
@@ -143,6 +151,9 @@ export const getUserById = (userId) => {
 const RoomSocketController = {
   addNewRoom,
   removeRoom,
+  updateRoomState,
+
+  getRoom,
   getRoomInfo,
   hasRoomExisted,
   //Users verification
