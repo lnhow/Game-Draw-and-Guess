@@ -1,5 +1,6 @@
 import gameroomModel from '../models/gameroomModel.cjs';
 import { createRoomValidation } from '../utils/validation.cjs';
+import RoomState from '../models/roomStateModel.js';
 
 const roomController = {
   findingRoom,
@@ -33,16 +34,17 @@ async function findingRoom(req, res) {
 }
 
 async function createRoom(req, res) {
-  // const { error } = createRoomValidation(req.body);
+  //const { error } = createRoomValidation(req.body);
 
-  // if (error) return res.status(400).json({ message: error.details[0].message });
+  //if (error) return res.status(400).json({ message: error.details[0].message });
 
   const roomName = req.body.roomName;
   const hostUserId = req.body.hostUserId;
   const maxPlayer = req.body.maxPlayer;
   const timePerRound = req.body.timePerRound;
   const isPrivate = req.body.isPrivate;
-  const categoryId = req.body.categoryId;
+  const categoryId = req.body.category;
+  const roomStatus = RoomState.CREATED;
 
   const gameroom = new gameroomModel({
     roomName,
@@ -51,7 +53,10 @@ async function createRoom(req, res) {
     timePerRound,
     isPrivate,
     categoryId,
+    roomStatus,
   });
+
+  console.log(gameroom);
 
   try {
     await gameroom.save();
