@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../features/User/userSlice.js';
 
+
 import theme from '../app/app.styles';
 
 function App() {
@@ -19,8 +20,14 @@ function App() {
     if (tokenForUser) {
       const infoUser = jwt.decode(tokenForUser, { complete: true });
       dispatch(
-        updateUser({ isLogin: true, username: infoUser.payload.username }),
+        updateUser({
+          isLogin: true,
+          id: infoUser.payload.userId,
+          username: infoUser.payload.username,
+        }),
       );
+    } else {
+      dispatch(updateUser({ isLogin: false }));
     }
   }, [tokenForUser, dispatch]);
 

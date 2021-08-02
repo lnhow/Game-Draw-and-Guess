@@ -48,7 +48,11 @@ function SignUp() {
       const reponses = await UserApi.register(values);
       const infoUser = jwt.decode(reponses.token, { complete: true });
       dispatch(
-        updateUser({ isLogin: true, username: infoUser.payload.username }),
+        updateUser({
+          isLogin: true,
+          id: infoUser.payload.userId,
+          username: infoUser.payload.username,
+        }),
       );
       await localStorage.setItem('user', reponses.token);
 

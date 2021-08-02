@@ -38,9 +38,9 @@ async function findingRoom(req, res) {
 }
 
 async function createRoom(req, res) {
-  const { error } = createRoomValidation(req.body);
-
-  if (error) return res.status(400).json({ message: error.details[0].message });
+  // const { error } = createRoomValidation(req.body);
+  
+  // if (error) return res.status(400).json({ message: error.details[0].message });
 
   const roomName = req.body.roomName;
   const hostUserId = req.body.hostUserId;

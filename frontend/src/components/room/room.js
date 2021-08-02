@@ -10,7 +10,7 @@ import {
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
-import Input from '../../components/auth/input.js';
+import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
 import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
