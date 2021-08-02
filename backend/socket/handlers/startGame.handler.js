@@ -42,8 +42,8 @@ const RoundTimer = (io, socket) => {
   }, 1000);
 
   //client-side
-  socket.on('timer', function (count) {
-    $('#counter').html(count);
-  });
+  //socket.on('timer', function (count) {
+  //  $('#counter').html(count);
+  //});
 };
 export default handleStartGame;
