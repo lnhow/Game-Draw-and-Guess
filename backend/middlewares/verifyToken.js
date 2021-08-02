@@ -5,8 +5,9 @@ import cookie from 'cookie';
 import mongoose from 'mongoose';
 
 export default async function auth(req, res, next) {
-  // const token = req.header('auth_token');
-  const token = cookie.parse(req.headers.cookie).auth_token;
+  const token = req.header('auth-token');
+  console.log(req.header);
+  // const token = cookie.parse(req.headers.cookie).auth_token;
   if (!token) return next(res.status(401).send('Access Denied'));
 
   try {

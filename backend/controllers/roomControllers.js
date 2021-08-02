@@ -20,16 +20,11 @@ async function findingRoom(req, res) {
         },
       },
       {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [{ $arrayElemAt: ['$category', 0] }, '$$ROOT'],
-          },
-        },
+        $unwind: '$category',
       },
-      { $project: { category: 0 } },
     ]);
 
-    res.json({
+    res.status(200).json({
       rooms: all,
     });
   } catch (err) {
@@ -39,7 +34,7 @@ async function findingRoom(req, res) {
 
 async function createRoom(req, res) {
   // const { error } = createRoomValidation(req.body);
-  
+
   // if (error) return res.status(400).json({ message: error.details[0].message });
 
   const roomName = req.body.roomName;
