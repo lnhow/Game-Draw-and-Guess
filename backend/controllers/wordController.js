@@ -12,24 +12,13 @@ async function getWords(req, res) {
     {
       $lookup: {
         from: 'categories',
-        localField: '_id',
-        foreignField: 'categoryId',
-        as: 'category1',
-      },
-    },
-    {
-      $unwind: '$category1',
-    },
-    {
-      $lookup: {
-        from: 'gamerooms',
         localField: 'categoryId',
-        foreignField: 'categoryId',
-        as: 'category2',
+        foreignField: '_id',
+        as: 'category',
       },
     },
     {
-      $unwind: '$category2',
+      $unwind: '$category',
     },
   ]);
   res.json(all);

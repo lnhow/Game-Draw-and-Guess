@@ -1,3 +1,6 @@
+import gameroomModel from '../models/gameroomModel.cjs';
+var $ = require('jquery');
+
 const handleStartGame = () => {
   //Check if host send command startGame
   //Check room contains more 2 user, else throw err msg
@@ -22,4 +25,25 @@ const handleStartGame = () => {
   // Kick users
 };
 
+const RoundTimer = (io, socket) => {
+  const roomId = '60fe2664ef197c52240d1087';
+
+  let result = gameroomModel.findOne({ _id: roomId });
+
+  //server-side
+  var counter = result.timePerRound;
+  var TimerCountdown = setInterval(function () {
+    io.emit('timer', counter);
+    counter--;
+    if (counter === 0) {
+      io.emit('timer', "Time's up!!");
+      clearInterval(TimerCountdown);
+    }
+  }, 1000);
+
+  //client-side
+  socket.on('timer', function (count) {
+    $('#counter').html(count);
+  });
+};
 export default handleStartGame;
