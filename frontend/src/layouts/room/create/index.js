@@ -57,7 +57,7 @@ function RoomCreate(props) {
       };
       try {
         const reponses = await RoomApi.create(dataSubmit);
-        setDisplayAlert(<Alert onClose={()=>handleCloseAlert(reponses.roomId)}>This is a success</Alert>);
+        setDisplayAlert(<Alert severity="success" onClose={()=>handleCloseAlert(reponses.roomId)}>This is a success-<strong>Click close to enter the game</strong></Alert>);
       } catch (error) {
         console.log(error.message,' test');
         setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
