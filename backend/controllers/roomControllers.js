@@ -24,8 +24,14 @@ async function findingRoom(req, res) {
     },
   ]);
 
+  const allRoom = all.map((room) => ({
+    _id: room._id,
+    maxPlayer: room.maxPlayer,
+    categoryName: room.category.categoryName,
+    roomStatus: room.roomStatus,
+  }));
   res.status(200).json({
-    rooms: all,
+    rooms: allRoom,
   });
 }
 
