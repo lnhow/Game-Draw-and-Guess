@@ -13,11 +13,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Alerts(props) {
   const classes = useStyles();
-  const { onClose } = props;
+  const { onClose,children,severity } = props;
 
   return (
     <div className={classes.root}>
-      <Alert onClose={onClose}>This is a success!</Alert>
+      <Alert severity={severity} onClose={onClose}>
+        {children}
+      </Alert>
     </div>
   );
 }
