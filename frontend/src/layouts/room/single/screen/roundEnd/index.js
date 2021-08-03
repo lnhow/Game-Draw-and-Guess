@@ -1,9 +1,11 @@
 import { Paper, Typography, Box } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 import useStyles from './styles';
 
 export default function RoundEndScreen() {
   const classes = useStyles();
+  const wordLastRound = useSelector((state) => state.room.wordLastRound);
 
   return (
     <Paper className={classes.waiting} elevation={2}>
@@ -15,7 +17,7 @@ export default function RoundEndScreen() {
           The word is
         </Typography>
         <Typography className={classes.contentItem} variant="h5">
-          [Word used in the game]
+          {wordLastRound}
         </Typography>
       </Box>
     </Paper>

@@ -37,11 +37,11 @@ const HandleGameController = async (io, roomId) => {
             io.to(roomId).emit('room-end-game');
             //Temporarily reset back to WAITING
             RoomSocket.updateRoomState(roomId, RoomState.WAITING);
-          }, 2 * oneSecond);
+          }, 5 * oneSecond);
         }
       }, oneSecond);
     }, oneSecond);
-  }, 2 * oneSecond);
+  }, 5 * oneSecond);
 };
 
 const handleEndRound = (io, roomId, room, word) => {
@@ -50,6 +50,7 @@ const handleEndRound = (io, roomId, room, word) => {
 
   calcPoints(room);
   clearCorrect(room.users);
+  RoomSocket.setRoomDrawInfo(roomId, null, null);
 
   io.to(roomId).emit('room-users', {
     users: RoomSocket.getUsersInRoom(roomId),

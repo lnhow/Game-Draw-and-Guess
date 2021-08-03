@@ -117,8 +117,13 @@ function SingleRoom() {
     socketRef.current.on('room-start-playing', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
     });
-    socketRef.current.on('room-end-round', () => {
-      dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_ENDED }));
+    socketRef.current.on('room-end-round', ({ word }) => {
+      dispatch(
+        updateRoom({
+          wordLastRound: word,
+          roomState: RoomScreenStates.ROUND_ENDED,
+        }),
+      );
     });
     socketRef.current.on('room-end-game', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_ENDED }));

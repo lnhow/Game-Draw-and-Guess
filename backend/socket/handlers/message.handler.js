@@ -4,6 +4,7 @@ const handleMessage = (io, socket, { message }, callback) => {
   const user = RoomSocket.getUserBySocketId(socket.id);
   if (user) {
     const containRightAnswer = RoomSocket.verifyCorrectWord(
+      user.id,
       user.roomId,
       message,
     );

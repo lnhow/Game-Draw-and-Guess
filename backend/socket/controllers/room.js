@@ -162,12 +162,13 @@ export const getUserInfoById = (userId) => {
   };
 };
 
-export const verifyCorrectWord = (roomId, guess) => {
-  const roomDrawWord = RoomServices.roomGetDrawWord(roomId);
-  if (!roomDrawWord) {
+export const verifyCorrectWord = (userId, roomId, guess) => {
+  const room = getRoom(roomId);
+  if (!room || !guess || !userId) {
     return false;
   }
-  if (!guess) {
+  const roomDrawWord = room.currentDrawWord;
+  if (userId === room.currentDrawer) {
     return false;
   }
   return guess.includes(roomDrawWord);

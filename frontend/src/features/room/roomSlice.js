@@ -9,6 +9,7 @@ const initialState = {
   hostUserId: null,
   drawerId: null,
   drawerWord: null,
+  wordLastRound: null,
   messages: [],
   users: [],
 };
@@ -18,8 +19,15 @@ export const RoomSlice = createSlice({
   initialState,
   reducers: {
     updateRoom(state, action) {
-      const { roomId, roomState, roomRound, hostUserId, drawerId, drawerWord } =
-        action.payload;
+      const {
+        roomId,
+        roomState,
+        roomRound,
+        hostUserId,
+        drawerId,
+        drawerWord,
+        wordLastRound,
+      } = action.payload;
 
       if (roomId) state.roomId = roomId;
       if (roomState) {
@@ -29,6 +37,7 @@ export const RoomSlice = createSlice({
       if (hostUserId) state.hostUserId = hostUserId;
       if (drawerId) state.drawerId = drawerId;
       if (drawerWord) state.drawerWord = drawerWord;
+      if (wordLastRound) state.wordLastRound = wordLastRound;
     },
 
     updateRoomUsers(state, action) {
