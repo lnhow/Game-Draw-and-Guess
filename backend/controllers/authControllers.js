@@ -31,7 +31,7 @@ async function register(req, res) {
     email: req.body.email,
   });
   if (emailExist)
-    return res.status(400).json({
+    return res.status(409).json({
       message: 'Email already exists',
     });
 
@@ -67,7 +67,7 @@ async function register(req, res) {
         token: token,
       });
   } catch (err) {
-    res.status(400).json({
+    res.status(500).json({
       message: err,
     });
   }
@@ -84,13 +84,13 @@ async function login(req, res) {
     email: req.body.email,
   });
   if (!account)
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Email is not found',
     });
 
   const validPass = await bcrypt.compare(req.body.password, account.password);
   if (!validPass)
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Invalid password',
     });
 
@@ -122,7 +122,7 @@ async function forgotPassword(req, res, next) {
 
   if (!account)
     return next(
-      res.status(400).json({
+      res.status(401).json({
         message: 'Email is not found',
       }),
     );
@@ -151,7 +151,7 @@ async function forgotPassword(req, res, next) {
     account.passwordResetExpires = undefined;
     await account.save({ validateBeforeSave: false });
 
-    return res.status(500).json({
+    return res.status(502).json({
       message: 'There was an error sending the email. Try again later!',
     });
   }
@@ -169,7 +169,7 @@ async function resetPassword(req, res) {
   });
 
   if (!account) {
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Token is invalid or has expired',
     });
   }

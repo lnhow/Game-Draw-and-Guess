@@ -10,27 +10,23 @@ const roomController = {
 };
 
 async function findingRoom(req, res) {
-  try {
-    const all = await gameroomModel.aggregate([
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'categoryId',
-          foreignField: '_id',
-          as: 'category',
-        },
+  const all = await gameroomModel.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: '_id',
+        as: 'category',
       },
-      {
-        $unwind: '$category',
-      },
-    ]);
+    },
+    {
+      $unwind: '$category',
+    },
+  ]);
 
-    res.status(200).json({
-      rooms: all,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Can't find any room!" });
-  }
+  res.status(200).json({
+    rooms: all,
+  });
 }
 
 async function createRoom(req, res) {
