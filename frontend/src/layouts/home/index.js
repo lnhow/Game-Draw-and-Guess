@@ -12,6 +12,7 @@ import Footer from '../../components/footer/index.js';
 
 
 import { makeStyles } from '@material-ui/core/styles';
+import { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -95,6 +96,7 @@ const gameName = {
 
 function Home() {
   const classes = useStyles();
+  const [idRoom,setIdRoom] = useState('')
 
   return (
     <Container component="main" className={classes.root}>
@@ -167,16 +169,11 @@ function Home() {
                 <Input
                   id="roomId"
                   name="roomId"
+                  value ={idRoom}
+                  handleChange={e=>setIdRoom(e.target.value)}
                   placeholder="Enter room code"
-                  link="/room/:id"
+                  link={`/room/${idRoom}`}
                 />
-                <Typography>OR</Typography>
-                <FuncButton
-                  link="/room/:id"
-                  text="Random"
-                  bgcolor="#F97645"
-                  name="esport"
-                ></FuncButton>
               </Paper>
             </Grid>
           </Grid>

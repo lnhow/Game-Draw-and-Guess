@@ -19,6 +19,7 @@ import RoomApi from '../../../api/roomApi';
 import { CREATED } from '../../../common/constant';
 import { useSelector } from 'react-redux';
 import Alert from '../../../common/alert';
+import { useHistory } from 'react-router-dom';
 
 const validationSchema = yup.object({
   roomName: yup
@@ -37,6 +38,7 @@ const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 function RoomCreate(props) {
   const [categories, setCategories] = useState([]);
   const [displayAlert, setDisplayAlert] = useState('');
+  const history = useHistory();
   const classes = useStyles();
   const User = useSelector((state) => state.user);
   const formik = useFormik({
@@ -55,16 +57,16 @@ function RoomCreate(props) {
       };
       try {
         const reponses = await RoomApi.create(dataSubmit);
-        setDisplayAlert(<Alert onClose={handleCloseAlert} />);
-        console.log(reponses);
+        setDisplayAlert(<Alert onClose={()=>handleCloseAlert(reponses.roomId)}>This is a success</Alert>);
       } catch (error) {
-        console.log(error);
+        console.log(error.message,' test');
+        setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
       }
     },
   });
 
-  const handleCloseAlert = () => {
-    console.log('click redirect page');
+  const handleCloseAlert = (roomId) => {
+    history.push(`/room/${roomId}`)
   };
 
   useEffect(() => {

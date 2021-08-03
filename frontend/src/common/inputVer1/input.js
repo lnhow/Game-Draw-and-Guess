@@ -5,6 +5,7 @@ import EndButtonSwitcher from './endButton/switcher';
 const Input = ({
   name,
   handleChange,
+  value,
   label,
   half,
   autoFocus,
@@ -17,6 +18,7 @@ const Input = ({
     <TextField
       name={name}
       onChange={handleChange}
+      value={value}
       variant="outlined"
       required
       fullWidth
