@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
   },
   roomName: {
-    marginBottom: '10px',
+    marginBottom: '0px',
   },
   avatar: {
     alignItems: 'center',
@@ -51,6 +51,7 @@ const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
       </div>
       <Typography variant="h6" className={useStyles().roomName}>
         {roomName}
+        <br />
         <span className={useStyles().roomId}>&emsp;#{roomId}</span>
       </Typography>
       <RoomInfo
@@ -73,18 +74,6 @@ const RoomInfo = ({ curPlayer, maxiPlayer, pvt }) => (
           <Typography>
             {curPlayer}/{maxiPlayer}
           </Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs>
-        <Paper className={useStyles().setting}>
-          <IconButton className={useStyles().icon}>
-            <LockIcon />
-          </IconButton>
-          {pvt === true ? (
-            <Typography>ON</Typography>
-          ) : (
-            <Typography>OFF</Typography>
-          )}
         </Paper>
       </Grid>
     </Grid>
