@@ -158,7 +158,35 @@ export const getUserInfoById = (userId) => {
     id: userId,
     username: user.username,
     points: user.points,
+    isCorrect: user.isCorrect,
   };
+};
+
+export const verifyCorrectWord = (roomId, guess) => {
+  const roomDrawWord = RoomServices.roomGetDrawWord(roomId);
+  if (!roomDrawWord) {
+    return false;
+  }
+  if (!guess) {
+    return false;
+  }
+  return guess.includes(roomDrawWord);
+};
+
+export const setUserIsCorrect = (userId, isCorrect) => {
+  return RoomUsersServices.setCorrect(userId, isCorrect);
+};
+
+export const countCorrectUser = (roomId) => {
+  const users = getUsersInRoom(roomId);
+  return users.filter((user) => user.isCorrect).length;
+};
+
+export const addPointsToUser = (userId, additionalPoints) => {
+  const user = getUserById(userId);
+  if (user) {
+    RoomUsersServices.setPoints(userId, user.points + additionalPoints);
+  }
 };
 
 const RoomSocketController = {
@@ -176,11 +204,15 @@ const RoomSocketController = {
   //Add & remove
   addUserToRoom,
   removeUserFromRoom,
+  verifyCorrectWord,
+  setUserIsCorrect,
+  countCorrectUser,
   //Get user
   getUsersInRoom,
   getUserBySocketId,
   getUserById,
   getUserInfoById,
+  addPointsToUser,
 };
 
 export default RoomSocketController;

@@ -37,6 +37,7 @@ const UserRoomServices = {
       id: user.id.toString(),
       username: user.username,
       points: 0,
+      isCorrect: false,
       word: '',
     };
     return userRoomMap.set(user.id, newUser);
@@ -61,6 +62,15 @@ const UserRoomServices = {
       return false;
     }
     user.points = points;
+    return true;
+  },
+
+  setCorrect(userId, correct) {
+    let user = this.getUserRoom(userId);
+    if (!user) {
+      return false;
+    }
+    user.isCorrect = correct;
     return true;
   },
 };

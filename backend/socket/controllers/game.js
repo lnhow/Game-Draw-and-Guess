@@ -24,12 +24,13 @@ const HandleGameController = async (io, roomId) => {
 
       var counter = room.timePerRound;
       var TimerCountdown = setInterval(function () {
-        io.to(roomId).emit('timer', counter);
+        const correctUsers = RoomSocket.countCorrectUser(roomId);
+
         counter--;
-        if (counter === 0) {
+        io.to(roomId).emit('timer', counter);
+        if (counter === 0 || correctUsers >= room.users.length - 1) {
           //End the round
-          console.log(`${roomId}: room-end-round`);
-          io.to(roomId).emit('room-end-round', { word });
+          handleEndRound(io, roomId, room, word);
           clearInterval(TimerCountdown);
           setTimeout(() => {
             console.log(`${roomId}: room-end-game`);
@@ -41,6 +42,53 @@ const HandleGameController = async (io, roomId) => {
       }, oneSecond);
     }, oneSecond);
   }, 2 * oneSecond);
+};
+
+const handleEndRound = (io, roomId, room, word) => {
+  console.log(`${roomId}: room-end-round`);
+  io.to(roomId).emit('room-end-round', { word });
+
+  calcPoints(room);
+  clearCorrect(room.users);
+
+  io.to(roomId).emit('room-users', {
+    users: RoomSocket.getUsersInRoom(roomId),
+  });
+};
+
+const calcPoints = (room) => {
+  const drawer = room.currentDrawer;
+  const users = room.users;
+  const basePoints = 10;
+  let correctUserCount = 0;
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].left || users[i].id === drawer) {
+      continue;
+    }
+    //Calc points for guessers
+    let user = RoomSocket.getUserById(users[i].id);
+    if (user.isCorrect) {
+      RoomSocket.addPointsToUser(users[i].id, basePoints);
+      correctUserCount++;
+    }
+  }
+
+  //Calc points for drawer
+  const drawerPoints = Math.floor(
+    //Minus 1 drawer
+    (basePoints * correctUserCount) / (users.length - 1),
+  );
+  RoomSocket.addPointsToUser(drawer, drawerPoints);
+};
+
+const clearCorrect = (roomUsers) => {
+  if (!roomUsers) {
+    return;
+  }
+
+  for (let i = 0; i < roomUsers.length; i++) {
+    RoomSocket.setUserIsCorrect(roomUsers[i].id, false);
+  }
 };
 
 export default HandleGameController;

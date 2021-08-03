@@ -1,4 +1,5 @@
 import { Avatar, Box, Typography } from '@material-ui/core';
+import { CheckCircle } from '@material-ui/icons';
 import useStyles from './styles';
 
 export default function SinglePlayer({ player }) {
@@ -19,6 +20,13 @@ export default function SinglePlayer({ player }) {
         </Typography>
         <Typography className={classes.infoText} variant="body2">
           <b>{`${player.points} Pts`}</b>
+          <span>
+            {player.isCorrect ? (
+              <CheckCircle style={{ fill: 'green', fontSize: 18 }} />
+            ) : (
+              <div></div>
+            )}
+          </span>
         </Typography>
       </Box>
     </Box>

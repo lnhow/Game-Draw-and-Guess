@@ -83,8 +83,8 @@ function SingleRoom() {
   }, [dispatch]);
 
   useEffect(() => {
-    socketRef.current.on('message', ({ user, message }) => {
-      dispatch(addMessage({ user, message }));
+    socketRef.current.on('message', (message) => {
+      dispatch(addMessage(message));
     });
   }, [dispatch]);
 
