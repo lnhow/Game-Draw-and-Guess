@@ -41,7 +41,10 @@ const RoomServices = {
       category: room.category.toString(),
       timePerRound: room.timePerRound,
       hostUserId: room.hostUserId.toString(),
-      currentRound: 0,
+      currentRound: -1,
+      roundTimer: null,
+      currentDrawWord: '',
+      currentDrawer: null,
       status: RoomState.WAITING,
       users: [],
     });
@@ -99,6 +102,32 @@ const RoomServices = {
 
     const user = room.users.find((user) => user.id === userId);
     return user ? user.id : null;
+  },
+
+  roomSetDrawInfo(roomId, drawerId, drawWord) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.currentDrawer = drawerId;
+    room.currentDrawWord = drawWord;
+  },
+
+  roomGetDrawerUser(roomId) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return null;
+    }
+    return room.currentDrawer;
+  },
+
+  roomGetDrawWord(roomId) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return null;
+    }
+    return room.currentDrawWord;
   },
 
   roomRemoveUser(roomId, userId) {

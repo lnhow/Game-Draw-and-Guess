@@ -3,6 +3,7 @@
  * For making sure that user do not join multiple room at the same time
  * <key>:<value>
  * userId: {
+ *  socketId:...
  *  roomId:...
  *  id:...
  *  username:....
@@ -22,7 +23,7 @@ const UserRoomServices = {
     return userRoomMap.has(userId);
   },
 
-  addUserRoom(user, roomId) {
+  addUserRoom(user, roomId, socketId) {
     const isInvalidInput =
       !user || !roomId || !user.id || userRoomMap.has(user.id);
 
@@ -31,6 +32,7 @@ const UserRoomServices = {
     }
 
     const newUser = {
+      socketId: socketId,
       roomId: roomId,
       id: user.id.toString(),
       username: user.username,

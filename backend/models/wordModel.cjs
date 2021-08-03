@@ -18,7 +18,6 @@ const wordSchema = new Schema(
   },
 );
 
-
 wordSchema.plugin(mongoose_delete, {
   deletedAt: true,
   overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],

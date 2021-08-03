@@ -28,6 +28,8 @@ function Canvas(props, ref) {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const drawable = props.drawable;
+  const [drawConfig, setDrawConfig] = useState({});
   const [strokeColor, setStrokeColor] = useState(DEFAULT_COLOR);
 
   useEffect(() => {
@@ -49,9 +51,25 @@ function Canvas(props, ref) {
 
   const onSubmit = () => {
     //When submitting data
-    const drawData = canvasRef.current.toDataURL('image/png');
-    submitHandler(drawData);
+    if (drawable) {
+      const drawData = canvasRef.current.toDataURL('image/png');
+      submitHandler(drawData);
+    }
   };
+
+  useEffect(() => {
+    if (drawable) {
+      setDrawConfig({
+        onTouchStart: handleStartDrawing,
+        onTouchMove: handleDraw,
+        onTouchEnd: handleFinishDrawing,
+        onMouseDown: handleStartDrawing,
+        onMouseMove: handleDraw,
+        onMouseUp: handleFinishDrawing,
+        onMouseOut: handleFinishDrawing,
+      });
+    }
+  });
 
   //Handlers--------------------------------------------------
   //Draw tool handlers
@@ -121,27 +139,23 @@ function Canvas(props, ref) {
       style={{ flexDirection: 'row' }}
     >
       <Box display="flex" style={{ height: '100%', flexDirection: 'row' }}>
-        <DrawToolBar
-          onLineWidthChange={handleLineWidthChange}
-          onColorChangeComplete={handleColorChangeComplete}
-          onClearCanvas={handleClearCanvas}
-          width={sizeConfig.CANVAS_TOOLBAR_WIDTH}
-        />
+        {drawable ? (
+          <DrawToolBar
+            onLineWidthChange={handleLineWidthChange}
+            onColorChangeComplete={handleColorChangeComplete}
+            onClearCanvas={handleClearCanvas}
+            width={sizeConfig.CANVAS_TOOLBAR_WIDTH}
+          />
+        ) : (
+          <div></div>
+        )}
+
         <Paper
           elevation={2}
           style={{ height: '100%', width: sizeConfig.CANVAS_WIDTH }}
         >
           <AspectRatioBox ratio={8 / 6}>
-            <canvas
-              onTouchStart={handleStartDrawing}
-              onTouchMove={handleDraw}
-              onTouchEnd={handleFinishDrawing}
-              onMouseDown={handleStartDrawing}
-              onMouseMove={handleDraw}
-              onMouseUp={handleFinishDrawing}
-              onMouseOut={handleFinishDrawing}
-              ref={canvasRef}
-            />
+            <canvas {...drawConfig} ref={canvasRef} />
           </AspectRatioBox>
         </Paper>
       </Box>

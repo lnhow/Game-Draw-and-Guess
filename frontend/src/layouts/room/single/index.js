@@ -106,8 +106,13 @@ function SingleRoom() {
     socketRef.current.on('room-start-game', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_STARTED }));
     });
-    socketRef.current.on('room-start-round', () => {
-      dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_START }));
+    socketRef.current.on('room-start-round', ({ drawerId }) => {
+      dispatch(
+        updateRoom({
+          drawerId: drawerId,
+          roomState: RoomScreenStates.ROUND_START,
+        }),
+      );
     });
     socketRef.current.on('room-start-playing', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
@@ -117,6 +122,10 @@ function SingleRoom() {
     });
     socketRef.current.on('room-end-game', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_ENDED }));
+    });
+    socketRef.current.on('room-draw-word', ({ word }) => {
+      console.log(word);
+      dispatch(updateRoom({ drawerWord: word }));
     });
     socketRef.current.on('timer', (timeLeft) => {
       dispatch(updateTimer({ timer: timeLeft }));

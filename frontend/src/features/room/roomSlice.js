@@ -7,7 +7,8 @@ const initialState = {
   roomRound: null,
   roundTimer: null,
   hostUserId: null,
-  drawerWord: '',
+  drawerId: null,
+  drawerWord: null,
   messages: [],
   users: [],
 };
@@ -17,7 +18,8 @@ export const RoomSlice = createSlice({
   initialState,
   reducers: {
     updateRoom(state, action) {
-      const { roomId, roomState, roomRound, hostUserId } = action.payload;
+      const { roomId, roomState, roomRound, hostUserId, drawerId, drawerWord } =
+        action.payload;
 
       if (roomId) state.roomId = roomId;
       if (roomState) {
@@ -25,6 +27,8 @@ export const RoomSlice = createSlice({
       }
       if (roomRound) state.roomRound = roomRound;
       if (hostUserId) state.hostUserId = hostUserId;
+      if (drawerId) state.drawerId = drawerId;
+      if (drawerWord) state.drawerWord = drawerWord;
     },
 
     updateRoomUsers(state, action) {

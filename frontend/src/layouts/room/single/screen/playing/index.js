@@ -1,5 +1,6 @@
 import { Grid } from '@material-ui/core';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import Canvas from './canvas';
 import TopBar from './topbar';
 
@@ -19,6 +20,8 @@ function PlayingScreen(props, ref) {
   const submitHandler = props.submitHandler;
 
   const canvasRef = useRef(null);
+  const user = useSelector((state) => state.user);
+  const roomDrawer = useSelector((state) => state.room.drawerId);
 
   //Allow parent to call these inner functions
   useImperativeHandle(ref, () => ({
@@ -33,7 +36,11 @@ function PlayingScreen(props, ref) {
         <TopBar />
       </Grid>
       <Grid item xs={12} style={{ height: drawAreaHeight, marginTop: spacing }}>
-        <Canvas ref={canvasRef} submitHandler={submitHandler} />
+        <Canvas
+          ref={canvasRef}
+          submitHandler={submitHandler}
+          drawable={roomDrawer === user.id}
+        />
       </Grid>
     </Grid>
   );

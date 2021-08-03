@@ -55,6 +55,10 @@ export const getRoomInfo = (roomId) => {
   };
 };
 
+export const setRoomDrawInfo = (roomId, drawerId, drawWord) => {
+  RoomServices.roomSetDrawInfo(roomId, drawerId, drawWord);
+};
+
 export const updateRoomState = (roomId, roomState) => {
   RoomServices.updateRoomState(roomId, roomState);
 };
@@ -74,7 +78,7 @@ export const canRoomBeJoined = (roomId) => {
 
 export const addUserToRoom = (socketId, roomId, user) => {
   //Add to user info map, then socket info & then to room
-  RoomUsersServices.addUserRoom(user, roomId);
+  RoomUsersServices.addUserRoom(user, roomId, socketId);
   SocketUserServices.addSocketUser(socketId, user.id);
   RoomServices.roomAddUser(roomId, user.id);
 
@@ -112,7 +116,7 @@ export const getUsersInRoom = (roomId) => {
   }
 
   const usersInRoom = users
-    .map((userId) => getUserById(userId))
+    .map((userId) => getUserInfoById(userId))
     .filter(Boolean); //Filter null...
 
   return usersInRoom;
@@ -120,7 +124,7 @@ export const getUsersInRoom = (roomId) => {
 
 export const getUserBySocketId = (socketId) => {
   const userId = SocketUserServices.getSocketUser(socketId);
-  return getUserById(userId);
+  return getUserInfoById(userId);
 };
 
 export const getRoomBySocketId = (socketId) => {
@@ -140,6 +144,15 @@ export const getUserById = (userId) => {
     return null;
   }
 
+  return user;
+};
+
+export const getUserInfoById = (userId) => {
+  const user = RoomUsersServices.getUserRoom(userId);
+  if (!user) {
+    return null;
+  }
+
   return {
     roomId: user.roomId,
     id: userId,
@@ -152,6 +165,7 @@ const RoomSocketController = {
   addNewRoom,
   removeRoom,
   updateRoomState,
+  setRoomDrawInfo,
 
   getRoom,
   getRoomInfo,
@@ -166,6 +180,7 @@ const RoomSocketController = {
   getUsersInRoom,
   getUserBySocketId,
   getUserById,
+  getUserInfoById,
 };
 
 export default RoomSocketController;
