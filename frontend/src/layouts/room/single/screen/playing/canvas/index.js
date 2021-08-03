@@ -29,7 +29,6 @@ function Canvas(props, ref) {
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const drawable = props.drawable;
-  const [drawConfig, setDrawConfig] = useState({});
   const [strokeColor, setStrokeColor] = useState(DEFAULT_COLOR);
 
   useEffect(() => {
@@ -51,25 +50,9 @@ function Canvas(props, ref) {
 
   const onSubmit = () => {
     //When submitting data
-    if (drawable) {
-      const drawData = canvasRef.current.toDataURL('image/png');
-      submitHandler(drawData);
-    }
+    const drawData = canvasRef.current.toDataURL('image/png');
+    submitHandler(drawData);
   };
-
-  useEffect(() => {
-    if (drawable) {
-      setDrawConfig({
-        onTouchStart: handleStartDrawing,
-        onTouchMove: handleDraw,
-        onTouchEnd: handleFinishDrawing,
-        onMouseDown: handleStartDrawing,
-        onMouseMove: handleDraw,
-        onMouseUp: handleFinishDrawing,
-        onMouseOut: handleFinishDrawing,
-      });
-    }
-  });
 
   //Handlers--------------------------------------------------
   //Draw tool handlers
@@ -100,7 +83,6 @@ function Canvas(props, ref) {
     contextRef.current.moveTo(offsetX, offsetY);
     setIsDrawing(true);
   };
-
   const handleFinishDrawing = () => {
     setIsDrawing(false);
     contextRef.current.closePath();
@@ -116,6 +98,7 @@ function Canvas(props, ref) {
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
   };
+
   //Draw action handlers
   //Handlers--------------------------------------------------
 
@@ -155,7 +138,20 @@ function Canvas(props, ref) {
           style={{ height: '100%', width: sizeConfig.CANVAS_WIDTH }}
         >
           <AspectRatioBox ratio={8 / 6}>
-            <canvas {...drawConfig} ref={canvasRef} />
+            <canvas
+              {...(drawable
+                ? {
+                    onTouchStart: handleStartDrawing,
+                    onTouchMove: handleDraw,
+                    onTouchEnd: handleFinishDrawing,
+                    onMouseDown: handleStartDrawing,
+                    onMouseMove: handleDraw,
+                    onMouseUp: handleFinishDrawing,
+                    onMouseOut: handleFinishDrawing,
+                  }
+                : null)}
+              ref={canvasRef}
+            />
           </AspectRatioBox>
         </Paper>
       </Box>
