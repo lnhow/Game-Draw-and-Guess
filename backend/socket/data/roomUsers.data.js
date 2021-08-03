@@ -43,6 +43,24 @@ const UserRoomServices = {
   removeUserRoom(userId) {
     return userRoomMap.delete(userId);
   },
+
+  setWord(userId, word) {
+    let user = this.getUserRoom(userId);
+    if (!user) {
+      return false;
+    }
+    user.word = word;
+    return true;
+  },
+
+  setPoints(userId, points) {
+    let user = this.getUserRoom(userId);
+    if (!user) {
+      return false;
+    }
+    user.points = points;
+    return true;
+  },
 };
 
 export default UserRoomServices;

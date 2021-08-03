@@ -32,6 +32,11 @@ export const RoomSlice = createSlice({
       if (users) state.users = users;
     },
 
+    updateTimer(state, action) {
+      const { timer } = action.payload;
+      if (timer) state.roundTimer = timer;
+    },
+
     addMessage(state, action) {
       const message = action.payload;
       if (message) state.messages = [...state.messages, message];
@@ -54,7 +59,12 @@ const convertRoomToScreenState = (roomState) => {
   return roomState; //No need to convert
 };
 
-export const { updateRoom, updateRoomUsers, addMessage, clearRoom } =
-  RoomSlice.actions;
+export const {
+  updateRoom,
+  updateRoomUsers,
+  addMessage,
+  updateTimer,
+  clearRoom,
+} = RoomSlice.actions;
 
 export default RoomSlice.reducer;

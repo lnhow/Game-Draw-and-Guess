@@ -1,23 +1,20 @@
-import gameroomModel from '../../models/gameroomModel.cjs';
 import RoomSocket from '../controllers/room.js';
 import { subcribeCallback } from '../../utils/helpers.js';
 import RoomState from '../../models/roomStateModel.js';
+import HandleGameController from '../controllers/game.js';
 
 const handleStartGame = (io, socket, callback) => {
   const user = RoomSocket.getUserBySocketId(socket.id);
+  if (!user) {
+    return;
+  }
   const room = RoomSocket.getRoom(user.roomId);
   const clientCallback = subcribeCallback(callback);
   if (!room) {
     clientCallback('Room do not exist');
-    return;
   }
 
   console.log(`${user.id} want to start game in room ${user.roomId}`);
-  console.log(user.id);
-  console.log(room.hostUserId);
-  console.log(user.id === room.hostUserId);
-  console.log(room.users);
-  console.log(room.users.length);
   const isHostStartGame = user.id === room.hostUserId;
   const isRoomValidToStart =
     isHostStartGame && room.users && room.users.length > 1;
@@ -32,9 +29,7 @@ const handleStartGame = (io, socket, callback) => {
   });
   io.to(user.roomId).emit('room-start-game');
   console.log(`Game started in room ${user.roomId}`);
-  // io.to(room.roomId).emit('room-start-round', {round});
-  // io.to(room.roomId).emit('room-end-round');
-  // io.to(room.roomId).emit('room-end-game')
+  HandleGameController(io, user.roomId);
 
   //Check room contains more 2 user, else throw err msg
   //Update room status: PLAYING, no more new user can join
@@ -58,25 +53,4 @@ const handleStartGame = (io, socket, callback) => {
   // Kick users
 };
 
-const RoundTimer = (io, socket) => {
-  const roomId = '60fe2664ef197c52240d1087';
-
-  let result = gameroomModel.findOne({ _id: roomId });
-
-  //server-side
-  var counter = result.timePerRound;
-  var TimerCountdown = setInterval(function () {
-    io.emit('timer', counter);
-    counter--;
-    if (counter === 0) {
-      io.emit('timer', "Time's up!!");
-      clearInterval(TimerCountdown);
-    }
-  }, 1000);
-
-  //client-side
-  //socket.on('timer', function (count) {
-  //  $('#counter').html(count);
-  //});
-};
 export default handleStartGame;

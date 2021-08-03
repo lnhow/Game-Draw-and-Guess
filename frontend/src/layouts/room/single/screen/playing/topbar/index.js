@@ -1,8 +1,10 @@
 import { Paper, Box } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import useStyles from './styles';
 
 function TopBar() {
   const classes = useStyles();
+  const timer = useSelector((state) => state.room.roundTimer);
 
   return (
     <Paper
@@ -23,7 +25,7 @@ function TopBar() {
         <Box>
           <span>Round [2] of [3]</span>
           <h2 id="counter" style={{ margin: 0, textAlign: 'center' }}>
-            [Time left]
+            {timer}
           </h2>
         </Box>
       </Box>
