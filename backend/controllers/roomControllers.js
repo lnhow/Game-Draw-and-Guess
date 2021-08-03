@@ -26,6 +26,7 @@ async function findingRoom(req, res) {
 
   const allRoom = all.map((room) => ({
     _id: room._id,
+    roomName: room.roomName,
     maxPlayer: room.maxPlayer,
     categoryName: room.category.categoryName,
     roomStatus: room.roomStatus,
