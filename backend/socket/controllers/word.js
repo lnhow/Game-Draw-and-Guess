@@ -12,7 +12,11 @@ export const getRandomWord = async (categoryId) => {
   }
 
   const rand = Math.floor(Math.random() * count);
-  const word = await wordModel.findOne().skip(rand);
+  const word = await wordModel
+    .findOne({
+      categoryId: ObjectId(categoryId),
+    })
+    .skip(rand);
   if (!word) {
     return DEFAULT_WORD;
   }
