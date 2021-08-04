@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core';
+import green from '@material-ui/core/colors/green';
 
 export default makeStyles((theme) => ({
   outer: {
@@ -13,5 +14,8 @@ export default makeStyles((theme) => ({
   },
   infoText: {
     textAlign: 'left',
+  },
+  success: {
+    color: green,
   },
 }));

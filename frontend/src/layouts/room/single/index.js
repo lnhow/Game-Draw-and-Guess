@@ -1,18 +1,24 @@
-import { useEffect, useRef } from 'react';
-
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   updateRoom,
   updateRoomUsers,
   addMessage,
   clearRoom,
+  updateTimer,
 } from '../../../features/room/roomSlice';
 import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL params as room name
-import GameRoomLayout from './layout';
+import GameRoomLayout from './layout/gameRoomLayout';
+import LoadingPage from '../../loading';
+import ErrorPage from '../../error';
+import { RoomScreenStates } from '../../../common/constant';
 import { connectToSocket } from '../../../helpers/socketio';
 
 function SingleRoom() {
   const user = useSelector((state) => state.user);
+  const roomId = useSelector((state) => state.room.roomId);
+  const [err, setErr] = useState(null);
+
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
@@ -32,6 +38,11 @@ function SingleRoom() {
     }
   };
 
+  const submitStartGame = () => {
+    console.log('request-start-game');
+    socketRef.current.emit('request-start-game');
+  };
+
   useEffect(() => {
     if (!user) {
       history.push('/login');
@@ -40,16 +51,12 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current = connectToSocket();
-
     socketRef.current.emit('join', { user, roomId: id }, (error) => {
       if (error) {
-        alert(error);
-        //Redirect
+        setErr({ message: error });
         return;
       }
-      dispatch(updateRoom({ roomId: id }));
     });
-
 
     return function cleanUp() {
       //componentsWillUnmount
@@ -76,17 +83,75 @@ function SingleRoom() {
   }, [dispatch]);
 
   useEffect(() => {
-    socketRef.current.on('message', ({ user, message }) => {
-      dispatch(addMessage({ user, message }));
+    socketRef.current.on('message', (message) => {
+      dispatch(addMessage(message));
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    socketRef.current.on('room-info', ({ info }) => {
+      console.log(info);
+      dispatch(
+        updateRoom({
+          roomState: info.roomState,
+          roomRound: info.roomRound + 1, //Room round start at 0: falsy
+          hostUserId: info.hostUserId,
+          roomId: info.roomId,
+        }),
+      );
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    socketRef.current.on('room-start-game', () => {
+      dispatch(updateRoom({ roomState: RoomScreenStates.GAME_STARTED }));
+    });
+    socketRef.current.on('room-start-round', ({ drawerId }) => {
+      dispatch(
+        updateRoom({
+          drawerId: drawerId,
+          roomState: RoomScreenStates.ROUND_START,
+        }),
+      );
+    });
+    socketRef.current.on('room-start-playing', () => {
+      dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
+    });
+    socketRef.current.on('room-end-round', ({ word }) => {
+      dispatch(
+        updateRoom({
+          wordLastRound: word,
+          roomState: RoomScreenStates.ROUND_ENDED,
+        }),
+      );
+    });
+    socketRef.current.on('room-end-game', () => {
+      dispatch(updateRoom({ roomState: RoomScreenStates.GAME_ENDED }));
+    });
+    socketRef.current.on('room-draw-word', ({ word }) => {
+      console.log(word);
+      dispatch(updateRoom({ drawerWord: word }));
+    });
+    socketRef.current.on('timer', (timeLeft) => {
+      dispatch(updateTimer({ timer: timeLeft }));
     });
   }, [dispatch]);
 
   return (
-    <GameRoomLayout
-      submitDrawHandler={submitDraw}
-      submitMessageHandler={submitMsg}
-      ref={playScreenRef}
-    />
+    <div>
+      {err ? (
+        <ErrorPage message={err.message} />
+      ) : roomId ? (
+        <GameRoomLayout
+          submitDrawHandler={submitDraw}
+          submitMessageHandler={submitMsg}
+          submitStartGameHandler={submitStartGame}
+          ref={playScreenRef}
+        />
+      ) : (
+        <LoadingPage text="Joining Room" />
+      )}
+    </div>
   );
 }
 

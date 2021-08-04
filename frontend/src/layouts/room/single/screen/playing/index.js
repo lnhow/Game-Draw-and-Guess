@@ -1,5 +1,6 @@
 import { Grid } from '@material-ui/core';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import Canvas from './canvas';
 import TopBar from './topbar';
 
@@ -9,7 +10,6 @@ const DEFAULT_DRAW_AREA_HEIGHT = 600;
 const DEFAULT_SPACING = 16;
 
 function PlayingScreen(props, ref) {
-  const classes = props.classes;
   const topbarHeight = props.topbarHeight
     ? props.topbarHeight
     : DEFAULT_TOP_BAR_HEIGHT;
@@ -20,6 +20,8 @@ function PlayingScreen(props, ref) {
   const submitHandler = props.submitHandler;
 
   const canvasRef = useRef(null);
+  const user = useSelector((state) => state.user);
+  const roomDrawer = useSelector((state) => state.room.drawerId);
 
   //Allow parent to call these inner functions
   useImperativeHandle(ref, () => ({
@@ -31,13 +33,13 @@ function PlayingScreen(props, ref) {
   return (
     <Grid container style={{ width: '100%' }}>
       <Grid item xs={12} style={{ height: topbarHeight }}>
-        <TopBar classes={classes} />
+        <TopBar />
       </Grid>
       <Grid item xs={12} style={{ height: drawAreaHeight, marginTop: spacing }}>
         <Canvas
           ref={canvasRef}
-          classes={classes}
           submitHandler={submitHandler}
+          drawable={roomDrawer === user.id}
         />
       </Grid>
     </Grid>
