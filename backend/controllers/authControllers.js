@@ -60,14 +60,10 @@ async function register(req, res) {
     };
 
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-    res
-      .status(201)
-      .header('auth-token', token)
-      .cookie('auth-token', token, { httpOnly: true })
-      .json({
-        message: 'Register success',
-        token: token,
-      });
+    res.status(201).json({
+      message: 'Register success',
+      token: token,
+    });
   } catch (err) {
     res.status(400).json({
       message: err,
@@ -107,14 +103,10 @@ async function login(req, res) {
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
-  res
-    .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
-    .json({
-      message: 'Login success',
-      token: token,
-    });
+  res.status(200).json({
+    message: 'Login success',
+    token: token,
+  });
 }
 
 async function forgotPassword(req, res, next) {
@@ -201,14 +193,10 @@ async function resetPassword(req, res) {
   };
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-  res
-    .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
-    .json({
-      message: 'Reset password success',
-      token: token,
-    });
+  res.status(200).json({
+    message: 'Reset password success',
+    token: token,
+  });
 }
 
 async function logout(req, res) {
@@ -244,7 +232,7 @@ async function anonymousUser(req, res) {
 
     await anonymousUser.save();
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-    res.status(201).header('auth-token', token).json({
+    res.status(201).json({
       message: 'New user created!',
       token: token,
     });
