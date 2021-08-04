@@ -77,13 +77,13 @@ function Rooms({ classes }) {
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <div>
-        <Typography variant="h5" className={classes.page} style={gameName}>
+        
           <SearchBar
             value={searched}
             onChange={(searchVal) => requestSearch(searchVal)}
             onCancelSearch={() => cancelSearch()}
           />
-        </Typography>
+   
 
         <div className={classes.grid}>
           <Scrollbars
