@@ -224,20 +224,24 @@ async function anonymousUser(req, res) {
     return res.status(400).json({
       message: error.details[0].message,
     });
+
   const user = await usersModel.findOne({ username: req.body.username });
   if (user)
-    return res.status(409).json({
+    return res.status(403).json({
       message: 'Username already taken!',
     });
+
   const anonymousUser = new usersModel({
     accountId: null,
     username: req.body.username,
   });
+
   try {
     const dataToken = {
       userId: anonymousUser._id,
       username: anonymousUser.username,
     };
+
     await anonymousUser.save();
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
     res.status(201).header('auth-token', token).json({

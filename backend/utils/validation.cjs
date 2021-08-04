@@ -48,7 +48,7 @@ const createRoomValidation = (data) => {
 
 const usernameValidation = (data) => {
   const schema = Joi.object({
-    username: Joi.string().required(),
+    username: Joi.string().alphanum().min(3).required(),
   });
   return schema.validate(data);
 };
