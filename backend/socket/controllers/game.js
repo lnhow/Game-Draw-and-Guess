@@ -1,52 +1,72 @@
 import RoomSocket from '../controllers/room.js';
 import RoomState from '../../models/roomStateModel.js';
 import { getRandomWord } from './word.js';
-const oneSecond = 1000;
+import sleep from '../../utils/sleep.js';
+const ONE_SECOND = 1000;
+const ROUND_TIMEOUT = 5 * ONE_SECOND;
 
 const HandleGameController = async (io, roomId) => {
   const room = RoomSocket.getRoom(roomId);
 
-  setTimeout(async () => {
-    const word = await getRandomWord(room.category);
-    const rand = Math.floor(Math.random() * room.users.length);
-    const drawerId = room.users[rand].id;
-    RoomSocket.setRoomDrawInfo(roomId, drawerId, word);
-    const drawer = RoomSocket.getUserById(drawerId);
-    console.log(drawer);
-    io.to(drawer.socketId).emit('room-draw-word', { word: word });
+  //Start round
+  const word = await handleStartRound(io, roomId, room);
+  //Wait for user to see the start round message
+  await sleep(ROUND_TIMEOUT);
 
-    console.log(`${roomId}: room-start-round- ${drawerId}`);
-    io.to(roomId).emit('room-start-round', { drawerId: drawerId });
+  await handleRoundPlaying(io, roomId, room);
 
-    setTimeout(() => {
-      console.log(`${roomId}: room-start-playing`);
-      io.to(roomId).emit('room-start-playing');
+  //End round
+  handleEndRound(io, roomId, room, word);
+  //Wait for user to see the end round message
+  await sleep(ROUND_TIMEOUT);
 
-      RoomSocket.setRoomTimer(roomId, room.timePerRound);
-      var TimerCountdown = setInterval(function () {
-        const correctUsers = RoomSocket.countCorrectUser(roomId);
-
-        RoomSocket.decreaseRoomTimer(roomId);
-        io.to(roomId).emit('timer', room.roundTimer);
-        if (room.roundTimer === 0 || correctUsers >= room.users.length - 1) {
-          //End the round
-          handleEndRound(io, roomId, room, word);
-          clearInterval(TimerCountdown);
-          setTimeout(() => {
-            console.log(`${roomId}: room-end-game`);
-            io.to(roomId).emit('room-end-game');
-            //Temporarily reset back to WAITING
-            RoomSocket.updateRoomState(roomId, RoomState.WAITING);
-          }, 5 * oneSecond);
-        }
-      }, oneSecond);
-    }, oneSecond);
-  }, 5 * oneSecond);
+  console.log(`${roomId}: room-end-game`);
+  io.to(roomId).emit('room-end-game');
+  //Temporarily reset back to WAITING
+  RoomSocket.updateRoomState(roomId, RoomState.WAITING);
 };
 
-const handleEndRound = (io, roomId, room, word) => {
+const handleStartRound = async (io, roomId, room) => {
+  const word = await getRandomWord(room.category);
+  //Get random user in room
+  //TODO: Handle when drawer user left?
+  const rand = Math.floor(Math.random() * room.users.length);
+  const drawerId = room.users[rand].id;
+
+  RoomSocket.setRoomDrawInfo(roomId, drawerId, word);
+  const drawer = RoomSocket.getUserById(drawerId);
+  console.log(drawer);
+  RoomSocket.setRoomTimer(roomId, room.timePerRound); //Start timer for the round
+
+  //Send the word to drawer
+  io.to(drawer.socketId).emit('room-draw-word', { word: word });
+
+  console.log(`${roomId}: room-start-round- ${drawerId}`);
+  io.to(roomId).emit('room-start-round', { drawerId: drawerId });
+  return word;
+};
+
+const handleRoundPlaying = async (io, roomId, room) => {
+  console.log(`${roomId}: room-start-playing`);
+  io.to(roomId).emit('room-start-playing');
+
+  while (room.roundTimer > 0) {
+    await sleep(ONE_SECOND);
+    const correctUsers = RoomSocket.countCorrectUser(roomId);
+
+    RoomSocket.decreaseRoomTimer(roomId);
+    io.to(roomId).emit('timer', room.roundTimer);
+    if (room.roundTimer === 0 || correctUsers >= room.users.length - 1) {
+      break;
+    }
+  }
+};
+
+const handleEndRound = (io, roomId, room) => {
   console.log(`${roomId}: room-end-round`);
-  io.to(roomId).emit('room-end-round', { word });
+  io.to(roomId).emit('room-end-round', {
+    word: room.currentDrawWord,
+  });
 
   calcPoints(room);
   clearCorrect(room.users);
