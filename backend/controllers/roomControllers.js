@@ -29,6 +29,7 @@ async function findingRoom(req, res) {
     roomName: room.roomName,
     maxPlayer: room.maxPlayer,
     categoryName: room.category.categoryName,
+    categoryId: room.categoryId,
     roomStatus: room.roomStatus,
   }));
   res.status(200).json({
