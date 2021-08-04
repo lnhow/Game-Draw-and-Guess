@@ -143,6 +143,24 @@ const RoomServices = {
     }
     return false;
   },
+
+  roomSetTimer(roomId, timer) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.roundTimer = timer;
+  },
+
+  roomDecreaseTimer(roomId, value) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.roundTimer -= value;
+  },
 };
 
 export default RoomServices;

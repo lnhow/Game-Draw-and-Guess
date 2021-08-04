@@ -13,7 +13,9 @@ const handleMessage = (io, socket, { message }, callback) => {
         title: user.username,
         message: 'guess the correct word!',
       });
-      RoomSocket.setUserIsCorrect(user.id, true);
+      const room = RoomSocket.getRoom(user.roomId);
+
+      RoomSocket.setUserCorrect(user.id, room.roundTimer);
       io.to(user.roomId).emit('room-users', {
         users: RoomSocket.getUsersInRoom(user.roomId),
       });

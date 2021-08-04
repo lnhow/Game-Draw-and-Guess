@@ -22,13 +22,13 @@ const HandleGameController = async (io, roomId) => {
       console.log(`${roomId}: room-start-playing`);
       io.to(roomId).emit('room-start-playing');
 
-      var counter = room.timePerRound;
+      RoomSocket.setRoomTimer(roomId, room.timePerRound);
       var TimerCountdown = setInterval(function () {
         const correctUsers = RoomSocket.countCorrectUser(roomId);
 
-        counter--;
-        io.to(roomId).emit('timer', counter);
-        if (counter === 0 || correctUsers >= room.users.length - 1) {
+        RoomSocket.decreaseRoomTimer(roomId);
+        io.to(roomId).emit('timer', room.roundTimer);
+        if (room.roundTimer === 0 || correctUsers >= room.users.length - 1) {
           //End the round
           handleEndRound(io, roomId, room, word);
           clearInterval(TimerCountdown);
@@ -61,23 +61,24 @@ const calcPoints = (room) => {
   const drawer = room.currentDrawer;
   const users = room.users;
   const basePoints = 10;
-  let correctUserCount = 0;
+  let totalRoundPoints = 0;
   for (let i = 0; i < users.length; i++) {
     if (users[i].left || users[i].id === drawer) {
       continue;
     }
     //Calc points for guessers
     let user = RoomSocket.getUserById(users[i].id);
-    if (user.isCorrect) {
-      RoomSocket.addPointsToUser(users[i].id, basePoints);
-      correctUserCount++;
+    if (user.correctTime) {
+      const userPoints = user.correctTime * basePoints;
+      totalRoundPoints += userPoints;
+      RoomSocket.addPointsToUser(users[i].id, userPoints);
     }
   }
 
   //Calc points for drawer
   const drawerPoints = Math.floor(
     //Minus 1 drawer
-    (basePoints * correctUserCount) / (users.length - 1),
+    totalRoundPoints / (users.length - 1),
   );
   RoomSocket.addPointsToUser(drawer, drawerPoints);
 };
@@ -88,7 +89,7 @@ const clearCorrect = (roomUsers) => {
   }
 
   for (let i = 0; i < roomUsers.length; i++) {
-    RoomSocket.setUserIsCorrect(roomUsers[i].id, false);
+    RoomSocket.setUserCorrect(roomUsers[i].id, null);
   }
 };
 
