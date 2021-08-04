@@ -27,7 +27,6 @@ const HandleGameController = async (io, roomId) => {
         const correctUsers = RoomSocket.countCorrectUser(roomId);
 
         RoomSocket.decreaseRoomTimer(roomId);
-        // counter--;
         io.to(roomId).emit('timer', room.roundTimer);
         if (room.roundTimer === 0 || correctUsers >= room.users.length - 1) {
           //End the round
@@ -62,7 +61,6 @@ const calcPoints = (room) => {
   const drawer = room.currentDrawer;
   const users = room.users;
   const basePoints = 10;
-  // let correctUserCount = 0;
   let totalRoundPoints = 0;
   for (let i = 0; i < users.length; i++) {
     if (users[i].left || users[i].id === drawer) {
@@ -74,7 +72,6 @@ const calcPoints = (room) => {
       const userPoints = user.correctTime * basePoints;
       totalRoundPoints += userPoints;
       RoomSocket.addPointsToUser(users[i].id, userPoints);
-      // correctUserCount++;
     }
   }
 
