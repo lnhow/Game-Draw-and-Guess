@@ -2,8 +2,7 @@ import React from 'react';
 import { Avatar, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
-import LockIcon from '@material-ui/icons/Lock';
-import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -43,9 +42,10 @@ const useStyles = makeStyles((theme) => ({
 const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
   <Grid item justify="center">
     <Paper className={useStyles().paper}>
+    
       <div className={useStyles().avatar}>
         <Avatar
-          alt="Remy Sharp"
+          alt="Rimy Sharp"
           src="https://icon-library.com/images/doraemon-icon/doraemon-icon-19.jpg"
         />
       </div>

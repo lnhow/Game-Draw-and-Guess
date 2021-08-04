@@ -8,7 +8,6 @@ import {
 } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
-import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
 import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
@@ -16,6 +15,8 @@ import { roomData } from './roomData.js';
 import { withStyles } from '@material-ui/core/styles';
 import style from './style';
 import SearchBar from 'material-ui-search-bar';
+import AlertDialogSlide from '../../common/dialog/dialog.js';
+import { useHistory } from 'react-router-dom';
 
 const gameName = {
   fontSize: '40px',
@@ -30,6 +31,9 @@ const gameName = {
 function Rooms({ classes }) {
   const [data, setData] = useState(roomData);
   const [searched, setSearched] = useState('');
+  const [idRoom, setIdRoom] = useState('');
+  const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const history = useHistory();
 
   const getData = () => {
     fetch('roomData.json', {
@@ -64,6 +68,11 @@ function Rooms({ classes }) {
     requestSearch(searched);
   };
 
+  const handleClickRoom = (event) => {
+    setIdRoom(event.currentTarget.attributes?.idRoom?.value);
+    setIsOpenAlert(true);
+  };
+
   return (
     <Container component="main" className={classes.root}>
       <CssBaseline />
@@ -86,12 +95,19 @@ function Rooms({ classes }) {
               />
             )}
           >
-          
+            <AlertDialogSlide
+              isOpen={isOpenAlert}
+              setIsOpen={() => setIsOpenAlert(false)}
+              handleJoin={() => history.push(`/room/${idRoom}`)}
+            />
             <GridList cols={4} cellHeight={200} spacing={10}>
               {data.map((data, key) => {
                 return (
-                  
-                  <GridListTile key={key} idRoom={'1234'} onClick={(e)=>console.log(e)}>
+                  <GridListTile
+                    key={key}
+                    idRoom={data.roomId}
+                    onClick={handleClickRoom}
+                  >
                     <Room
                       key={key}
                       currentPlayer={data.currentPlayer}
@@ -100,11 +116,9 @@ function Rooms({ classes }) {
                       point={data.point}
                       roomName={data.roomName}
                       roomId={data.roomId}
-
+                      value={'123' + (Math.random() * 10) / 100}
                     />
                   </GridListTile>
-              
-                 
                 );
               })}
             </GridList>
@@ -118,12 +132,6 @@ function Rooms({ classes }) {
               text="New room"
               name="room"
             ></FuncButton>
-            <FuncButton
-              link="/room/:id"
-              text="Play"
-              bgcolor="#028a0f"
-              name="esport"
-            ></FuncButton>
           </Grid>
         </div>
       </div>
@@ -133,9 +141,5 @@ function Rooms({ classes }) {
     </Container>
   );
 }
-
-// function NumberInput({ id, name, classes }) {
-//   return <Input name="search" placeholder="Search room" />;
-// }
 
 export default withStyles(style)(Rooms);
