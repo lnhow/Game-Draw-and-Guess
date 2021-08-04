@@ -45,7 +45,7 @@ const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
 
   // Update list of users in room
   io.to(roomId).emit('room-users', {
-    users: RoomSocket.getUsersInRoom(roomId),
+    users: RoomSocket.getUserInfosInRoom(roomId),
   });
   callback();
 };

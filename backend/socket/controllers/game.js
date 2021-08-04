@@ -1,6 +1,7 @@
 import RoomSocket from '../controllers/room.js';
 import RoomState from '../../models/roomStateModel.js';
 import { getRandomWord } from './word.js';
+import { calcPoints } from './points.js';
 import sleep from '../../utils/sleep.js';
 const ONE_SECOND = 1000;
 const ROUND_TIMEOUT = 5 * ONE_SECOND;
@@ -10,15 +11,18 @@ const HandleGameController = async (io, roomId) => {
 
   //Start round
   const word = await handleStartRound(io, roomId, room);
-  //Wait for user to see the start round message
-  await sleep(ROUND_TIMEOUT);
 
-  await handleRoundPlaying(io, roomId, room);
+  if (word) {
+    //Wait for user to see the start round message
+    await sleep(ROUND_TIMEOUT);
 
-  //End round
-  handleEndRound(io, roomId, room, word);
-  //Wait for user to see the end round message
-  await sleep(ROUND_TIMEOUT);
+    await handleRoundPlaying(io, roomId, room);
+
+    //End round
+    handleEndRound(io, roomId, room, word);
+    //Wait for user to see the end round message
+    await sleep(ROUND_TIMEOUT);
+  }
 
   console.log(`${roomId}: room-end-game`);
   io.to(roomId).emit('room-end-game');
@@ -27,23 +31,24 @@ const HandleGameController = async (io, roomId) => {
 };
 
 const handleStartRound = async (io, roomId, room) => {
-  const word = await getRandomWord(room.category);
-  //Get random user in room
-  //TODO: Handle when drawer user left?
-  const rand = Math.floor(Math.random() * room.users.length);
-  const drawerId = room.users[rand].id;
+  const drawerWord = await getRandomWord(room.category);
+  const drawerId = randomizeDrawer(roomId); // {_id:"...", word:"..."}
 
-  RoomSocket.setRoomDrawInfo(roomId, drawerId, word);
+  if (drawerId === null) {
+    return null; //All users had been the drawer, stop the game
+  }
+
+  RoomSocket.setRoomDrawInfo(roomId, drawerId, drawerWord);
   const drawer = RoomSocket.getUserById(drawerId);
   console.log(drawer);
   RoomSocket.setRoomTimer(roomId, room.timePerRound); //Start timer for the round
 
   //Send the word to drawer
-  io.to(drawer.socketId).emit('room-draw-word', { word: word });
+  io.to(drawer.socketId).emit('room-draw-word', { word: drawerWord.word });
 
   console.log(`${roomId}: room-start-round- ${drawerId}`);
   io.to(roomId).emit('room-start-round', { drawerId: drawerId });
-  return word;
+  return drawerWord.word;
 };
 
 const handleRoundPlaying = async (io, roomId, room) => {
@@ -73,34 +78,8 @@ const handleEndRound = (io, roomId, room) => {
   RoomSocket.setRoomDrawInfo(roomId, null, null);
 
   io.to(roomId).emit('room-users', {
-    users: RoomSocket.getUsersInRoom(roomId),
+    users: RoomSocket.getUserInfosInRoom(roomId),
   });
-};
-
-const calcPoints = (room) => {
-  const drawer = room.currentDrawer;
-  const users = room.users;
-  const basePoints = 10;
-  let totalRoundPoints = 0;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].left || users[i].id === drawer) {
-      continue;
-    }
-    //Calc points for guessers
-    let user = RoomSocket.getUserById(users[i].id);
-    if (user.correctTime) {
-      const userPoints = user.correctTime * basePoints;
-      totalRoundPoints += userPoints;
-      RoomSocket.addPointsToUser(users[i].id, userPoints);
-    }
-  }
-
-  //Calc points for drawer
-  const drawerPoints = Math.floor(
-    //Minus 1 drawer
-    totalRoundPoints / (users.length - 1),
-  );
-  RoomSocket.addPointsToUser(drawer, drawerPoints);
 };
 
 const clearCorrect = (roomUsers) => {
@@ -111,6 +90,29 @@ const clearCorrect = (roomUsers) => {
   for (let i = 0; i < roomUsers.length; i++) {
     RoomSocket.setUserCorrect(roomUsers[i].id, null);
   }
+};
+
+/**
+ * Choose a random user that is not a drawer before to be the new drawer
+ * @param {String} roomId The room to randomize on
+ * @returns {String} The drawer's id (null if there is none left)
+ */
+const randomizeDrawer = (roomId) => {
+  const users = RoomSocket.getUsersInRoom(roomId);
+  if (!users || users.length === 0) {
+    console.log('users');
+    console.log(users);
+    return null;
+  }
+
+  const nonDrawerUsers = users.filter((user) => user.word === '');
+  if (!nonDrawerUsers || nonDrawerUsers.length === 0) {
+    console.log(nonDrawerUsers);
+    return null;
+  }
+
+  const rand = Math.floor(Math.random() * nonDrawerUsers.length);
+  return nonDrawerUsers[rand].id;
 };
 
 export default HandleGameController;

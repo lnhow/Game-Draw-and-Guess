@@ -1,8 +1,20 @@
 import wordModel from '../../models/wordModel.cjs';
 import mongoose from 'mongoose';
 const ObjectId = mongoose.Types.ObjectId;
-const DEFAULT_WORD = 'duck';
+export const DEFAULT_WORD = {
+  _id: null,
+  word: 'duck',
+};
 
+/**
+ * Randomize a word in a category
+ * @param {String} categoryId The id of the category
+ * @returns {{
+ *  id: String,
+ *  word: String
+ * }} Simple representation of the randomized word,
+ *    fallback to DEFAULT_WORD if not found
+ */
 export const getRandomWord = async (categoryId) => {
   const count = await wordModel.countDocuments({
     categoryId: ObjectId(categoryId),
@@ -21,5 +33,8 @@ export const getRandomWord = async (categoryId) => {
     return DEFAULT_WORD;
   }
 
-  return word.word;
+  return {
+    id: word._id.toString(),
+    word: word.word,
+  };
 };
