@@ -3,13 +3,11 @@ import { Avatar, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    width: '230px',
     borderRadius: '15px',
     backgroundColor: '#FFE203',
   },
@@ -22,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     display: 'inline-block',
   },
   setting: {
@@ -40,9 +38,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
-  <Grid item justify="center">
+  <Grid item>
     <Paper className={useStyles().paper}>
-    
       <div className={useStyles().avatar}>
         <Avatar
           alt="Rimy Sharp"

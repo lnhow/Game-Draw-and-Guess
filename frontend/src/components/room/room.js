@@ -1,10 +1,9 @@
 import {
   Container,
   Grid,
-  GridList,
-  Typography,
   CssBaseline,
-  GridListTile,
+  ImageList,
+  ImageListItem,
 } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
@@ -17,11 +16,6 @@ import style from './style';
 import SearchBar from 'material-ui-search-bar';
 import AlertDialogSlide from '../../common/dialog/dialog.js';
 import { useHistory } from 'react-router-dom';
-
-const gameName = {
-  fontSize: '40px',
-  color: 'black',
-};
 
 // const back = {
 //   transform: 'rotate(180deg)',
@@ -77,13 +71,11 @@ function Rooms({ classes }) {
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <div>
-        
-          <SearchBar
-            value={searched}
-            onChange={(searchVal) => requestSearch(searchVal)}
-            onCancelSearch={() => cancelSearch()}
-          />
-   
+        <SearchBar
+          value={searched}
+          onChange={(searchVal) => requestSearch(searchVal)}
+          onCancelSearch={() => cancelSearch()}
+        />
 
         <div className={classes.grid}>
           <Scrollbars
@@ -100,10 +92,10 @@ function Rooms({ classes }) {
               setIsOpen={() => setIsOpenAlert(false)}
               handleJoin={() => history.push(`/room/${idRoom}`)}
             />
-            <GridList cols={4} cellHeight={200} spacing={10}>
+            <ImageList cols={4} rowHeight={200} gap={24}>
               {data.map((data, key) => {
                 return (
-                  <GridListTile
+                  <ImageListItem
                     key={key}
                     idRoom={data.roomId}
                     onClick={handleClickRoom}
@@ -118,10 +110,10 @@ function Rooms({ classes }) {
                       roomId={data.roomId}
                       value={'123' + (Math.random() * 10) / 100}
                     />
-                  </GridListTile>
+                  </ImageListItem>
                 );
               })}
-            </GridList>
+            </ImageList>
           </Scrollbars>
         </div>
 
