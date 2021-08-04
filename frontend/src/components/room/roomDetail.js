@@ -3,7 +3,6 @@ import { Avatar, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
 import LockIcon from '@material-ui/icons/Lock';
-import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,9 +27,6 @@ const useStyles = makeStyles((theme) => ({
   },
   setting: {
     backgroundColor: '#FFE203',
-  },
-  private: {
-    marginLeft: '180px',
   },
   icon: {
     cursor: 'default',

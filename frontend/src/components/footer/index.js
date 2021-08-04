@@ -3,7 +3,12 @@ import { Typography, Link } from '@material-ui/core';
 
 function Footer() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography
+      variant="body2"
+      color="textSecondary"
+      align="center"
+      style={{ marginTop: '30px' }}
+    >
       {'Copyright © '}
       <Link
         color="inherit"

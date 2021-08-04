@@ -7,7 +7,7 @@ import RoomCreate from '../room/create';
 import RoomSingle from '../room/single';
 import HomeLogin from '../home/homeloggin';
 import { useSelector } from 'react-redux';
-
+import Profile from '../../components/profile/userProfile';
 import Home from '../../layouts/home';
 
 export default function Router() {
@@ -45,6 +45,9 @@ function PagePrivate({ isLogin }) {
       </Route>
       <Route path="/room/:id">
         <RoomSingle />
+      </Route>
+      <Route path="/profile">
+        <Profile />
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />

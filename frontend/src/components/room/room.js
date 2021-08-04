@@ -16,6 +16,8 @@ import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
 import { roomData } from './roomData.js';
 import { makeStyles } from '@material-ui/core/styles';
+import GuessJoinRoomModal from '../../common/modal/userJoinModal.js';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,37 +25,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '40px',
     marginTop: '30px',
   },
-  container: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(12, 1fr)',
-    gridGap: theme.spacing(3),
-    marginLeft: theme.spacing(40),
-    marginRight: theme.spacing(20),
-    marginTop: theme.spacing(10),
-    marginBottom: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    whiteSpace: 'nowrap',
-  },
-  paper: {
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    whiteSpace: 'nowrap',
-    marginBottom: theme.spacing(1),
-    marginLeft: theme.spacing(10),
-  },
-  page: {
+  gameName: {
     fontFamily: '"Gorditas", cursive',
     marginBottom: theme.spacing(1),
     textAlign: 'center',
-    color: 'black',
     whiteSpace: 'nowrap',
-  },
-  description: {
-    fontFamily: '"Fredoka One", cursive',
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
+    fontSize: '40px',
+    color: 'black',
   },
   icon: {
     color: 'white',
@@ -62,36 +40,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: 'transparent',
     },
   },
-  input: {
-    width: '90%',
-  },
-  divider: {
-    marginLeft: theme.spacing(5),
-    width: '4px',
-  },
-  span: {
-    color: 'white',
-    textShadow: '-1px 0 black, 0 1px black, 2px 0 black, 0 -1px black',
-  },
-  text: {
-    fontFamily: '"Roboto", sans-serif',
-    fontSize: '22px',
-    color: '#616161',
-    textAlign: 'initial',
-  },
   center: {
     display: 'table',
     marginLeft: 'auto',
     marginRight: 'auto',
-  },
-  margin: {
-    marginRight: '40px',
-    marginLeft: '40px',
-  },
-  search: {
-    width: '30%',
-    marginLeft: '550px',
-    backgroundColor: 'white',
   },
   grid: {
     height: '450px',
@@ -103,17 +55,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const gameName = {
-  fontSize: '40px',
-  color: 'black',
-};
-
 const back = {
   transform: 'rotate(180deg)',
   color: '#FFE203',
 };
 
 function Rooms() {
+  const User = useSelector((state) => state.user);
+  const user = {
+    idLogin: User.isLogin,
+    name: User.username,
+  };
+
   const classes = useStyles();
 
   const [data, setData] = useState([]);
@@ -143,12 +96,17 @@ function Rooms() {
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <div>
-        <Typography variant="h5" className={classes.page} style={gameName}>
+        <Typography variant="h5" className={classes.gameName}>
           <IconButton className={classes.icon} style={back} href="/">
             <PlayArrowIcon />
           </IconButton>
           ROOMS
-          <NumberInput id="roomId" name="roomId" classes={classes} />
+          <Input
+            id="roomId"
+            classes={classes}
+            name="search"
+            placeholder="Search room"
+          />
         </Typography>
 
         <div className={classes.grid}>
@@ -187,13 +145,18 @@ function Rooms() {
               link="/room/create"
               text="New room"
               name="room"
+              mr="30px"
             ></FuncButton>
-            <FuncButton
-              link="/room/:id"
-              text="Play"
-              bgcolor="#028a0f"
-              name="esport"
-            ></FuncButton>
+            {user.idLogin ? (
+              <FuncButton
+                link="/room/:id"
+                text="Play"
+                bgcolor="#028a0f"
+                name="esport"
+              ></FuncButton>
+            ) : (
+              <GuessJoinRoomModal />
+            )}
           </Grid>
         </div>
       </div>
@@ -202,10 +165,6 @@ function Rooms() {
       </Grid>
     </Container>
   );
-}
-
-function NumberInput({ id, name, classes }) {
-  return <Input name="search" placeholder="Search room" />;
 }
 
 export default Rooms;

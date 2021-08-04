@@ -46,7 +46,8 @@ export const FuncButton = (props) => {
     <Link to={props.link} style={textStyle} name={props.name}>
       <CustomButton
         variant="contained"
-        style={{ backgroundColor: props.bgcolor }}
+        style={{ backgroundColor: props.bgcolor, marginRight: props.mr }}
+        onClick={props.handleClick}
       >
         {props.name === 'esport' ? (
           <SportsEsportsIcon />
