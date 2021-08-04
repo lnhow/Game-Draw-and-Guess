@@ -7,6 +7,7 @@ import RoomCreate from '../room/create';
 import RoomSingle from '../room/single';
 import HomeLogin from '../home/homeloggin';
 import { useSelector } from 'react-redux';
+import HomeAdmin from '../../pages/admin/home/home';
 
 import Home from '../../layouts/home';
 
@@ -42,6 +43,9 @@ function PagePrivate({ isLogin }) {
       </Route>
       <Route exact path="/room/create">
         <RoomCreate />
+      </Route>
+      <Route exact path="/admin">
+        <HomeAdmin />
       </Route>
       <Route path="/room/:id">
         <RoomSingle />
