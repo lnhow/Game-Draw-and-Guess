@@ -196,8 +196,14 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
   if (!room || !guess || !userId) {
     return false;
   }
+
   const roomDrawWord = room.currentDrawWord;
   if (userId === room.currentDrawer) {
+    return false;
+  }
+
+  const isNotValidDrawWord = !roomDrawWord && roomDrawWord === '';
+  if (isNotValidDrawWord) {
     return false;
   }
 
