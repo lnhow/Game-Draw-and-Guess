@@ -11,7 +11,7 @@ import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL 
 import GameRoomLayout from './layout/gameRoomLayout';
 import LoadingPage from '../../loading';
 import ErrorPage from '../../error';
-import { RoomScreenStates } from '../../../common/constant';
+import { RoomScreenStates, SpecialMessage } from '../../../common/constant';
 import { connectToSocket } from '../../../helpers/socketio';
 
 function SingleRoom() {
@@ -106,6 +106,12 @@ function SingleRoom() {
     });
     socketRef.current.on('room-start-round', ({ round, drawerId }) => {
       dispatch(
+        addMessage({
+          type: SpecialMessage.ROUND_START,
+          title: round + 1, //Room round start at 0
+        }),
+      );
+      dispatch(
         updateRoom({
           roomRound: round + 1, //Room round start at 0
           drawerId: drawerId,
@@ -117,6 +123,7 @@ function SingleRoom() {
       dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
     });
     socketRef.current.on('room-end-round', ({ word }) => {
+      dispatch(addMessage({ type: SpecialMessage.ROUND_END }));
       dispatch(
         updateRoom({
           wordLastRound: word,

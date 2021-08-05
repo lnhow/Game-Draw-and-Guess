@@ -251,10 +251,6 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
   }
 
   const roomDrawWord = room.currentDrawWord;
-  if (userId === room.currentDrawer) {
-    return false;
-  }
-
   const isNotValidDrawWord =
     !roomDrawWord || roomDrawWord === '' || typeof roomDrawWord != 'string';
   if (isNotValidDrawWord) {

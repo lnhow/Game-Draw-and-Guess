@@ -1,4 +1,5 @@
 import RoomSocket from '../controllers/room.js';
+import SocketMessage from '../controllers/message.js';
 
 const handleMessage = (io, socket, { message }, callback) => {
   const user = RoomSocket.getUserBySocketId(socket.id);
@@ -8,22 +9,26 @@ const handleMessage = (io, socket, { message }, callback) => {
       user.roomId,
       message,
     );
-    if (containRightAnswer) {
-      io.to(user.roomId).emit('message', {
-        title: user.username,
-        message: 'guess the correct word!',
-      });
-      const room = RoomSocket.getRoom(user.roomId);
 
-      RoomSocket.setUserCorrect(user.id, room.roundTimer);
-      io.to(user.roomId).emit('room-users', {
-        users: RoomSocket.getUsersInRoom(user.roomId),
-      });
+    if (containRightAnswer) {
+      const room = RoomSocket.getRoom(user.roomId);
+      const isDrawer = room.currentDrawer === user.id;
+      if (user.isCorrect || isDrawer) {
+        // A user who is already correct or the drawer
+        // send another message contains the right anwser
+        SocketMessage.emitBlockedMessage(
+          io,
+          socket.id,
+          "Shh. Don't spoil the answer to others.",
+        );
+      } else {
+        SocketMessage.emitCorrectMessage(io, user);
+
+        RoomSocket.setUserCorrect(user.id, room.roundTimer);
+        SocketMessage.emitRoomUserInfos(io, user.roomId);
+      }
     } else {
-      io.to(user.roomId).emit('message', {
-        user: user.username,
-        message: message,
-      });
+      SocketMessage.emitChatMessage(io, user, message);
     }
   }
   if (callback) {
