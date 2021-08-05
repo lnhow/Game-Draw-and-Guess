@@ -1,6 +1,5 @@
 import RoomSocket from '../controllers/room.js';
 import { subcribeCallback } from '../../utils/helpers.js';
-import RoomState from '../../models/roomStateModel.js';
 import HandleGameController from '../controllers/game.js';
 
 const handleStartGame = (io, socket, callback) => {
@@ -23,12 +22,6 @@ const handleStartGame = (io, socket, callback) => {
     return;
   }
 
-  RoomSocket.updateRoomState(user.roomId, RoomState.PLAYING);
-  io.to(socket.id).emit('room-info', {
-    info: RoomSocket.getRoomInfo(user.roomId),
-  });
-  io.to(user.roomId).emit('room-start-game');
-  console.log(`Game started in room ${user.roomId}`);
   HandleGameController(io, user.roomId);
 
   //Check room contains more 2 user, else throw err msg

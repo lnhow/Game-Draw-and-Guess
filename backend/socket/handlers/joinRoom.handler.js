@@ -22,10 +22,18 @@ const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
     //Room not exist in server data: New room, fetch from db
     const result = await RoomSocket.addNewRoom(roomId, user.id);
     if (result === 400) {
-      clientCallback(`Invalid roomId: ${roomId}`);
+      clientCallback(`This game room had already ended. RoomId: ${roomId}`);
+      return;
+    } else if (result === 401) {
+      clientCallback(
+        `The host has not joined this room yet.\n RoomId: ${roomId}`,
+      );
+      return;
+    } else if (result === 404) {
+      clientCallback(`Room not found.\n RoomId: ${roomId}`);
       return;
     } else if (result === 500) {
-      clientCallback(`Server internal Error. roomId: ${roomId}`);
+      clientCallback(`Server internal Error. RoomId: ${roomId}`);
       return;
     }
   }

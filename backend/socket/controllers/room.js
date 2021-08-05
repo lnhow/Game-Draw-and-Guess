@@ -3,6 +3,7 @@
  */
 import gameroomModel from '../../models/gameroomModel.cjs';
 import RoomState from '../../models/roomStateModel.js';
+import mongoose from 'mongoose';
 
 import RoomServices from '../data/room.data.js';
 import RoomUsersServices from '../data/roomUsers.data.js';
@@ -11,18 +12,24 @@ import SocketUserServices from '../data/socketUser.data.js';
 export const addNewRoom = async (roomId, userId) => {
   let result = await gameroomModel.findOne({ _id: roomId }, (err) => {
     if (err) {
-      return 400;
+      return 404;
     }
   });
-  const isInvalidNewRoom =
-    !result ||
-    result.roomStatus !== RoomState.CREATED ||
-    result.hostUserId.toString() !== userId;
 
-  if (isInvalidNewRoom) {
-    return 400;
+  if (!result) {
+    return 404;
   }
 
+  if (result.roomStatus !== RoomState.CREATED) {
+    return 400; //This game room is already used
+  }
+
+  if (result.hostUserId.toString() !== userId) {
+    return 401; //The host has not joined this room yet
+  }
+
+  updateRoomStateToDB(roomId, RoomState.WAITING);
+  //Server data automatically set room state to WAITING when joinned
   const newRoom = {
     id: result._id,
     category: result.categoryId,
@@ -36,9 +43,27 @@ export const addNewRoom = async (roomId, userId) => {
 };
 
 export const removeRoom = (roomId) => {
-  //Save room data to DB...
+  saveRemovedRoom(roomId);
   console.log(`Room ${roomId} removed`);
   return RoomServices.removeRoom(roomId);
+};
+
+export const saveRemovedRoom = (roomId) => {
+  const room = getRoom(roomId);
+  if (!room) {
+    return; //Room not found, stop saving
+  }
+
+  const saveRoomData = {
+    roomStatus: RoomState.ENDED,
+  };
+
+  gameroomModel.findOneAndUpdate(
+    {
+      _id: mongoose.Types.ObjectId(roomId),
+    },
+    saveRoomData,
+  );
 };
 
 export const getRoom = (roomId) => {
@@ -73,8 +98,30 @@ export const setRoomDrawInfo = (roomId, drawerId, drawWord) => {
   RoomServices.roomSetDrawInfo(roomId, drawerId, word);
 };
 
+/**
+ * Update a room's state both in server & database
+ * @param {String} roomId The id of the room
+ * @param {RoomState} roomState The new state of the room
+ */
 export const updateRoomState = (roomId, roomState) => {
+  updateRoomStateToDB(roomId, roomState);
   RoomServices.updateRoomState(roomId, roomState);
+};
+
+/**
+ * Update a room's state to database
+ * @param {String} roomId The id of the room
+ * @param {RoomState} roomState The new state of the room
+ */
+export const updateRoomStateToDB = async (roomId, roomState) => {
+  await gameroomModel.findOneAndUpdate(
+    {
+      _id: mongoose.Types.ObjectId(roomId),
+    },
+    {
+      roomStatus: roomState,
+    },
+  );
 };
 
 export const hasRoomExisted = (roomId) => {
@@ -202,7 +249,8 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
     return false;
   }
 
-  const isNotValidDrawWord = !roomDrawWord && roomDrawWord === '';
+  const isNotValidDrawWord =
+    !roomDrawWord || roomDrawWord === '' || typeof roomDrawWord != 'string';
   if (isNotValidDrawWord) {
     return false;
   }
