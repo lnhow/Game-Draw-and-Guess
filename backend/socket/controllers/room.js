@@ -227,6 +227,10 @@ export const setRoomTimer = (roomId, timer) => {
   RoomServices.roomSetTimer(roomId, timer);
 };
 
+export const setRoomRound = (roomId, currentRound = -1) => {
+  RoomServices.roomSetCurrentRound(roomId, currentRound);
+};
+
 export const decreaseRoomTimer = (roomId, value = 1) => {
   RoomServices.roomDecreaseTimer(roomId, value);
 };
@@ -240,6 +244,7 @@ const RoomSocketController = {
   getRoom,
   getRoomInfo,
   hasRoomExisted,
+  setRoomRound,
   setRoomTimer,
   decreaseRoomTimer,
   //Users verification

@@ -29,15 +29,15 @@ export const RoomSlice = createSlice({
         wordLastRound,
       } = action.payload;
 
-      if (roomId) state.roomId = roomId;
-      if (roomState) {
+      if (roomId !== undefined) state.roomId = roomId;
+      if (roomState !== undefined) {
         state.roomState = convertRoomToScreenState(roomState);
       }
-      if (roomRound) state.roomRound = roomRound;
-      if (hostUserId) state.hostUserId = hostUserId;
-      if (drawerId) state.drawerId = drawerId;
-      if (drawerWord) state.drawerWord = drawerWord;
-      if (wordLastRound) state.wordLastRound = wordLastRound;
+      if (roomRound !== undefined) state.roomRound = roomRound;
+      if (hostUserId !== undefined) state.hostUserId = hostUserId;
+      if (drawerId !== undefined) state.drawerId = drawerId;
+      if (drawerWord !== undefined) state.drawerWord = drawerWord;
+      if (wordLastRound !== undefined) state.wordLastRound = wordLastRound;
     },
 
     updateRoomUsers(state, action) {
