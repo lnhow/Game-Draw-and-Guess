@@ -33,6 +33,7 @@ function Rooms({ classes }) {
   const dispatch = useDispatch();
   const [isAlertAnonymousUser, setIsAlertAnonymousUser] = useState(false);
   const [errorJoinAnonymousUser, setErrorJoinAnonymousUser] = useState('');
+  
 
   useEffect(() => {
     async function getRooms() {
@@ -92,6 +93,7 @@ function Rooms({ classes }) {
           isLogin: false,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
+          isToken:true,
         }),
       );
       await localStorage.setItem('user', reponses.token);

@@ -25,11 +25,12 @@ function App() {
           isLogin: UserIsLogin === 'true' ? true : false, //distinguish between logged in users and Anonymous
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
+          isToken:true,
         }),
       );
     }
     else {
-      dispatch(updateUser({ isLogin: false }));
+      dispatch(updateUser({ isLogin: false,isToken:false }));
     }
   }, [tokenForUser,UserIsLogin, dispatch]);
 

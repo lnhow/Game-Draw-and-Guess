@@ -12,7 +12,6 @@ import Home from '../../layouts/home';
 
 export default function Router() {
   const User = useSelector((state) => state.user);
-  const UserIsLogin = localStorage.getItem('isLogin');
   return (
     <Switch>
       <Route exact path="/login">
@@ -32,7 +31,7 @@ export default function Router() {
         {User.isLogin ? <RoomCreate /> : <Redirect to="/login" />}
       </Route>
       <Route path="/room/:id">
-        {UserIsLogin ? <RoomSingle /> : <Redirect to="/login" />}
+        {User.isToken ? <RoomSingle /> : <Redirect to="/login" />}
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />
