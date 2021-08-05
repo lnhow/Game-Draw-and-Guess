@@ -2,6 +2,7 @@
  * May need more verification
  */
 import gameroomModel from '../../models/gameroomModel.cjs';
+import roomUsersController from '../../controllers/roomUsersController.js';
 import RoomState from '../../models/roomStateModel.js';
 import mongoose from 'mongoose';
 
@@ -151,18 +152,23 @@ export const removeUserFromRoom = (socketId) => {
   const user = RoomUsersServices.getUserRoom(userId);
 
   //Remove user info & then socket info & then remove from room
-  if (!userId) {
+  if (!userId || !user) {
     return;
   }
+
+  //Save user to DB (if possible)
+  roomUsersController.saveRoomUserData({
+    userId: userId,
+    roomId: user.roomId,
+    point: user.points,
+    drawWordId: user.word,
+  });
+
   RoomUsersServices.removeUserRoom(userId);
   SocketUserServices.removeSocketUser(socketId);
-  if (!user) {
-    return;
-  }
   RoomServices.roomRemoveUser(user.roomId, userId);
 
   const users = RoomServices.roomGetUsers(user.roomId);
-  //TODO: Remove this & handle when room is less than 2 player
   if (!users || users.length < 1) {
     removeRoom(user.roomId);
   }
