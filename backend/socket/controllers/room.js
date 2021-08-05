@@ -200,7 +200,11 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
   if (userId === room.currentDrawer) {
     return false;
   }
-  return guess.includes(roomDrawWord);
+
+  const formattedGuess = guess.toUpperCase();
+  const formattedDrawWord = roomDrawWord.toUpperCase();
+
+  return formattedGuess.includes(formattedDrawWord);
 };
 
 export const setUserCorrect = (userId, correctTime = null) => {
