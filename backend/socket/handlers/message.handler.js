@@ -11,8 +11,10 @@ const handleMessage = (io, socket, { message }, callback) => {
     );
 
     if (containRightAnswer) {
-      if (user.isCorrect) {
-        // A user who is already correct
+      const room = RoomSocket.getRoom(user.roomId);
+      const isDrawer = room.currentDrawer === user.id;
+      if (user.isCorrect || isDrawer) {
+        // A user who is already correct or the drawer
         // send another message contains the right anwser
         SocketMessage.emitBlockedMessage(
           io,
@@ -22,7 +24,6 @@ const handleMessage = (io, socket, { message }, callback) => {
       } else {
         SocketMessage.emitCorrectMessage(io, user);
 
-        const room = RoomSocket.getRoom(user.roomId);
         RoomSocket.setUserCorrect(user.id, room.roundTimer);
         SocketMessage.emitRoomUserInfos(io, user.roomId);
       }
