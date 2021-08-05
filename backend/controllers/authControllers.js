@@ -33,7 +33,7 @@ async function register(req, res) {
     email: req.body.email,
   });
   if (emailExist)
-    return res.status(409).json({
+    return res.status(403).json({
       message: 'Email already exists',
     });
 

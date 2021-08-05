@@ -30,7 +30,7 @@ async function createWord(req, res) {
   });
 
   if (existedWword) {
-    res.status(409).json({ message: 'Word already exists' });
+    res.status(403).json({ message: 'Word already exists' });
   }
 
   const word = new wordModel(req.body);
