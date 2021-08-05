@@ -9,9 +9,9 @@ const handleDisconnect = (io, socket) => {
   }
   // Broadcast to room that user had left
   // Update list of users in room
-  console.log(RoomSocket.getUsersInRoom(room));
+  console.log(RoomSocket.getUserInfosInRoom(room));
   io.to(room).emit('room-users', {
-    users: RoomSocket.getUsersInRoom(room),
+    users: RoomSocket.getUserInfosInRoom(room),
   });
 };
 

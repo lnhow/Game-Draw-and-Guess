@@ -55,8 +55,22 @@ export const getRoomInfo = (roomId) => {
   };
 };
 
+/**
+ * Set room's current draw info or clear it's current draw info
+ * & associate the drawer with the word's id
+ * @param {String} roomId The id of the room to set the draw info
+ * @param {String} drawerId The id of the drawer to set, null to clear room's current Drawer
+ * @param {{
+ *  id: String,
+ *  word: String
+ * }} drawWord The simple representation of the draw word to set, left null to clear room's current Draw Word
+ */
 export const setRoomDrawInfo = (roomId, drawerId, drawWord) => {
-  RoomServices.roomSetDrawInfo(roomId, drawerId, drawWord);
+  const word = drawWord ? drawWord.word : null;
+  if (drawWord) {
+    RoomUsersServices.setWord(drawerId, drawWord.id);
+  }
+  RoomServices.roomSetDrawInfo(roomId, drawerId, word);
 };
 
 export const updateRoomState = (roomId, roomState) => {
@@ -115,7 +129,22 @@ export const getUsersInRoom = (roomId) => {
     return [];
   }
 
-  const usersInRoom = users
+  const userNotLeft = users.filter((user) => !user.left);
+  const usersInRoom = userNotLeft
+    .map((userId) => getUserById(userId))
+    .filter(Boolean); //Filter null...
+
+  return usersInRoom;
+};
+
+export const getUserInfosInRoom = (roomId) => {
+  const users = RoomServices.roomGetUsers(roomId);
+  if (!users) {
+    return [];
+  }
+
+  const userNotLeft = users.filter((user) => !user.left);
+  const usersInRoom = userNotLeft
     .map((userId) => getUserInfoById(userId))
     .filter(Boolean); //Filter null...
 
@@ -171,7 +200,11 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
   if (userId === room.currentDrawer) {
     return false;
   }
-  return guess.includes(roomDrawWord);
+
+  const formattedGuess = guess.toUpperCase();
+  const formattedDrawWord = roomDrawWord.toUpperCase();
+
+  return formattedGuess.includes(formattedDrawWord);
 };
 
 export const setUserCorrect = (userId, correctTime = null) => {
@@ -179,7 +212,7 @@ export const setUserCorrect = (userId, correctTime = null) => {
 };
 
 export const countCorrectUser = (roomId) => {
-  const users = getUsersInRoom(roomId);
+  const users = getUserInfosInRoom(roomId);
   return users.filter((user) => user.isCorrect).length;
 };
 
@@ -220,6 +253,7 @@ const RoomSocketController = {
   countCorrectUser,
   //Get user
   getUsersInRoom,
+  getUserInfosInRoom,
   getUserBySocketId,
   getUserById,
   getUserInfoById,
