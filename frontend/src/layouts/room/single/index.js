@@ -60,7 +60,7 @@ function SingleRoom() {
 
     return function cleanUp() {
       //componentsWillUnmount
-      if (socketRef.current) {
+      if (socketRef.current && socketRef.current.connected) {
         socketRef.current.disconnect();
       }
       dispatch(clearRoom());
@@ -77,7 +77,6 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('room-users', ({ users }) => {
-      console.log(users);
       dispatch(updateRoomUsers({ users }));
     });
   }, [dispatch]);
@@ -90,7 +89,6 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('room-info', ({ info }) => {
-      console.log(info);
       dispatch(
         updateRoom({
           roomState: info.roomState,
@@ -136,6 +134,12 @@ function SingleRoom() {
     });
     socketRef.current.on('timer', (timeLeft) => {
       dispatch(updateTimer({ timer: timeLeft }));
+    });
+    socketRef.current.on('connect_error', (_) => {
+      setErr({ message: 'Server - Room connection error' });
+      if (socketRef.current && socketRef.current.connected) {
+        socketRef.current.disconnect();
+      }
     });
   }, [dispatch]);
 
