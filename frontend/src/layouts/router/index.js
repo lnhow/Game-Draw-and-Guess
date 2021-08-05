@@ -12,27 +12,15 @@ import Home from '../../layouts/home';
 
 export default function Router() {
   const User = useSelector((state) => state.user);
+  const UserIsLogin = localStorage.getItem('isLogin');
   return (
     <Switch>
-      <Route path="/">
-        {User.isLogin ? (
-          <PagePrivate isLogin={User.isLogin} />
-        ) : (
-          <Logined isLogin={User.isLogin} />
-        )}
+      <Route exact path="/login">
+        {User.isLogin ? <Redirect to="/" /> : <Login />}
       </Route>
-      <Route>
-        <ErrorPage errorCode={404} message={'Not Found'} />
+      <Route exact path="/sign-up">
+        {User.isLogin ? <Redirect to="/" /> : <SignUp />}
       </Route>
-    </Switch>
-  );
-}
-
-function PagePrivate({ isLogin }) {
-  if (!isLogin) return <Redirect to="/login" />;
-
-  return (
-    <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/home">
         <HomeLogin />
@@ -41,27 +29,10 @@ function PagePrivate({ isLogin }) {
         <Room />
       </Route>
       <Route exact path="/room/create">
-        <RoomCreate />
+        {User.isLogin ? <RoomCreate /> : <Redirect to="/login" />}
       </Route>
       <Route path="/room/:id">
-        <RoomSingle />
-      </Route>
-      <Route>
-        <ErrorPage errorCode={404} message={'Not Found'} />
-      </Route>
-    </Switch>
-  );
-}
-
-function Logined({ isLogin }) {
-  if (isLogin) return <Redirect to="/home" />;
-  return (
-    <Switch>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <Route exact path="/sign-up">
-        <SignUp />
+        {UserIsLogin ? <RoomSingle /> : <Redirect to="/login" />}
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />
