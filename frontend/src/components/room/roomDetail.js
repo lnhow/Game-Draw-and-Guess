@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
+const Room = ({ currentPlayer, maxPlayer, roomName, categoryName, isPrivate }) => (
   <Grid item>
     <Paper className={useStyles().paper}>
       <div className={useStyles().avatar}>
@@ -49,7 +49,7 @@ const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
       <Typography variant="h6" className={useStyles().roomName}>
         {roomName}
         <br />
-        <span className={useStyles().roomId}>&emsp;#{roomId}</span>
+        <span className={useStyles().categoryName}>&emsp;#{categoryName}</span>
       </Typography>
       <RoomInfo
         curPlayer={currentPlayer}

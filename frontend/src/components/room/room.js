@@ -10,51 +10,52 @@ import { FuncButton } from '../../common/Button.js';
 import Footer from '../../components/footer/index.js';
 import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
-import { roomData } from './roomData.js';
 import { withStyles } from '@material-ui/core/styles';
 import style from './style';
 import SearchBar from 'material-ui-search-bar';
 import AlertDialogSlide from '../../common/dialog/dialog.js';
 import { useHistory } from 'react-router-dom';
-
-// const back = {
-//   transform: 'rotate(180deg)',
-//   color: '#FFE203',
-// };
+import RoomApi from '../../api/roomApi';
 
 function Rooms({ classes }) {
-  const [data, setData] = useState(roomData);
+  const [data, setData] = useState([]);
   const [searched, setSearched] = useState('');
   const [idRoom, setIdRoom] = useState('');
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const history = useHistory();
 
-  const getData = () => {
-    fetch('roomData.json', {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    })
-      .then(function (response) {
-        console.log(response);
-        return response.json();
-      })
-      .then(function (myJson) {
-        console.log(myJson);
-        setData(myJson);
-      });
-  };
-
   useEffect(() => {
-    getData();
+    async function getRooms() {
+      try {
+        const reponses = await RoomApi.get();
+        setData(reponses.rooms);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    getRooms();
   }, []);
 
   const requestSearch = (searchedVal) => {
-    const filteredRows = roomData.filter((row) => {
-      return row.roomName.toLowerCase().includes(searchedVal.toLowerCase());
-    });
-    setData(filteredRows);
+    if (!searchedVal) {
+      async function getRooms() {
+        try {
+          const reponses = await RoomApi.get();
+          setData(reponses.rooms);
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
+
+      getRooms();
+    } else {
+      const filteredRows = data.filter((row) => {
+        return row.roomName.toLowerCase().includes(searchedVal.toLowerCase());
+      });
+      console.log('filtered: ', filteredRows);
+      setData(filteredRows);
+    }
   };
 
   const cancelSearch = () => {
@@ -97,18 +98,16 @@ function Rooms({ classes }) {
                 return (
                   <ImageListItem
                     key={key}
-                    idRoom={data.roomId}
+                    idRoom={data._id}
                     onClick={handleClickRoom}
                   >
                     <Room
                       key={key}
                       currentPlayer={data.currentPlayer}
                       maxPlayer={data.maxPlayer}
-                      language={data.language}
-                      point={data.point}
                       roomName={data.roomName}
-                      roomId={data.roomId}
-                      value={'123' + (Math.random() * 10) / 100}
+                      roomId={data._id}
+                      categoryName={data.categoryName}
                     />
                   </ImageListItem>
                 );
