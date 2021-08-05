@@ -1,6 +1,7 @@
 import { subcribeCallback, isValidRoomId } from '../../utils/helpers.js';
 
 import RoomSocket from '../controllers/room.js';
+import SocketMessage from '../controllers/message.js';
 
 const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
   console.log(
@@ -51,10 +52,9 @@ const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
     info: RoomSocket.getRoomInfo(roomId),
   });
 
+  SocketMessage.emitJoinMessage(io, roomId, user.username);
   // Update list of users in room
-  io.to(roomId).emit('room-users', {
-    users: RoomSocket.getUserInfosInRoom(roomId),
-  });
+  SocketMessage.emitRoomUserInfos(io, roomId);
   callback();
 };
 
