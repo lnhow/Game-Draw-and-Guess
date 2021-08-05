@@ -12,6 +12,13 @@ const HandleGameController = async (io, roomId) => {
     return;
   }
 
+  RoomSocket.updateRoomState(roomId, RoomState.PLAYING);
+  io.to(roomId).emit('room-info', {
+    info: RoomSocket.getRoomInfo(roomId),
+  });
+  io.to(roomId).emit('room-start-game');
+  console.log(`Game started in room ${roomId}`);
+
   for (let i = 0; i < room.users.length; i++) {
     RoomSocket.setRoomRound(roomId, i);
     //Start round
@@ -31,8 +38,12 @@ const HandleGameController = async (io, roomId) => {
 
   console.log(`${roomId}: room-end-game`);
   io.to(roomId).emit('room-end-game');
-  //Temporarily reset back to WAITING
-  RoomSocket.updateRoomState(roomId, RoomState.WAITING);
+  if (process.env.SERVER_MODE === 'dev') {
+    //Don't have to create a new room for dev test
+    RoomSocket.updateRoomState(roomId, RoomState.WAITING);
+  } else {
+    RoomSocket.updateRoomState(roomId, RoomState.ENDED);
+  }
 };
 
 const handleStartRound = async (io, roomId, room) => {

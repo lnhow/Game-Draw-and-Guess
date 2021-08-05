@@ -14,9 +14,10 @@ mongoose
   .connect(process.env.DB_CONNECT, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   })
   .then(() => {
-    console.log('Connect successfully');
+    console.log('Connect to DB successfully');
   });
 const app = express();
 
