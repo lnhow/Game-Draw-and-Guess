@@ -94,7 +94,7 @@ function SingleRoom() {
       dispatch(
         updateRoom({
           roomState: info.roomState,
-          roomRound: info.roomRound + 1, //Room round start at 0: falsy
+          roomRound: info.roomRound + 1, //Room round start at 0
           hostUserId: info.hostUserId,
           roomId: info.roomId,
         }),
@@ -106,9 +106,10 @@ function SingleRoom() {
     socketRef.current.on('room-start-game', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_STARTED }));
     });
-    socketRef.current.on('room-start-round', ({ drawerId }) => {
+    socketRef.current.on('room-start-round', ({ round, drawerId }) => {
       dispatch(
         updateRoom({
+          roomRound: round + 1, //Room round start at 0
           drawerId: drawerId,
           roomState: RoomScreenStates.ROUND_START,
         }),
@@ -121,6 +122,7 @@ function SingleRoom() {
       dispatch(
         updateRoom({
           wordLastRound: word,
+          drawerWord: null, //Clear drawer word
           roomState: RoomScreenStates.ROUND_ENDED,
         }),
       );

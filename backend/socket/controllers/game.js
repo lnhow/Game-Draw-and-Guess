@@ -8,20 +8,25 @@ const ROUND_TIMEOUT = 5 * ONE_SECOND;
 
 const HandleGameController = async (io, roomId) => {
   const room = RoomSocket.getRoom(roomId);
+  if (!room) {
+    return;
+  }
 
-  //Start round
-  const word = await handleStartRound(io, roomId, room);
+  for (let i = 0; i < room.users.length; i++) {
+    RoomSocket.setRoomRound(roomId, i);
+    //Start round
+    const word = await handleStartRound(io, roomId, room);
+    if (word) {
+      //Wait for user to see the start round message
+      await sleep(ROUND_TIMEOUT);
 
-  if (word) {
-    //Wait for user to see the start round message
-    await sleep(ROUND_TIMEOUT);
+      await handleRoundPlaying(io, roomId, room);
 
-    await handleRoundPlaying(io, roomId, room);
-
-    //End round
-    handleEndRound(io, roomId, room, word);
-    //Wait for user to see the end round message
-    await sleep(ROUND_TIMEOUT);
+      //End round
+      handleEndRound(io, roomId, room, word);
+      //Wait for user to see the end round message
+      await sleep(ROUND_TIMEOUT);
+    }
   }
 
   console.log(`${roomId}: room-end-game`);
@@ -47,7 +52,11 @@ const handleStartRound = async (io, roomId, room) => {
   io.to(drawer.socketId).emit('room-draw-word', { word: drawerWord.word });
 
   console.log(`${roomId}: room-start-round- ${drawerId}`);
-  io.to(roomId).emit('room-start-round', { drawerId: drawerId });
+  io.to(roomId).emit('room-start-round', {
+    round: room.currentRound,
+    drawerId: drawerId,
+  });
+
   return drawerWord.word;
 };
 

@@ -161,6 +161,15 @@ const RoomServices = {
 
     room.roundTimer -= value;
   },
+
+  roomSetCurrentRound(roomId, currentRound) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.currentRound = currentRound;
+  },
 };
 
 export default RoomServices;
