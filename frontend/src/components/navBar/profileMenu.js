@@ -51,7 +51,7 @@ export default function ProfileMenu({ component, listDropDownItem }) {
   const handleLogOut = () => {
     localStorage.removeItem('user');
     dispatch(updateUser({ isLogin: false }));
-    return history.push('/login');
+    return history.push('/');
   };
 
   return (

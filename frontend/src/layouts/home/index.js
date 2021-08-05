@@ -9,7 +9,7 @@ import {
 import { FuncButton } from '../../common/Button.js';
 import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
-
+import { useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
@@ -37,6 +37,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     whiteSpace: 'nowrap',
+    justify: 'center',
+    alignItems: 'center',
   },
   paper: {
     padding: theme.spacing(1),
@@ -78,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: '"Roboto", sans-serif',
     fontSize: '22px',
     color: '#616161',
-    textAlign: 'initial',
+    textAlign: 'center',
   },
 }));
 
@@ -96,7 +98,13 @@ const gameName = {
 
 function Home() {
   const classes = useStyles();
-  const [idRoom,setIdRoom] = useState('')
+  const [idRoom, setIdRoom] = useState('');
+  const User = useSelector((state) => state.user);
+  const user = {
+    idLogin: User.isLogin,
+    name: User.username,
+    avatar: User.avatar,
+  };
 
   return (
     <Container component="main" className={classes.root}>
@@ -112,20 +120,29 @@ function Home() {
 
       <div>
         <div className={classes.container}>
-          <Grid>
-            <Typography variant="h6" className={classes.text}>
-              Don't have an account?
-            </Typography>
-            <FuncButton
-              link="/sign-up"
-              text="Sign up"
-              bgcolor="#028a0f"
-            ></FuncButton>
-            <Typography variant="h6" className={classes.text}>
-              Already have an account?
-            </Typography>
-            <FuncButton link="/login" text="Log in"></FuncButton>
-          </Grid>
+          {user.idLogin ? (
+            <Grid>
+              <img src={User.avatar} alt="avatar" />
+              <Typography variant="h6" className={classes.text}>
+                Hello, {User.username}
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid>
+              <Typography variant="h6" className={classes.text}>
+                Don't have an account?
+              </Typography>
+              <FuncButton
+                link="/sign-up"
+                text="Sign up"
+                bgcolor="#028a0f"
+              ></FuncButton>
+              <Typography variant="h6" className={classes.text}>
+                Already have an account?
+              </Typography>
+              <FuncButton link="/login" text="Log in"></FuncButton>
+            </Grid>
+          )}
           <Divider
             className={classes.divider}
             orientation="vertical"
@@ -169,8 +186,8 @@ function Home() {
                 <Input
                   id="roomId"
                   name="roomId"
-                  value ={idRoom}
-                  handleChange={e=>setIdRoom(e.target.value)}
+                  value={idRoom}
+                  handleChange={(e) => setIdRoom(e.target.value)}
                   placeholder="Enter room code"
                   link={`/room/${idRoom}`}
                 />

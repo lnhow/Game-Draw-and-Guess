@@ -10,6 +10,10 @@ const UserApi = {
     const url = '/user/register';
     return axiosClient.post(url, { ...params });
   },
+  editProfile: (params) => {
+    const url = '/user/edit';
+    return axiosClient.post(url, { ...params });
+  },
 };
 
 export default UserApi;

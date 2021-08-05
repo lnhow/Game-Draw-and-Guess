@@ -4,6 +4,9 @@ import { Avatar, GridList, GridListTile } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import Modal from 'react-modal';
 import { FuncButton } from '../../common/Button.js';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../features/User/userSlice.js';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -36,6 +39,8 @@ const customStyles = {
 export default function AvarModal() {
   const classes = useStyles();
   const User = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
@@ -60,6 +65,22 @@ export default function AvarModal() {
     'https://robohash.org/640.png?set=set4&size=150x150',
   ];
 
+  const handleClick = (event, data) => {
+    console.log(event.currentTarget.firstChild.currentSrc);
+
+    let avar = event.currentTarget.firstChild.currentSrc;
+
+    event.preventDefault();
+    const action = () => {
+      return {
+        avatar: avar,
+      };
+    };
+    dispatch(updateUser(action()));
+    console.log(User.avatar);
+    history.push('/profile');
+  };
+
   return (
     <div>
       <FuncButton
@@ -82,7 +103,7 @@ export default function AvarModal() {
                 <Avatar
                   src={data}
                   className={classes.ava}
-                  // onClick={handleClick => {User.avatar = {data}}}
+                  onClick={handleClick}
                 />
               </GridListTile>
             );

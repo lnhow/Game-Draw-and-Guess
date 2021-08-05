@@ -147,7 +147,7 @@ function Rooms() {
               name="room"
               mr="30px"
             ></FuncButton>
-            {user.idLogin ? (
+            {/* {user.idLogin ? (
               <FuncButton
                 link="/room/:id"
                 text="Play"
@@ -156,7 +156,14 @@ function Rooms() {
               ></FuncButton>
             ) : (
               <GuessJoinRoomModal />
-            )}
+            )} */}
+            {/* <FuncButton
+                link="/room/:id"
+                text="Play"
+                bgcolor="#028a0f"
+                name="esport"
+              ></FuncButton> */}
+            <GuessJoinRoomModal />
           </Grid>
         </div>
       </div>
