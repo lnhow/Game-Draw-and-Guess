@@ -46,7 +46,15 @@ const createRoomValidation = (data) => {
   return schema.validate(data);
 };
 
+const usernameValidation = (data) => {
+  const schema = Joi.object({
+    username: Joi.string().alphanum().min(3).required(),
+  });
+  return schema.validate(data);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.repasswordValidation = repasswordValidation;
 module.exports.createRoomValidation = createRoomValidation;
+module.exports.usernameValidation = usernameValidation;

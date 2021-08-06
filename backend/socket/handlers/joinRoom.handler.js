@@ -1,6 +1,7 @@
 import { subcribeCallback, isValidRoomId } from '../../utils/helpers.js';
 
 import RoomSocket from '../controllers/room.js';
+import SocketMessage from '../controllers/message.js';
 
 const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
   console.log(
@@ -22,10 +23,18 @@ const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
     //Room not exist in server data: New room, fetch from db
     const result = await RoomSocket.addNewRoom(roomId, user.id);
     if (result === 400) {
-      clientCallback(`Invalid roomId: ${roomId}`);
+      clientCallback(`This game room had already ended. RoomId: ${roomId}`);
+      return;
+    } else if (result === 401) {
+      clientCallback(
+        `The host has not joined this room yet.\n RoomId: ${roomId}`,
+      );
+      return;
+    } else if (result === 404) {
+      clientCallback(`Room not found.\n RoomId: ${roomId}`);
       return;
     } else if (result === 500) {
-      clientCallback(`Server internal Error. roomId: ${roomId}`);
+      clientCallback(`Server internal Error. RoomId: ${roomId}`);
       return;
     }
   }
@@ -43,10 +52,9 @@ const handleJoinRoom = async (io, socket, { user, roomId }, callback) => {
     info: RoomSocket.getRoomInfo(roomId),
   });
 
+  SocketMessage.emitJoinMessage(io, roomId, user.username);
   // Update list of users in room
-  io.to(roomId).emit('room-users', {
-    users: RoomSocket.getUsersInRoom(roomId),
-  });
+  SocketMessage.emitRoomUserInfos(io, roomId);
   callback();
 };
 

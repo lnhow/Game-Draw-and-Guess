@@ -2,7 +2,9 @@
  * May need more verification
  */
 import gameroomModel from '../../models/gameroomModel.cjs';
+import roomUsersController from '../../controllers/roomUsersController.js';
 import RoomState from '../../models/roomStateModel.js';
+import mongoose from 'mongoose';
 
 import RoomServices from '../data/room.data.js';
 import RoomUsersServices from '../data/roomUsers.data.js';
@@ -11,18 +13,24 @@ import SocketUserServices from '../data/socketUser.data.js';
 export const addNewRoom = async (roomId, userId) => {
   let result = await gameroomModel.findOne({ _id: roomId }, (err) => {
     if (err) {
-      return 400;
+      return 404;
     }
   });
-  const isInvalidNewRoom =
-    !result ||
-    result.roomStatus !== RoomState.CREATED ||
-    result.hostUserId.toString() !== userId;
 
-  if (isInvalidNewRoom) {
-    return 400;
+  if (!result) {
+    return 404;
   }
 
+  if (result.roomStatus !== RoomState.CREATED) {
+    return 400; //This game room is already used
+  }
+
+  if (result.hostUserId.toString() !== userId) {
+    return 401; //The host has not joined this room yet
+  }
+
+  updateRoomStateToDB(roomId, RoomState.WAITING);
+  //Server data automatically set room state to WAITING when joinned
   const newRoom = {
     id: result._id,
     category: result.categoryId,
@@ -36,9 +44,27 @@ export const addNewRoom = async (roomId, userId) => {
 };
 
 export const removeRoom = (roomId) => {
-  //Save room data to DB...
+  saveRemovedRoom(roomId);
   console.log(`Room ${roomId} removed`);
   return RoomServices.removeRoom(roomId);
+};
+
+export const saveRemovedRoom = (roomId) => {
+  const room = getRoom(roomId);
+  if (!room) {
+    return; //Room not found, stop saving
+  }
+
+  const saveRoomData = {
+    roomStatus: RoomState.ENDED,
+  };
+
+  gameroomModel.findOneAndUpdate(
+    {
+      _id: mongoose.Types.ObjectId(roomId),
+    },
+    saveRoomData,
+  );
 };
 
 export const getRoom = (roomId) => {
@@ -55,12 +81,48 @@ export const getRoomInfo = (roomId) => {
   };
 };
 
+/**
+ * Set room's current draw info or clear it's current draw info
+ * & associate the drawer with the word's id
+ * @param {String} roomId The id of the room to set the draw info
+ * @param {String} drawerId The id of the drawer to set, null to clear room's current Drawer
+ * @param {{
+ *  id: String,
+ *  word: String
+ * }} drawWord The simple representation of the draw word to set, left null to clear room's current Draw Word
+ */
 export const setRoomDrawInfo = (roomId, drawerId, drawWord) => {
-  RoomServices.roomSetDrawInfo(roomId, drawerId, drawWord);
+  const word = drawWord ? drawWord.word : null;
+  if (drawWord) {
+    RoomUsersServices.setWord(drawerId, drawWord.id);
+  }
+  RoomServices.roomSetDrawInfo(roomId, drawerId, word);
 };
 
+/**
+ * Update a room's state both in server & database
+ * @param {String} roomId The id of the room
+ * @param {RoomState} roomState The new state of the room
+ */
 export const updateRoomState = (roomId, roomState) => {
+  updateRoomStateToDB(roomId, roomState);
   RoomServices.updateRoomState(roomId, roomState);
+};
+
+/**
+ * Update a room's state to database
+ * @param {String} roomId The id of the room
+ * @param {RoomState} roomState The new state of the room
+ */
+export const updateRoomStateToDB = async (roomId, roomState) => {
+  await gameroomModel.findOneAndUpdate(
+    {
+      _id: mongoose.Types.ObjectId(roomId),
+    },
+    {
+      roomStatus: roomState,
+    },
+  );
 };
 
 export const hasRoomExisted = (roomId) => {
@@ -90,18 +152,23 @@ export const removeUserFromRoom = (socketId) => {
   const user = RoomUsersServices.getUserRoom(userId);
 
   //Remove user info & then socket info & then remove from room
-  if (!userId) {
+  if (!userId || !user) {
     return;
   }
+
+  //Save user to DB (if possible)
+  roomUsersController.saveRoomUserData({
+    userId: userId,
+    roomId: user.roomId,
+    point: user.points,
+    drawWordId: user.word,
+  });
+
   RoomUsersServices.removeUserRoom(userId);
   SocketUserServices.removeSocketUser(socketId);
-  if (!user) {
-    return;
-  }
   RoomServices.roomRemoveUser(user.roomId, userId);
 
   const users = RoomServices.roomGetUsers(user.roomId);
-  //TODO: Remove this & handle when room is less than 2 player
   if (!users || users.length < 1) {
     removeRoom(user.roomId);
   }
@@ -115,7 +182,22 @@ export const getUsersInRoom = (roomId) => {
     return [];
   }
 
-  const usersInRoom = users
+  const userNotLeft = users.filter((user) => !user.left);
+  const usersInRoom = userNotLeft
+    .map((userId) => getUserById(userId))
+    .filter(Boolean); //Filter null...
+
+  return usersInRoom;
+};
+
+export const getUserInfosInRoom = (roomId) => {
+  const users = RoomServices.roomGetUsers(roomId);
+  if (!users) {
+    return [];
+  }
+
+  const userNotLeft = users.filter((user) => !user.left);
+  const usersInRoom = userNotLeft
     .map((userId) => getUserInfoById(userId))
     .filter(Boolean); //Filter null...
 
@@ -158,7 +240,7 @@ export const getUserInfoById = (userId) => {
     id: userId,
     username: user.username,
     points: user.points,
-    isCorrect: user.isCorrect,
+    isCorrect: Boolean(user.correctTime),
   };
 };
 
@@ -167,19 +249,26 @@ export const verifyCorrectWord = (userId, roomId, guess) => {
   if (!room || !guess || !userId) {
     return false;
   }
+
   const roomDrawWord = room.currentDrawWord;
-  if (userId === room.currentDrawer) {
+  const isNotValidDrawWord =
+    !roomDrawWord || roomDrawWord === '' || typeof roomDrawWord != 'string';
+  if (isNotValidDrawWord) {
     return false;
   }
-  return guess.includes(roomDrawWord);
+
+  const formattedGuess = guess.toUpperCase();
+  const formattedDrawWord = roomDrawWord.toUpperCase();
+
+  return formattedGuess.includes(formattedDrawWord);
 };
 
-export const setUserIsCorrect = (userId, isCorrect) => {
-  return RoomUsersServices.setCorrect(userId, isCorrect);
+export const setUserCorrect = (userId, correctTime = null) => {
+  return RoomUsersServices.setCorrect(userId, correctTime);
 };
 
 export const countCorrectUser = (roomId) => {
-  const users = getUsersInRoom(roomId);
+  const users = getUserInfosInRoom(roomId);
   return users.filter((user) => user.isCorrect).length;
 };
 
@@ -188,6 +277,18 @@ export const addPointsToUser = (userId, additionalPoints) => {
   if (user) {
     RoomUsersServices.setPoints(userId, user.points + additionalPoints);
   }
+};
+
+export const setRoomTimer = (roomId, timer) => {
+  RoomServices.roomSetTimer(roomId, timer);
+};
+
+export const setRoomRound = (roomId, currentRound = -1) => {
+  RoomServices.roomSetCurrentRound(roomId, currentRound);
+};
+
+export const decreaseRoomTimer = (roomId, value = 1) => {
+  RoomServices.roomDecreaseTimer(roomId, value);
 };
 
 const RoomSocketController = {
@@ -199,6 +300,9 @@ const RoomSocketController = {
   getRoom,
   getRoomInfo,
   hasRoomExisted,
+  setRoomRound,
+  setRoomTimer,
+  decreaseRoomTimer,
   //Users verification
   canRoomBeJoined,
   hasUserJoined,
@@ -206,10 +310,11 @@ const RoomSocketController = {
   addUserToRoom,
   removeUserFromRoom,
   verifyCorrectWord,
-  setUserIsCorrect,
+  setUserCorrect,
   countCorrectUser,
   //Get user
   getUsersInRoom,
+  getUserInfosInRoom,
   getUserBySocketId,
   getUserById,
   getUserInfoById,

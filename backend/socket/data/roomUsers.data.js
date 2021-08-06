@@ -8,6 +8,7 @@
  *  id:...
  *  username:....
  *  points:....
+ *  correctTime:...
  *  word:...
  *},
  */
@@ -37,7 +38,7 @@ const UserRoomServices = {
       id: user.id.toString(),
       username: user.username,
       points: 0,
-      isCorrect: false,
+      correctTime: null,
       word: '',
     };
     return userRoomMap.set(user.id, newUser);
@@ -65,12 +66,12 @@ const UserRoomServices = {
     return true;
   },
 
-  setCorrect(userId, correct) {
+  setCorrect(userId, correctTime = null) {
     let user = this.getUserRoom(userId);
     if (!user) {
       return false;
     }
-    user.isCorrect = correct;
+    user.correctTime = correctTime;
     return true;
   },
 };

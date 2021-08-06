@@ -2,14 +2,12 @@ import React from 'react';
 import { Avatar, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
-import LockIcon from '@material-ui/icons/Lock';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    width: '230px',
     borderRadius: '15px',
     backgroundColor: '#FFE203',
   },
@@ -18,11 +16,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
   },
   roomName: {
-    marginBottom: '10px',
+    marginBottom: '0px',
   },
   avatar: {
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     display: 'inline-block',
   },
   setting: {
@@ -36,18 +34,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Room = ({ currentPlayer, maxPlayer, roomName, roomId, isPrivate }) => (
-  <Grid item justify="center">
+const Room = ({ currentPlayer, maxPlayer, roomName, categoryName, isPrivate }) => (
+  <Grid item>
     <Paper className={useStyles().paper}>
       <div className={useStyles().avatar}>
         <Avatar
-          alt="Remy Sharp"
+          alt="Rimy Sharp"
           src="https://icon-library.com/images/doraemon-icon/doraemon-icon-19.jpg"
         />
       </div>
       <Typography variant="h6" className={useStyles().roomName}>
         {roomName}
-        <span className={useStyles().roomId}>&emsp;#{roomId}</span>
+        <br />
+        <span className={useStyles().categoryName}>&emsp;#{categoryName}</span>
       </Typography>
       <RoomInfo
         curPlayer={currentPlayer}
@@ -69,18 +68,6 @@ const RoomInfo = ({ curPlayer, maxiPlayer, pvt }) => (
           <Typography>
             {curPlayer}/{maxiPlayer}
           </Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs>
-        <Paper className={useStyles().setting}>
-          <IconButton className={useStyles().icon}>
-            <LockIcon />
-          </IconButton>
-          {pvt === true ? (
-            <Typography>ON</Typography>
-          ) : (
-            <Typography>OFF</Typography>
-          )}
         </Paper>
       </Grid>
     </Grid>

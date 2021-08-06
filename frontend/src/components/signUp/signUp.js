@@ -55,6 +55,7 @@ function SignUp() {
         }),
       );
       await localStorage.setItem('user', reponses.token);
+      await localStorage.setItem('isLogin', true);
 
       setMessageConflictDataSever('');
       actions.resetForm({

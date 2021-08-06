@@ -10,6 +10,12 @@ export default createTheme({
     },
   },
   palette: {
+    primary: {
+      main: '#311b92',
+    },
+    secondary: {
+      main: '#800080',
+    },
     background: {
       default: '#EDEDED',
       accent: 'rgba(255,255,255,0.8)',

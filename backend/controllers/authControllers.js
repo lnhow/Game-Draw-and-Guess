@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
+import { usernameValidation } from '../utils/validation.cjs';
 
 const authController = {
   register,
@@ -17,6 +18,7 @@ const authController = {
   forgotPassword,
   resetPassword,
   logout,
+  anonymousUser,
 };
 
 async function register(req, res) {
@@ -31,7 +33,7 @@ async function register(req, res) {
     email: req.body.email,
   });
   if (emailExist)
-    return res.status(400).json({
+    return res.status(403).json({
       message: 'Email already exists',
     });
 
@@ -58,16 +60,12 @@ async function register(req, res) {
     };
 
     const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-    res
-      .status(201)
-      .header('auth-token', token)
-      .cookie('auth-token', token, { httpOnly: true })
-      .json({
-        message: 'Register success',
-        token: token,
-      });
+    res.status(201).json({
+      message: 'Register success',
+      token: token,
+    });
   } catch (err) {
-    res.status(400).json({
+    res.status(500).json({
       message: err,
     });
   }
@@ -84,13 +82,13 @@ async function login(req, res) {
     email: req.body.email,
   });
   if (!account)
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Email is not found',
     });
 
   const validPass = await bcrypt.compare(req.body.password, account.password);
   if (!validPass)
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Invalid password',
     });
 
@@ -105,14 +103,10 @@ async function login(req, res) {
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
-  res
-    .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
-    .json({
-      message: 'Login success',
-      token: token,
-    });
+  res.status(200).json({
+    message: 'Login success',
+    token: token,
+  });
 }
 
 async function forgotPassword(req, res, next) {
@@ -122,7 +116,7 @@ async function forgotPassword(req, res, next) {
 
   if (!account)
     return next(
-      res.status(400).json({
+      res.status(401).json({
         message: 'Email is not found',
       }),
     );
@@ -151,7 +145,7 @@ async function forgotPassword(req, res, next) {
     account.passwordResetExpires = undefined;
     await account.save({ validateBeforeSave: false });
 
-    return res.status(500).json({
+    return res.status(502).json({
       message: 'There was an error sending the email. Try again later!',
     });
   }
@@ -169,7 +163,7 @@ async function resetPassword(req, res) {
   });
 
   if (!account) {
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Token is invalid or has expired',
     });
   }
@@ -199,14 +193,10 @@ async function resetPassword(req, res) {
   };
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
-  res
-    .status(200)
-    .header('auth-token', token)
-    .cookie('auth-token', token, { httpOnly: true })
-    .json({
-      message: 'Reset password success',
-      token: token,
-    });
+  res.status(200).json({
+    message: 'Reset password success',
+    token: token,
+  });
 }
 
 async function logout(req, res) {
@@ -214,6 +204,43 @@ async function logout(req, res) {
   res.json({
     message: 'You have been logout!',
   });
+}
+
+async function anonymousUser(req, res) {
+  const { error } = usernameValidation(req.body);
+  if (error)
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+
+  const user = await usersModel.findOne({ username: req.body.username });
+  if (user)
+    return res.status(403).json({
+      message: 'Username already taken!',
+    });
+
+  const anonymousUser = new usersModel({
+    accountId: null,
+    username: req.body.username,
+  });
+
+  try {
+    const dataToken = {
+      userId: anonymousUser._id,
+      username: anonymousUser.username,
+    };
+
+    await anonymousUser.save();
+    const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
+    res.status(201).json({
+      message: 'New user created!',
+      token: token,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err,
+    });
+  }
 }
 
 export default authController;

@@ -5,6 +5,7 @@ import useStyles from './styles';
 function TopBar() {
   const classes = useStyles();
   const timer = useSelector((state) => state.room.roundTimer);
+  const round = useSelector((state) => state.room.roomRound);
   const drawerWord = useSelector((state) => state.room.drawerWord);
 
   return (
@@ -30,7 +31,7 @@ function TopBar() {
           )}
         </Box>
         <Box>
-          {/* <span>Round [2] of [3]</span> */}
+          <span> {round ? `Round ${round}` : ''}</span>
           <h2 id="counter" style={{ margin: 0, textAlign: 'center' }}>
             {`${timer} s`}
           </h2>

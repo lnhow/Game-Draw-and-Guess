@@ -14,26 +14,26 @@ export default function Router() {
   const User = useSelector((state) => state.user);
   return (
     <Switch>
+      <Route exact path="/login">
+        {User.isLogin ? <Redirect to="/" /> : <Login />}
+      </Route>
+      <Route exact path="/sign-up">
+        {User.isLogin ? <Redirect to="/" /> : <SignUp />}
+      </Route>
       <Route exact path="/" component={Home} />
       <Route exact path="/room">
         <Room />
       </Route>
-      <Route exact path="/login">
-        <Login />
-      </Route>
-      <Route exact path="/sign-up">
-        <SignUp />
-      </Route>
       <Route exact path="/room/create">
-        <RoomCreate />
+        {User.isLogin ? <RoomCreate /> : <Redirect to="/login" />}
       </Route>
       <Route path="/room/:id">
-        <RoomSingle />
+        {User.isToken ? <RoomSingle /> : <Redirect to="/login" />}
       </Route>
-      <Route path="/profile">
+      <Route exact path="/profile">
         <Profile />
       </Route>
-      <Route path="/edit">
+      <Route exact path="/edit">
         <ProfileEdit />
       </Route>
       <Route>

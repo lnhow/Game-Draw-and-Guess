@@ -55,6 +55,7 @@ function Login() {
         }),
       );
       await localStorage.setItem('user', reponses.token);
+      await localStorage.setItem('isLogin', true);
 
       setMessageConflictDataSever('');
       actions.resetForm({
@@ -63,7 +64,7 @@ function Login() {
       });
       history.push('/');
     } catch (error) {
-      setMessageConflictDataSever(error?.['response']?.data?.msg);
+      setMessageConflictDataSever(error?.['response']?.data?.message);
       console.log({ error: error.message });
     }
   };

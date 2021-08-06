@@ -4,7 +4,7 @@ export default makeStyles((theme) => ({
   appBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.primary.main,
+    background: `linear-gradient(-45deg,${theme.palette.primary.main} 40%,${theme.palette.secondary.main})`,
   },
   heading: {
     color: 'white',

@@ -13,6 +13,11 @@ const UserApi = {
   editProfile: (params) => {
     const url = '/user/edit';
     return axiosClient.post(url, { ...params });
+  }
+
+  getAnonymousUser: (params) => {
+    const url = '/user/getUser';
+    return axiosClient.post(url, { ...params });
   },
 };
 
