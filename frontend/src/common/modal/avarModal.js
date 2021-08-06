@@ -69,6 +69,9 @@ export default function AvarModal() {
     console.log(event.currentTarget.firstChild.currentSrc);
 
     let avar = event.currentTarget?.firstChild?.currentSrc;
+    if (!avar) {
+      console.log('No image found');
+    }
 
     event.preventDefault();
     const action = () => {
