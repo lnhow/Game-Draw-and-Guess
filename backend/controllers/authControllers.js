@@ -11,6 +11,7 @@ import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { usernameValidation } from '../utils/validation.cjs';
+import { changePasswordValidation } from '../utils/validation.cjs';
 
 const authController = {
   register,
@@ -20,6 +21,7 @@ const authController = {
   logout,
   anonymousUser,
   updateUser,
+  changePassword,
 };
 
 async function register(req, res) {
@@ -198,6 +200,44 @@ async function resetPassword(req, res) {
     message: 'Reset password success',
     token: token,
   });
+}
+
+async function changePassword(req, res, next) {
+  const token = req.header('auth-token');
+  if (!token) return next(res.status(401).send('Access Denied'));
+  const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+  req.user = verified;
+
+  const user = await usersModel.findOne({ _id: req.user.userId });
+  const account = await accountsModel.findOne({ _id: user.accountId });
+  const validPass = await bcrypt.compare(
+    req.body.oldPassword,
+    account.password,
+  );
+  if (!validPass)
+    return res.status(401).json({
+      message: 'Invalid password',
+    });
+  const { error } = changePasswordValidation(req.body);
+  if (error)
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
+  account.password = hashPassword;
+
+  try {
+    await account.save();
+    res.status(200).json({
+      message: "User's password updated",
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err,
+    });
+  }
 }
 
 async function logout(req, res) {
