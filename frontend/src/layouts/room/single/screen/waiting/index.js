@@ -1,4 +1,11 @@
-import { Paper, Typography, Button, Box, TextField } from '@material-ui/core';
+import {
+  Paper,
+  Typography,
+  Button,
+  Box,
+  TextField,
+  Tooltip,
+} from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -26,9 +33,22 @@ export default function WaitingScreen({ onStartClick }) {
         />
         <Box className={classes.contentItem}>
           {userId === roomHost ? (
-            <Button onClick={onStartClick} variant="outlined" color="primary">
-              Start game
-            </Button>
+            <Tooltip
+              title={
+                <>
+                  <Typography color="inherit">Start game</Typography>
+                  <em>
+                    {
+                      'You can only start game when there are more than 1 people in the room'
+                    }
+                  </em>
+                </>
+              }
+            >
+              <Button onClick={onStartClick} variant="outlined" color="primary">
+                Start game
+              </Button>
+            </Tooltip>
           ) : null}
         </Box>
       </Box>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { verifyUserCorrect } from '../../../helpers/message';
 import {
   updateRoom,
   updateRoomUsers,
@@ -43,6 +44,12 @@ function SingleRoom() {
     socketRef.current.emit('request-start-game');
   };
 
+  const onUserGuessCorrect = () => {
+    if (playScreenRef.current) {
+      playScreenRef.current.toggleChatDisable(true);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       history.push('/login');
@@ -83,9 +90,10 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('message', (message) => {
+      verifyUserCorrect(message, user.id, onUserGuessCorrect);
       dispatch(addMessage(message));
     });
-  }, [dispatch]);
+  }, [dispatch, user.id]);
 
   useEffect(() => {
     socketRef.current.on('room-info', ({ info }) => {
@@ -123,6 +131,10 @@ function SingleRoom() {
       dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
     });
     socketRef.current.on('room-end-round', ({ word }) => {
+      if (playScreenRef.current) {
+        //Reset chat back to normal
+        playScreenRef.current.toggleChatDisable(false);
+      }
       dispatch(addMessage({ type: SpecialMessage.ROUND_END }));
       dispatch(
         updateRoom({
@@ -151,7 +163,7 @@ function SingleRoom() {
   }, [dispatch]);
 
   return (
-    <div>
+    <>
       {err ? (
         <ErrorPage message={err.message} />
       ) : roomId ? (
@@ -164,7 +176,7 @@ function SingleRoom() {
       ) : (
         <LoadingPage text="Joining Room" />
       )}
-    </div>
+    </>
   );
 }
 
