@@ -52,7 +52,7 @@ function SignUp() {
           isLogin: true,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
-          isToken:true,
+          isToken: true,
         }),
       );
       await localStorage.setItem('user', reponses.token);
@@ -88,9 +88,11 @@ function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box my={2}>
-          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
-        </Box>
+        {messageConflictDataSever ?? (
+          <Box my={2}>
+            <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
+          </Box>
+        )}
         <Formik
           initialValues={initialValues}
           onSubmit={(values, action) => handleSubmit(values, action)}
@@ -98,11 +100,11 @@ function SignUp() {
         >
           {(formikProps) => {
             return (
-              <Form>
+              <Form className={classes.form}>
                 <FastField
                   name="username"
                   component={InputField}
-                  placeholder="User Name"
+                  placeholder="Username"
                   type="text"
                 />
                 <FastField
@@ -120,7 +122,7 @@ function SignUp() {
                 <FastField
                   name="passwordConfirm"
                   component={InputPassword}
-                  placeholder="passwordConfirm"
+                  placeholder="Confirm Password"
                   type="password"
                 />
                 <Button

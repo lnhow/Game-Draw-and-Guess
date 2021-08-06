@@ -24,11 +24,14 @@ import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
 
 const LoginSchema = yup.object().shape({
-  email: yup.string().email('not an email').required('Email not empty'),
+  email: yup
+    .string()
+    .email('Please enter an email')
+    .required('Email must not be empty'),
   password: yup
     .string()
-    .min(6, 'password min 6')
-    .max(20, 'password max 20')
+    .min(6, 'Password have to contains at least 6 characters')
+    .max(20, 'Password max length is 20')
     .required('Password is required'),
 });
 
@@ -52,7 +55,7 @@ function Login() {
           isLogin: true,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
-          isToken:true,
+          isToken: true,
         }),
       );
       await localStorage.setItem('user', reponses.token);
@@ -79,9 +82,11 @@ function Login() {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Box my={2}>
-          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
-        </Box>
+        {messageConflictDataSever ?? (
+          <Box my={2}>
+            <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
+          </Box>
+        )}
         <Formik
           initialValues={initialValues}
           onSubmit={(values, actions) => handleSubmit(values, actions)}
@@ -89,7 +94,7 @@ function Login() {
         >
           {(formikProps) => {
             return (
-              <Form>
+              <Form className={classes.form}>
                 <FastField
                   name="email"
                   component={InputField}

@@ -58,7 +58,12 @@ function UserToolbar({ classes, user }) {
           }
         />
       ) : (
-        <Button component={Link} to="/login" variant="contained">
+        <Button
+          component={Link}
+          to="/login"
+          color="secondary"
+          variant="contained"
+        >
           Login
         </Button>
       )}
