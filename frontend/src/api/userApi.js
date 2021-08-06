@@ -10,6 +10,10 @@ const UserApi = {
     const url = '/user/register';
     return axiosClient.post(url, { ...params });
   },
+  getAnonymousUser: (params) => {
+    const url = '/user/getUser';
+    return axiosClient.post(url, { ...params });
+  },
 };
 
 export default UserApi;
