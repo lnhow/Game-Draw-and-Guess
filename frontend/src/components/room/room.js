@@ -4,6 +4,7 @@ import {
   CssBaseline,
   ImageList,
   ImageListItem,
+  Button,
 } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
@@ -16,6 +17,11 @@ import SearchBar from 'material-ui-search-bar';
 import AlertDialogSlide from '../../common/dialog/dialog.js';
 import { useHistory } from 'react-router-dom';
 import RoomApi from '../../api/roomApi';
+import { useSelector, useDispatch } from 'react-redux';
+import UserApi from '../../api/userApi.js';
+import { updateUser } from '../../features/User/userSlice';
+import jwt from 'jsonwebtoken';
+import GuessJoinRoomModal from '../../common/modal/userJoinModal';
 
 function Rooms({ classes }) {
   const [data, setData] = useState([]);
@@ -23,6 +29,11 @@ function Rooms({ classes }) {
   const [idRoom, setIdRoom] = useState('');
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const history = useHistory();
+  const User = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [isAlertAnonymousUser, setIsAlertAnonymousUser] = useState(false);
+  const [errorJoinAnonymousUser, setErrorJoinAnonymousUser] = useState('');
+  
 
   useEffect(() => {
     async function getRooms() {
@@ -63,9 +74,37 @@ function Rooms({ classes }) {
     requestSearch(searched);
   };
 
-  const handleClickRoom = (event) => {
+  const handleClickRoom = async (event) => {
     setIdRoom(event.currentTarget.attributes?.idRoom?.value);
-    setIsOpenAlert(true);
+    if (User.isLogin) return setIsOpenAlert(true);
+
+    return handleOpenAlertAnonymousUser();
+  };
+
+  const handleOpenAlertAnonymousUser = () => setIsAlertAnonymousUser(true);
+  const handleCloseAlertAnonymousUser = () => setIsAlertAnonymousUser(false);
+
+  const handleJoinAlertAnonymousUser = async (username) => {
+    try {
+      const reponses = await UserApi.getAnonymousUser({ username });
+      const infoUser = jwt.decode(reponses.token, { complete: true });
+      dispatch(
+        updateUser({
+          isLogin: false,
+          id: infoUser.payload.userId,
+          username: infoUser.payload.username,
+          isToken:true,
+        }),
+      );
+      await localStorage.setItem('user', reponses.token);
+      await localStorage.setItem('isLogin', false);
+      if (errorJoinAnonymousUser) setErrorJoinAnonymousUser('');
+      history.push(`/room/${idRoom}`);
+    } catch (error) {
+      const errorMessage = error?.['response']?.data?.message;
+      if (errorMessage) setErrorJoinAnonymousUser(errorMessage);
+      console.log({ error });
+    }
   };
 
   return (
@@ -77,7 +116,12 @@ function Rooms({ classes }) {
           onChange={(searchVal) => requestSearch(searchVal)}
           onCancelSearch={() => cancelSearch()}
         />
-
+        <GuessJoinRoomModal
+          isOpen={isAlertAnonymousUser}
+          closeAlert={handleCloseAlertAnonymousUser}
+          join={handleJoinAlertAnonymousUser}
+          errorMessage={errorJoinAnonymousUser}
+        />
         <div className={classes.grid}>
           <Scrollbars
             renderTrackHorizontal={(props) => (

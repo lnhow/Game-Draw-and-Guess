@@ -31,7 +31,6 @@ const InputField = (props) => {
             {...field}
             disabled={disabled}
             labelWidth={100}
-            style={{ width: '30ch' }}
           />
           {/* <FormHelperText id={name}> */}
           <ErrorMessage name={name} component={FormHelperText} />
