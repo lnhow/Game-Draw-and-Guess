@@ -7,7 +7,12 @@ import useStyles from './styles';
 
 export default function GameEndScreen() {
   const classes = useStyles();
-  const players = useSelector((state) => state.room.users);
+  //Stop leaderboard from re-render when state change
+  //(State compare func always return true meaning nothing had change, no re-render)
+  const players = useSelector(
+    (state) => state.room.users,
+    () => true,
+  );
   let formattedPlayers = [...players];
   formattedPlayers = formattedPlayers.sort((p1, p2) => p2.points - p1.points);
 
