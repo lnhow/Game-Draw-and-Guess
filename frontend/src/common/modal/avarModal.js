@@ -68,7 +68,8 @@ export default function AvarModal() {
   const handleClick = (event, data) => {
     console.log(event.currentTarget.firstChild.currentSrc);
 
-    let avar = event.currentTarget.firstChild.currentSrc;
+    let avar = event.currentTarget?.firstChild?.currentSrc;
+    if(!avar) bắt lỗi và hiện lỗi ở đây chẳng hạn (kiểu trường src của img không tìm thấy chẳng hạn)
 
     event.preventDefault();
     const action = () => {
