@@ -9,7 +9,7 @@ export default function GameEndScreen() {
   const classes = useStyles();
   const players = useSelector((state) => state.room.users);
   let formattedPlayers = [...players];
-  formattedPlayers = formattedPlayers.sort((p1, p2) => p1.points - p2.points);
+  formattedPlayers = formattedPlayers.sort((p1, p2) => p2.points - p1.points);
 
   return (
     <Paper className={classes.outerEnd} elevation={2}>

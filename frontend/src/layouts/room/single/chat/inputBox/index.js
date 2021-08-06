@@ -9,6 +9,7 @@ import { Send } from '@material-ui/icons';
 
 function ChatInputBox(props) {
   const handleSubmitMessage = props.handleSubmitMessage;
+  const isDisabled = props.disabled;
   const [formValue, setFormValue] = useState('');
 
   const sendMessage = async (e) => {
@@ -27,6 +28,7 @@ function ChatInputBox(props) {
       <form onSubmit={sendMessage}>
         <FormControl fullWidth>
           <TextField
+            disabled={isDisabled}
             placeholder="Chat or Guess the word..."
             variant="outlined"
             size="small"

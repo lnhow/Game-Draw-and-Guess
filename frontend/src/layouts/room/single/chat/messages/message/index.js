@@ -1,4 +1,4 @@
-import buildMessage from '../../../../../../helpers/messageBuilder';
+import { buildMessage } from '../../../../../../helpers/message';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles({

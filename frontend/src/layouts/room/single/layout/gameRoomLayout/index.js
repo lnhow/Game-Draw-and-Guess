@@ -1,5 +1,5 @@
 import { Container, Box, Paper } from '@material-ui/core';
-import { forwardRef } from 'react';
+import { forwardRef, useImperativeHandle, useState, useRef } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -17,6 +17,28 @@ function GameRoomLayout(
   const classes = useStyles();
   const players = useSelector((state) => state.room.users);
   const messages = useSelector((state) => state.room.messages);
+  const [chatDisabled, setChatDisabled] = useState(false);
+  const canvasRef = useRef(null);
+
+  //Allow parent to call these inner functions
+  useImperativeHandle(ref, () => ({
+    /**
+     * Disable chat
+     * @param {Boolean} boolean
+     */
+    toggleChatDisable(boolean) {
+      setChatDisabled(boolean);
+    },
+    /**
+     * Load draw data
+     * @param {Object} data
+     */
+    loadDrawData(data) {
+      if (canvasRef.current) {
+        canvasRef.current.loadDrawData(data);
+      }
+    },
+  }));
 
   return (
     <Container fixed style={{ width: 1200, height: 700 }}>
@@ -28,7 +50,7 @@ function GameRoomLayout(
           <MainScreen
             submitDrawHandler={submitDrawHandler}
             onStartClicked={submitStartGameHandler}
-            ref={ref}
+            ref={canvasRef}
           />
           {/* </AspectRatioBox> */}
         </Box>
@@ -48,7 +70,10 @@ function GameRoomLayout(
               <Box style={{ height: CHAT_HEIGHT }}>
                 <Box className={classes.outer}>
                   <ChatMessages messages={messages} />
-                  <ChatInputBox handleSubmitMessage={submitMessageHandler} />
+                  <ChatInputBox
+                    handleSubmitMessage={submitMessageHandler}
+                    disabled={chatDisabled}
+                  />
                 </Box>
               </Box>
             </Paper>

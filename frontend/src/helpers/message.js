@@ -1,6 +1,6 @@
 import { SpecialMessage } from '../common/constant';
 
-function buildMessage({ title, user, message, type }, currentUserId) {
+export function buildMessage({ title, user, message, type }, currentUserId) {
   let msgTitle = '';
   let msgBody = '';
   let msgStyle = {
@@ -37,6 +37,23 @@ function buildMessage({ title, user, message, type }, currentUserId) {
   }
 
   return { msgTitle, msgBody, msgStyle };
+}
+
+/**
+ * Check if message contains info the the current user is correct
+ * @param {Object} receivedMsg - Received message
+ * @param {String} currentUserId - The id of current login user
+ * @param {function} onCorrect - Callback function when is correct
+ */
+export function verifyUserCorrect(receivedMsg, currentUserId, onCorrect) {
+  const { user, type } = receivedMsg;
+  if (type === SpecialMessage.CORRECT_GUESS) {
+    if (user.id === currentUserId) {
+      if (onCorrect) {
+        onCorrect();
+      }
+    }
+  }
 }
 
 export default buildMessage;
