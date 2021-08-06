@@ -52,6 +52,7 @@ function Login() {
           isLogin: true,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
+          isToken:true,
         }),
       );
       await localStorage.setItem('user', reponses.token);
