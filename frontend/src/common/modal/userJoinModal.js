@@ -39,15 +39,6 @@ export default function GuessJoinRoomModal({isOpen,closeAlert,join,errorMessage}
 
   return (
     <div>
-      {/* <FuncButton
-        text="Play"
-        bgcolor="#028a0f"
-        name="esport"
-        handleClick={openModal}
-      ></FuncButton> */}
-
-{/* <Button variant="contained" color="primary" onClick={openModal} >test</Button> */}
-
       <Modal
         isOpen={isOpen}
         onAfterOpen={afterOpenModal}
@@ -65,16 +56,6 @@ export default function GuessJoinRoomModal({isOpen,closeAlert,join,errorMessage}
            />
         </form>
         <div style={center}>
-          {/* <FuncButton
-            text="cancel"
-            bgcolor="#ff5141"
-            handleClick={closeModal}
-          ></FuncButton>
-          <FuncButton
-            text="join"
-            bgcolor="#0063cc"
-            link="/room/:id"
-          ></FuncButton> */}
           <Button variant="contained" color="warning" onClick={closeAlert} >cancel</Button>
           <Button variant="contained" color="primary" onClick={()=>join(value)} >join</Button>
         </div>
