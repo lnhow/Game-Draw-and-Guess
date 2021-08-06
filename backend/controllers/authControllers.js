@@ -19,6 +19,7 @@ const authController = {
   resetPassword,
   logout,
   anonymousUser,
+  updateUser,
 };
 
 async function register(req, res) {
@@ -235,6 +236,40 @@ async function anonymousUser(req, res) {
     res.status(201).json({
       message: 'New user created!',
       token: token,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err,
+    });
+  }
+}
+
+async function updateUser(req, res, next) {
+  const { error } = usernameValidation(req.body);
+  if (error)
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+
+  const user = await usersModel.findOne({ username: req.body.username });
+  if (user)
+    return res.status(403).json({
+      message: 'Username already taken!',
+    });
+
+  const token = req.header('auth-token');
+  if (!token) return next(res.status(401).send('Access Denied'));
+  const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+  req.user = verified;
+
+  const updateUser = await usersModel.findOne({ _id: req.user.userId });
+  updateUser.username = req.body.username;
+  if (req.body.avatar) updateUser.avatar = req.body.avatar;
+
+  try {
+    await updateUser.save();
+    res.status(200).json({
+      message: 'User updated',
     });
   } catch (err) {
     res.status(500).json({
