@@ -5,14 +5,13 @@ import ProfileMenu from './profileMenu';
 import { useSelector } from 'react-redux';
 
 function Navbar() {
-  const User = useSelector((state) => state.user)
-  console.log('Username: ',User)
+  const User = useSelector((state) => state.user);
+  console.log('Username: ', User);
   const classes = useStyles();
   const user = {
-    idLogin:User.isLogin,
-    name:User.username
+    idLogin: User.isLogin,
+    name: User.username,
   };
-  
 
   return (
     <header>
@@ -60,7 +59,7 @@ function UserToolbar({ classes, user }) {
           }
         />
       ) : (
-        <Button component={Link} to="/login" variant="outlined">
+        <Button component={Link} to="/login" variant="contained">
           Login
         </Button>
       )}
