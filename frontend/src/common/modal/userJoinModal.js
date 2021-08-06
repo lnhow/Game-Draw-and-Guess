@@ -20,6 +20,7 @@ const center = {
   marginRight: 'auto',
 };
 
+
 export default function GuessJoinRoomModal({isOpen,closeAlert,join,errorMessage}) {
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);

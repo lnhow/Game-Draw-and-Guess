@@ -26,9 +26,6 @@ const useStyles = makeStyles((theme) => ({
   setting: {
     backgroundColor: '#FFE203',
   },
-  private: {
-    marginLeft: '180px',
-  },
   icon: {
     cursor: 'default',
     '&:hover': {

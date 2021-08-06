@@ -11,6 +11,7 @@ function Navbar() {
   const user = {
     idLogin: User.isLogin,
     name: User.username,
+    avatar: User.avatar,
   };
 
   return (
@@ -48,10 +49,8 @@ function UserToolbar({ classes, user }) {
               <Avatar
                 className={classes.avatar}
                 alt={user.name}
-                src={user.imageUrl}
-              >
-                {user.name.charAt(0)}
-              </Avatar>
+                src={user.avatar}
+              ></Avatar>
               <Typography className={classes.heading} variant="body2">
                 {user.name}
               </Typography>

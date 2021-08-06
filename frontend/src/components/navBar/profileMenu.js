@@ -52,7 +52,7 @@ export default function ProfileMenu({ component, listDropDownItem }) {
     localStorage.removeItem('user');
     localStorage.removeItem('isLogin');
     dispatch(updateUser({ isLogin: false }));
-    return history.push('/login');
+    return history.push('/');
   };
 
   return (

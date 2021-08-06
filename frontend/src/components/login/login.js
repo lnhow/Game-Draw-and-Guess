@@ -62,7 +62,7 @@ function Login() {
         email: '',
         password: '',
       });
-      history.push('/home');
+      history.push('/');
     } catch (error) {
       setMessageConflictDataSever(error?.['response']?.data?.message);
       console.log({ error: error.message });

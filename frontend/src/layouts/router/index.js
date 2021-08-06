@@ -1,13 +1,13 @@
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import ErrorPage from '../error';
 import SignUp from '../../components/signUp/signUp';
 import Login from '../../components/login/login';
 import Room from '../../components/room/room';
 import RoomCreate from '../room/create';
 import RoomSingle from '../room/single';
-import HomeLogin from '../home/homeloggin';
 import { useSelector } from 'react-redux';
-
+import Profile from '../../components/profile/userProfile';
+import ProfileEdit from '../../components/profile/editProfile';
 import Home from '../../layouts/home';
 
 export default function Router() {
@@ -21,9 +21,6 @@ export default function Router() {
         {User.isLogin ? <Redirect to="/" /> : <SignUp />}
       </Route>
       <Route exact path="/" component={Home} />
-      <Route exact path="/home">
-        <HomeLogin />
-      </Route>
       <Route exact path="/room">
         <Room />
       </Route>
@@ -32,6 +29,12 @@ export default function Router() {
       </Route>
       <Route path="/room/:id">
         {User.isToken ? <RoomSingle /> : <Redirect to="/login" />}
+      </Route>
+      <Route exact path="/profile">
+        <Profile />
+      </Route>
+      <Route exact path="/edit">
+        <ProfileEdit />
       </Route>
       <Route>
         <ErrorPage errorCode={404} message={'Not Found'} />

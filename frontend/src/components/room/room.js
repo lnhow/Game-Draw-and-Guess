@@ -11,6 +11,7 @@ import { FuncButton } from '../../common/Button.js';
 import Footer from '../../components/footer/index.js';
 import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
+
 import { withStyles } from '@material-ui/core/styles';
 import style from './style';
 import SearchBar from 'material-ui-search-bar';
@@ -33,7 +34,6 @@ function Rooms({ classes }) {
   const dispatch = useDispatch();
   const [isAlertAnonymousUser, setIsAlertAnonymousUser] = useState(false);
   const [errorJoinAnonymousUser, setErrorJoinAnonymousUser] = useState('');
-  
 
   useEffect(() => {
     async function getRooms() {
@@ -166,6 +166,7 @@ function Rooms({ classes }) {
               link="/room/create"
               text="New room"
               name="room"
+              mr="30px"
             ></FuncButton>
           </Grid>
         </div>
