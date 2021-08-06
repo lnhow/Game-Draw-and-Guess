@@ -4,7 +4,6 @@ import {
   CssBaseline,
   ImageList,
   ImageListItem,
-  Button,
 } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
@@ -93,7 +92,7 @@ function Rooms({ classes }) {
           isLogin: false,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
-          isToken:true,
+          isToken: true,
         }),
       );
       await localStorage.setItem('user', reponses.token);

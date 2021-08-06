@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import ErrorPage from '../error';
 import SignUp from '../../components/signUp/signUp';
 import Login from '../../components/login/login';
