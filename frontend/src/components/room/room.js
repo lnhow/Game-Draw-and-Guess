@@ -1,10 +1,4 @@
-import {
-  Container,
-  Grid,
-  CssBaseline,
-  Toolbar,
-  Button,
-} from '@material-ui/core';
+import { Container, Grid, CssBaseline, Toolbar } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
 import Footer from '../../components/footer/index.js';
