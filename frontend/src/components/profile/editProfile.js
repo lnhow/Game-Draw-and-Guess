@@ -185,57 +185,7 @@ function ProfileEdit() {
                   type="submit"
                   text="Save"
                   bgcolor="#F97645"
-                ></FuncButton>
-
-                {/* <div className={classes.container}> */}
-                {/* <TableContainer component={Paper}>
-                    <Table className={classes.table}>
-                        <TableBody>
-                        <TableRow>
-                            <TableCell component="th" scope="row">
-                            username
-                            </TableCell>
-                            <TableCell align="left">
-                                <Input
-                                    placeholder={User.username}
-                                    type="text"
-                                    name="username"
-                                />
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell component="th" scope="row">
-                                email
-                            </TableCell>
-                            <TableCell align="left">
-                            <Input
-                                placeholder={User.username}
-                                disabled
-                                value="example@gmai.com"
-                            />
-                            </TableCell>
-                            <TableCell></TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell component="th" scope="row">
-                                password
-                            </TableCell>
-                            <TableCell align="left">
-                            <Input
-                                placeholder={User.password}
-                                type="password"
-                                name="password"
-                            />
-                            </TableCell>
-                        </TableRow>
-                        </TableBody>
-                    </Table>
-                    </TableContainer> */}
-                {/* <FuncButton
-                        type="submit"
-                        text="save"
-                        bgcolor="#F97645"
-                    ></FuncButton> */}
+                ></FuncButton>         
               </Form>
             );
           }}
