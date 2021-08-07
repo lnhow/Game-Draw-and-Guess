@@ -11,8 +11,6 @@ import { withStyles } from '@material-ui/core/styles';
 const CustomButton = withStyles({
   root: {
     color: 'white',
-    marginBottom: '30px',
-    marginTop: '10px',
     boxShadow: 'none',
     textTransform: 'none',
     fontSize: 18,
@@ -49,6 +47,7 @@ export const FuncButton = (props) => {
         style={{ backgroundColor: props.bgcolor, marginRight: props.mr }}
         onClick={props.handleClick}
         onSubmit={props.handleSubmit}
+        fullWidth
       >
         {props.name === 'esport' ? (
           <SportsEsportsIcon />

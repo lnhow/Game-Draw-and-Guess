@@ -2,13 +2,14 @@ import {
   Container,
   Grid,
   CssBaseline,
-  ImageList,
-  ImageListItem,
+  Toolbar,
+  Button,
 } from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
 import Footer from '../../components/footer/index.js';
-import Room from './roomDetail.js';
+import RoomListItem from './roomListItem';
+
 import { useState, useEffect } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -110,11 +111,20 @@ function Rooms({ classes }) {
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <div>
-        <SearchBar
-          value={searched}
-          onChange={(searchVal) => requestSearch(searchVal)}
-          onCancelSearch={() => cancelSearch()}
-        />
+        <Toolbar>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={9}>
+              <SearchBar
+                value={searched}
+                onChange={(searchVal) => requestSearch(searchVal)}
+                onCancelSearch={() => cancelSearch()}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <FuncButton link="/room/create" text="New room" name="room" />
+            </Grid>
+          </Grid>
+        </Toolbar>
         <GuessJoinRoomModal
           isOpen={isAlertAnonymousUser}
           closeAlert={handleCloseAlertAnonymousUser}
@@ -126,7 +136,7 @@ function Rooms({ classes }) {
             renderTrackHorizontal={(props) => (
               <div
                 {...props}
-                style={{ display: 'none' }}
+                // style={{ display: 'none' }}
                 className="track-horizontal"
               />
             )}
@@ -136,7 +146,33 @@ function Rooms({ classes }) {
               setIsOpen={() => setIsOpenAlert(false)}
               handleJoin={() => history.push(`/room/${idRoom}`)}
             />
-            <ImageList cols={4} rowHeight={200} gap={24}>
+            <Grid container spacing={3}>
+              {data.map((data, key) => {
+                return (
+                  <Grid
+                    item
+                    lg={3}
+                    md={4}
+                    sm={6}
+                    xs={12}
+                    key={key}
+                    idRoom={data._id}
+                    onClick={handleClickRoom}
+                  >
+                    <RoomListItem
+                      key={key}
+                      currentPlayer={data.currentPlayer}
+                      maxPlayer={data.maxPlayer}
+                      roomName={data.roomName}
+                      roomId={data._id}
+                      categoryName={data.categoryName}
+                      roomStatus={data.roomStatus}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+            {/* <ImageList cols={4} rowHeight={200} gap={24}>
               {data.map((data, key) => {
                 return (
                   <ImageListItem
@@ -155,19 +191,8 @@ function Rooms({ classes }) {
                   </ImageListItem>
                 );
               })}
-            </ImageList>
+            </ImageList> */}
           </Scrollbars>
-        </div>
-
-        <div className={classes.center}>
-          <Grid item>
-            <FuncButton
-              link="/room/create"
-              text="New room"
-              name="room"
-              mr="30px"
-            ></FuncButton>
-          </Grid>
         </div>
       </div>
       <Grid item xs={12}>
