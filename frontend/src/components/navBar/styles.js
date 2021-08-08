@@ -17,7 +17,8 @@ export default makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   avatar: {
-    border: '3px solid black',
+    border: '3px solid #616161',
     backgroundColor: 'white',
+    padding: '2px',
   },
 }));

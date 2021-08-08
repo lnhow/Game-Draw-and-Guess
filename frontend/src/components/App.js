@@ -1,15 +1,12 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
-
 import Navbar from './navBar';
 import RouterApp from '../layouts/router/index';
 import jwt from 'jsonwebtoken';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../features/User/userSlice.js';
-
-
 import theme from '../app/app.styles';
 
 function App() {
@@ -24,6 +21,7 @@ function App() {
           isLogin: true,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
+          avatar: infoUser.payload.avatar,
         }),
       );
     } else {

@@ -19,7 +19,7 @@ const center = {
   marginRight: 'auto',
 };
 
-export default function GuessJoinRoomModal() {
+export default function SaveChangeModal(props) {
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
@@ -28,7 +28,7 @@ export default function GuessJoinRoomModal() {
   }
 
   function afterOpenModal() {
-    subtitle.style.color = '#f00';
+    subtitle.style.color = '#444444';
   }
 
   function closeModal() {
@@ -37,36 +37,33 @@ export default function GuessJoinRoomModal() {
 
   return (
     <div>
-      <FuncButton
-        text="Play"
-        bgcolor="#028a0f"
-        name="esport"
-        handleClick={openModal}
-      ></FuncButton>
+      <button
+        type="submit"
+        style={props.style}
+        onClick={openModal}
+        disabled={props.disabled}
+      >
+        Save
+      </button>
 
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
         onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="Example Modal"
       >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Join as guest</h2>
-        <form>
-          <label>Username</label>&emsp;
-          <input />
-        </form>
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>
+          Are you sure you want to change?
+        </h2>
+
         <div style={center}>
           <FuncButton
             text="cancel"
             bgcolor="#ff5141"
             handleClick={closeModal}
           ></FuncButton>
-          <FuncButton
-            text="join"
-            bgcolor="#0063cc"
-            link="/room/:id"
-          ></FuncButton>
+          &emsp;
+          <FuncButton text="save" bgcolor="#0063cc" link="/"></FuncButton>
         </div>
       </Modal>
     </div>

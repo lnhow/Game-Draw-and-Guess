@@ -49,6 +49,8 @@ export const FuncButton = (props) => {
         style={{ backgroundColor: props.bgcolor, marginRight: props.mr }}
         onClick={props.handleClick}
         onSubmit={props.handleSubmit}
+        type={props.type}
+        disabled={props.disabled}
       >
         {props.name === 'esport' ? (
           <SportsEsportsIcon />

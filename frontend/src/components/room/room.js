@@ -16,7 +16,6 @@ import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
 import { roomData } from './roomData.js';
 import { makeStyles } from '@material-ui/core/styles';
-import GuessJoinRoomModal from '../../common/modal/userJoinModal.js';
 import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
@@ -147,23 +146,6 @@ function Rooms() {
               name="room"
               mr="30px"
             ></FuncButton>
-            {/* {user.idLogin ? (
-              <FuncButton
-                link="/room/:id"
-                text="Play"
-                bgcolor="#028a0f"
-                name="esport"
-              ></FuncButton>
-            ) : (
-              <GuessJoinRoomModal />
-            )} */}
-            {/* <FuncButton
-                link="/room/:id"
-                text="Play"
-                bgcolor="#028a0f"
-                name="esport"
-              ></FuncButton> */}
-            <GuessJoinRoomModal />
           </Grid>
         </div>
       </div>
