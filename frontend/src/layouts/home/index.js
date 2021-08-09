@@ -1,21 +1,18 @@
-import { Container, Divider, Grid, Typography, Paper } from '@material-ui/core';
+import {
+  Container,
+  Divider,
+  Grid,
+  Typography,
+  Paper,
+  CssBaseline,
+} from '@material-ui/core';
 import { FuncButton } from '../../common/Button.js';
 import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
 import WelcomeBanner from '../../components/banner/welcomeBanner.js';
 import { useSelector } from 'react-redux';
-import useStyles from './styles.js';
+import useStyles from './styles';
 import { useState } from 'react';
-
-const intro = {
-  color: '#FFA500',
-  weight: '400',
-  fontSize: 30,
-  textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
-};
-
-const gameName = {};
-
 
 function Home() {
   const classes = useStyles();
@@ -40,17 +37,16 @@ function Home() {
               <Typography variant="h6" className={classes.text}>
                 Hello, {User.username}
               </Typography>
-              <Typography>Game rule .....</Typography>
-            </Paper>
-            <Paper className={classes.paper}>
-              <Typography variant="h6" className={classes.description}>
-                See all available rooms
+            </Grid>
+          ) : (
+            <Grid>
+              <Typography variant="h6" className={classes.text}>
+                Don't have an account?
               </Typography>
               <FuncButton
-                link="/room"
-                text="Rooms"
-                bgcolor="#09f"
-                name="room"
+                link="/sign-up"
+                text="Sign up"
+                bgcolor="#028a0f"
               ></FuncButton>
               <Typography variant="h6" className={classes.text}>
                 Already have an account?
@@ -111,8 +107,8 @@ function Home() {
               ) : null}
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       <Grid item xs={12}>
         <Footer />
