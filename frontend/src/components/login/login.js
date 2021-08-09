@@ -8,6 +8,7 @@ import {
   Container,
   Box,
 } from '@material-ui/core';
+import { ConsoleLog } from '../../helpers/functions.js';
 import { Formik, FastField, Form } from 'formik';
 import * as yup from 'yup';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -69,7 +70,7 @@ function Login() {
       history.push('/');
     } catch (error) {
       setMessageConflictDataSever(error?.['response']?.data?.message);
-      console.log({ error: error.message });
+      ConsoleLog({ error: error.message });
     }
   };
 

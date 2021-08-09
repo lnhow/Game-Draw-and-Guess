@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core/styles';
 import style from './style';
 import SearchBar from 'material-ui-search-bar';
 import AlertDialogSlide from '../../common/dialog/dialog.js';
-
+import { ConsoleLog } from '../../helpers/functions.js';
 import { useHistory } from 'react-router-dom';
 import RoomApi from '../../api/roomApi';
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,7 +26,7 @@ import { updateUser } from '../../features/User/userSlice';
 import jwt from 'jsonwebtoken';
 import GuessJoinRoomModal from '../../common/modal/userJoinModal';
 import CenterScreen from '../../common/centerScreen/index.js';
-import {WAITING,PLAYING } from '../../common/constant/index'
+import { WAITING, PLAYING } from '../../common/constant/index';
 
 function Rooms({ classes }) {
   const [data, setData] = useState([]);
@@ -46,7 +46,7 @@ function Rooms({ classes }) {
         const reponses = await RoomApi.get();
         setData(reponses.rooms);
       } catch (error) {
-        console.log(error.message);
+        ConsoleLog(error.message);
       }
     }
 
@@ -60,7 +60,7 @@ function Rooms({ classes }) {
           const reponses = await RoomApi.get();
           setData(reponses.rooms);
         } catch (error) {
-          console.log(error.message);
+          ConsoleLog(error.message);
         }
       }
 
@@ -70,7 +70,7 @@ function Rooms({ classes }) {
       const filteredRows = data.filter((row) => {
         return row.roomName.toLowerCase().includes(searchedVal.toLowerCase());
       });
-      console.log('filtered: ', filteredRows);
+      ConsoleLog('filtered: ', filteredRows);
       setData(filteredRows);
     }
   };
@@ -110,7 +110,7 @@ function Rooms({ classes }) {
     } catch (error) {
       const errorMessage = error?.['response']?.data?.message;
       if (errorMessage) setErrorJoinAnonymousUser(errorMessage);
-      console.log({ error });
+      ConsoleLog({ error });
     }
   };
 
@@ -157,28 +157,30 @@ function Rooms({ classes }) {
               <Grid container spacing={3}>
                 {data.map((data, key) => {
                   return (
-                    (data.roomStatus === WAITING || data.roomStatus === WAITING) &&
-                    <Grid
-                      item
-                      lg={3}
-                      md={4}
-                      sm={6}
-                      xs={12}
-                      key={key}
-                      idRoom={data._id}
-                      onClick={handleClickRoom}
-                    >
-                      <RoomListItem
+                    (data.roomStatus === WAITING ||
+                      data.roomStatus === WAITING) && (
+                      <Grid
+                        item
+                        lg={3}
+                        md={4}
+                        sm={6}
+                        xs={12}
                         key={key}
-                        currentPlayer={data.currentPlayer}
-                        maxPlayer={data.maxPlayer}
-                        timePerRound={data.timePerRound}
-                        roomName={data.roomName}
-                        roomId={data._id}
-                        categoryName={data.categoryName}
-                        roomStatus={data.roomStatus}
-                      />
-                    </Grid>
+                        idRoom={data._id}
+                        onClick={handleClickRoom}
+                      >
+                        <RoomListItem
+                          key={key}
+                          currentPlayer={data.currentPlayer}
+                          maxPlayer={data.maxPlayer}
+                          timePerRound={data.timePerRound}
+                          roomName={data.roomName}
+                          roomId={data._id}
+                          categoryName={data.categoryName}
+                          roomStatus={data.roomStatus}
+                        />
+                      </Grid>
+                    )
                   );
                 })}
               </Grid>

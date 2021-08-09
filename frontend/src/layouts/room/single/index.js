@@ -13,6 +13,7 @@ import GameRoomLayout from './layout/gameRoomLayout';
 import LoadingPage from '../../loading';
 import ErrorPage from '../../error';
 import { RoomScreenStates, SpecialMessage } from '../../../common/constant';
+import { ConsoleLog } from '../../../helpers/functions';
 import { connectToSocket } from '../../../helpers/socketio';
 
 function SingleRoom() {
@@ -40,7 +41,7 @@ function SingleRoom() {
   };
 
   const submitStartGame = () => {
-    console.log('request-start-game');
+    ConsoleLog('request-start-game');
     socketRef.current.emit('request-start-game');
   };
 
@@ -148,7 +149,7 @@ function SingleRoom() {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_ENDED }));
     });
     socketRef.current.on('room-draw-word', ({ word }) => {
-      console.log(word);
+      ConsoleLog(word);
       dispatch(updateRoom({ drawerWord: word }));
     });
     socketRef.current.on('timer', (timeLeft) => {

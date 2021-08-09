@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import useStyles from './styles.js';
 import ProfileMenu from './profileMenu';
 import { useSelector } from 'react-redux';
+import { ConsoleLog } from '../../helpers/functions.js';
 
 function Navbar() {
   const User = useSelector((state) => state.user);
-  console.log('Username: ', User);
+  ConsoleLog('Username: ', User);
+
   const classes = useStyles();
   const user = {
     idLogin: User.isLogin,

@@ -22,6 +22,7 @@ import InputPassword from '../../common/inputPassword/inputPassword.js';
 import jwt from 'jsonwebtoken';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../features/User/userSlice.js';
+import { ConsoleLog } from '../../helpers/functions.js';
 
 const SignUpSchema = yup.object().shape({
   username: yup.string().required('Username not empty'),
@@ -68,7 +69,7 @@ function SignUp() {
       history.push('/');
     } catch (error) {
       setMessageConflictDataSever(error['response'].data.msg);
-      console.log({ error: error.message });
+      ConsoleLog({ error: error.message });
     }
   };
 

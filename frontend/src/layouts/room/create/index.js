@@ -20,6 +20,7 @@ import { CREATED } from '../../../common/constant';
 import { useSelector } from 'react-redux';
 import Alert from '../../../common/alert';
 import { useHistory } from 'react-router-dom';
+import { ConsoleLog } from '../../../helpers/functions';
 
 const validationSchema = yup.object({
   roomName: yup
@@ -66,7 +67,7 @@ function RoomCreate(props) {
           </Alert>,
         );
       } catch (error) {
-        console.log(error.message, ' test');
+        ConsoleLog(error);
         setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
       }
     },
@@ -82,7 +83,7 @@ function RoomCreate(props) {
         const reponses = await CategoryApi.get();
         setCategories(reponses.categories);
       } catch (error) {
-        console.log(error);
+        ConsoleLog(error);
       }
     }
 
