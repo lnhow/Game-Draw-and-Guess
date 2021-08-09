@@ -52,6 +52,7 @@ export default function GuessJoinRoomModal({
   join,
   errorMessage,
 }) {
+  const classes = useStyles();
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
