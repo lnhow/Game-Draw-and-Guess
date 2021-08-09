@@ -53,6 +53,8 @@ function RoomInfo({
   isPrivate = false,
 }) {
   const classes = useStyles();
+  const maxNumPlayers = maxPlayer === -1 ? '∞' : maxPlayer;
+
   return (
     <Box
       display="flex"
@@ -69,7 +71,7 @@ function RoomInfo({
       <Tooltip title="Players">
         <Typography variant="body1" className={classes.verticalCenter}>
           <Person />
-          <span>{`${curPlayer}/${maxPlayer}`}</span>
+          <span>{`${curPlayer}/${maxNumPlayers}`}</span>
         </Typography>
       </Tooltip>
       <Tooltip title="Time per round">

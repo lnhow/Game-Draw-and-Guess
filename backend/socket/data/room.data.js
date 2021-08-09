@@ -91,7 +91,7 @@ const RoomServices = {
       return false;
     }
 
-    return room.users.map((user) => user.id);
+    return room.users.filter((user) => !user.left).map((user) => user.id);
   },
 
   roomGetUser(roomId, userId) {
@@ -101,7 +101,7 @@ const RoomServices = {
     }
 
     const user = room.users.find((user) => user.id === userId);
-    return user ? user.id : null;
+    return user && !user.left ? user.id : null;
   },
 
   roomSetDrawInfo(roomId, drawerId, drawWord) {
@@ -137,7 +137,7 @@ const RoomServices = {
     }
 
     const user = room.users.find((user) => user.id === userId);
-    if (!user) {
+    if (user) {
       user.left = true;
       return true;
     }
