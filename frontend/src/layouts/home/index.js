@@ -181,7 +181,8 @@ function Home() {
               justifyContent="flex-start"
               alignItems="center"
             >
-              <Paper className={classes.paper}>
+            {user.idLogin ? (
+                <Paper className={classes.paper}>
                 <Typography variant="h6">Quick Play</Typography>
                 <Input
                   id="roomId"
@@ -192,6 +193,8 @@ function Home() {
                   link={`/room/${idRoom}`}
                 />
               </Paper>
+              ) : null
+            }
             </Grid>
           </Grid>
         </div>
