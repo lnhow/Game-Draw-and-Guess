@@ -1,5 +1,4 @@
-import { Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import React from 'react';
 import Modal from 'react-modal';
 
