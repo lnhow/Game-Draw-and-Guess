@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { verifyUserCorrect } from '../../../helpers/message';
 import {
   updateRoom,
   updateRoomUsers,
@@ -11,7 +12,7 @@ import { useParams, useHistory } from 'react-router-dom'; //Temporarily use URL 
 import GameRoomLayout from './layout/gameRoomLayout';
 import LoadingPage from '../../loading';
 import ErrorPage from '../../error';
-import { RoomScreenStates } from '../../../common/constant';
+import { RoomScreenStates, SpecialMessage } from '../../../common/constant';
 import { connectToSocket } from '../../../helpers/socketio';
 
 function SingleRoom() {
@@ -43,6 +44,12 @@ function SingleRoom() {
     socketRef.current.emit('request-start-game');
   };
 
+  const onUserGuessCorrect = () => {
+    if (playScreenRef.current) {
+      playScreenRef.current.toggleChatDisable(true);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       history.push('/login');
@@ -60,7 +67,7 @@ function SingleRoom() {
 
     return function cleanUp() {
       //componentsWillUnmount
-      if (socketRef.current) {
+      if (socketRef.current && socketRef.current.connected) {
         socketRef.current.disconnect();
       }
       dispatch(clearRoom());
@@ -77,24 +84,23 @@ function SingleRoom() {
 
   useEffect(() => {
     socketRef.current.on('room-users', ({ users }) => {
-      console.log(users);
       dispatch(updateRoomUsers({ users }));
     });
   }, [dispatch]);
 
   useEffect(() => {
     socketRef.current.on('message', (message) => {
+      verifyUserCorrect(message, user.id, onUserGuessCorrect);
       dispatch(addMessage(message));
     });
-  }, [dispatch]);
+  }, [dispatch, user.id]);
 
   useEffect(() => {
     socketRef.current.on('room-info', ({ info }) => {
-      console.log(info);
       dispatch(
         updateRoom({
           roomState: info.roomState,
-          roomRound: info.roomRound + 1, //Room round start at 0: falsy
+          roomRound: info.roomRound + 1, //Room round start at 0
           hostUserId: info.hostUserId,
           roomId: info.roomId,
         }),
@@ -106,9 +112,16 @@ function SingleRoom() {
     socketRef.current.on('room-start-game', () => {
       dispatch(updateRoom({ roomState: RoomScreenStates.GAME_STARTED }));
     });
-    socketRef.current.on('room-start-round', ({ drawerId }) => {
+    socketRef.current.on('room-start-round', ({ round, drawerId }) => {
+      dispatch(
+        addMessage({
+          type: SpecialMessage.ROUND_START,
+          title: round + 1, //Room round start at 0
+        }),
+      );
       dispatch(
         updateRoom({
+          roomRound: round + 1, //Room round start at 0
           drawerId: drawerId,
           roomState: RoomScreenStates.ROUND_START,
         }),
@@ -118,9 +131,15 @@ function SingleRoom() {
       dispatch(updateRoom({ roomState: RoomScreenStates.ROUND_PLAYING }));
     });
     socketRef.current.on('room-end-round', ({ word }) => {
+      if (playScreenRef.current) {
+        //Reset chat back to normal
+        playScreenRef.current.toggleChatDisable(false);
+      }
+      dispatch(addMessage({ type: SpecialMessage.ROUND_END }));
       dispatch(
         updateRoom({
           wordLastRound: word,
+          drawerWord: null, //Clear drawer word
           roomState: RoomScreenStates.ROUND_ENDED,
         }),
       );
@@ -135,10 +154,16 @@ function SingleRoom() {
     socketRef.current.on('timer', (timeLeft) => {
       dispatch(updateTimer({ timer: timeLeft }));
     });
+    socketRef.current.on('connect_error', (_) => {
+      setErr({ message: 'Server - Room connection error' });
+      if (socketRef.current && socketRef.current.connected) {
+        socketRef.current.disconnect();
+      }
+    });
   }, [dispatch]);
 
   return (
-    <div>
+    <>
       {err ? (
         <ErrorPage message={err.message} />
       ) : roomId ? (
@@ -151,7 +176,7 @@ function SingleRoom() {
       ) : (
         <LoadingPage text="Joining Room" />
       )}
-    </div>
+    </>
   );
 }
 

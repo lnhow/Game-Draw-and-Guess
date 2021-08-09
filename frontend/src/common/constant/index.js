@@ -35,3 +35,12 @@ export const avar = [
   'https://robohash.org/tcnxmnc.png?set=set4&size=150x150',
   'https://robohash.org/640.png?set=set4&size=150x150',
 ];
+
+export const SpecialMessage = Object.freeze({
+  JOIN_ROOM: 0,
+  LEFT_ROOM: 1,
+  CORRECT_GUESS: 2,
+  BLOCKED: 3,
+  ROUND_START: 100,
+  ROUND_END: 101,
+});

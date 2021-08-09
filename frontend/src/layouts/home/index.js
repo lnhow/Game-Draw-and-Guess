@@ -145,17 +145,19 @@ function Home() {
               justifyContent="flex-start"
               alignItems="center"
             >
-              <Paper className={classes.paper}>
-                <Typography variant="h6">Quick Play</Typography>
-                <Input
-                  id="roomId"
-                  name="roomId"
-                  value={idRoom}
-                  handleChange={(e) => setIdRoom(e.target.value)}
-                  placeholder="Enter room code"
-                  link={`/room/${idRoom}`}
-                />
-              </Paper>
+              {user.idLogin ? (
+                <Paper className={classes.paper}>
+                  <Typography variant="h6">Quick Play</Typography>
+                  <Input
+                    id="roomId"
+                    name="roomId"
+                    value={idRoom}
+                    handleChange={(e) => setIdRoom(e.target.value)}
+                    placeholder="Enter room code"
+                    link={`/room/${idRoom}`}
+                  />
+                </Paper>
+              ) : null}
             </Grid>
           </Grid>
         </div>

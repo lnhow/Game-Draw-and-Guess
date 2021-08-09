@@ -2,7 +2,7 @@ import { Avatar, Box, Typography } from '@material-ui/core';
 import { CheckCircle } from '@material-ui/icons';
 import useStyles from './styles';
 
-export default function SinglePlayer({ player }) {
+export default function SinglePlayer({ player, order }) {
   const classes = useStyles();
 
   return (
@@ -28,6 +28,13 @@ export default function SinglePlayer({ player }) {
             )}
           </span>
         </Typography>
+      </Box>
+      <Box className={classes.order}>
+        {order ? (
+          <Typography className={classes.orderText} variant="h5">
+            {`${order}`}
+          </Typography>
+        ) : null}
       </Box>
     </Box>
   );

@@ -11,11 +11,15 @@ const UserApi = {
     return axiosClient.post(url, { ...params });
   },
   editProfile: (params) => {
-    const url = '/user/updateUser';
+    const url = '/user/edit';
     return axiosClient.post(url, { ...params });
   },
   updatePassword: (params) => {
     const url = '/user/updatePassword';
+    return axiosClient.post(url, { ...params });
+  },
+  getAnonymousUser: (params) => {
+    const url = '/user/getUser';
     return axiosClient.post(url, { ...params });
   },
 };

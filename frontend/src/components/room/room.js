@@ -1,113 +1,126 @@
 import {
   Container,
   Grid,
-  GridList,
-  Typography,
-  IconButton,
   CssBaseline,
-  GridListTile,
+  ImageList,
+  ImageListItem,
 } from '@material-ui/core';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
-import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
 import Room from './roomDetail.js';
 import { useState, useEffect } from 'react';
-import { roomData } from './roomData.js';
-import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    marginBottom: '40px',
-    marginTop: '30px',
-  },
-  gameName: {
-    fontFamily: '"Gorditas", cursive',
-    marginBottom: theme.spacing(1),
-    textAlign: 'center',
-    whiteSpace: 'nowrap',
-    fontSize: '40px',
-    color: 'black',
-  },
-  icon: {
-    color: 'white',
-    padding: '0px 5px',
-    '&:hover': {
-      backgroundColor: 'transparent',
-    },
-  },
-  center: {
-    display: 'table',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  grid: {
-    height: '450px',
-    backgroundColor: '#FEEB75',
-    padding: '20px 50px',
-    borderRadius: '20px',
-    marginTop: '20px',
-    marginBottom: '20px',
-  },
-}));
+import { withStyles } from '@material-ui/core/styles';
+import style from './style';
+import SearchBar from 'material-ui-search-bar';
+import AlertDialogSlide from '../../common/dialog/dialog.js';
+import { useHistory } from 'react-router-dom';
+import RoomApi from '../../api/roomApi';
+import { useSelector, useDispatch } from 'react-redux';
+import UserApi from '../../api/userApi.js';
+import { updateUser } from '../../features/User/userSlice';
+import jwt from 'jsonwebtoken';
+import GuessJoinRoomModal from '../../common/modal/userJoinModal';
 
-const back = {
-  transform: 'rotate(180deg)',
-  color: '#FFE203',
-};
-
-function Rooms() {
-  const User = useSelector((state) => state.user);
-  const user = {
-    idLogin: User.isLogin,
-    name: User.username,
-  };
-
-  const classes = useStyles();
-
+function Rooms({ classes }) {
   const [data, setData] = useState([]);
-
-  const getData = () => {
-    fetch('roomData.json', {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    })
-      .then(function (response) {
-        console.log(response);
-        return response.json();
-      })
-      .then(function (myJson) {
-        console.log(myJson);
-        setData(myJson);
-      });
-  };
+  const [searched, setSearched] = useState('');
+  const [idRoom, setIdRoom] = useState('');
+  const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const history = useHistory();
+  const User = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [isAlertAnonymousUser, setIsAlertAnonymousUser] = useState(false);
+  const [errorJoinAnonymousUser, setErrorJoinAnonymousUser] = useState('');
 
   useEffect(() => {
-    getData();
+    async function getRooms() {
+      try {
+        const reponses = await RoomApi.get();
+        setData(reponses.rooms);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    getRooms();
   }, []);
+
+  const requestSearch = (searchedVal) => {
+    if (!searchedVal) {
+      async function getRooms() {
+        try {
+          const reponses = await RoomApi.get();
+          setData(reponses.rooms);
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
+
+      getRooms();
+    } else {
+      const filteredRows = data.filter((row) => {
+        return row.roomName.toLowerCase().includes(searchedVal.toLowerCase());
+      });
+      console.log('filtered: ', filteredRows);
+      setData(filteredRows);
+    }
+  };
+
+  const cancelSearch = () => {
+    setSearched('');
+    requestSearch(searched);
+  };
+
+  const handleClickRoom = async (event) => {
+    setIdRoom(event.currentTarget.attributes?.idRoom?.value);
+    if (User.isLogin) return setIsOpenAlert(true);
+
+    return handleOpenAlertAnonymousUser();
+  };
+
+  const handleOpenAlertAnonymousUser = () => setIsAlertAnonymousUser(true);
+  const handleCloseAlertAnonymousUser = () => setIsAlertAnonymousUser(false);
+
+  const handleJoinAlertAnonymousUser = async (username) => {
+    try {
+      const reponses = await UserApi.getAnonymousUser({ username });
+      const infoUser = jwt.decode(reponses.token, { complete: true });
+      dispatch(
+        updateUser({
+          isLogin: false,
+          id: infoUser.payload.userId,
+          username: infoUser.payload.username,
+          isToken: true,
+        }),
+      );
+      await localStorage.setItem('user', reponses.token);
+      await localStorage.setItem('isLogin', false);
+      if (errorJoinAnonymousUser) setErrorJoinAnonymousUser('');
+      history.push(`/room/${idRoom}`);
+    } catch (error) {
+      const errorMessage = error?.['response']?.data?.message;
+      if (errorMessage) setErrorJoinAnonymousUser(errorMessage);
+      console.log({ error });
+    }
+  };
 
   return (
     <Container component="main" className={classes.root}>
       <CssBaseline />
       <div>
-        <Typography variant="h5" className={classes.gameName}>
-          <IconButton className={classes.icon} style={back} href="/">
-            <PlayArrowIcon />
-          </IconButton>
-          ROOMS
-          <Input
-            id="roomId"
-            classes={classes}
-            name="search"
-            placeholder="Search room"
-          />
-        </Typography>
-
+        <SearchBar
+          value={searched}
+          onChange={(searchVal) => requestSearch(searchVal)}
+          onCancelSearch={() => cancelSearch()}
+        />
+        <GuessJoinRoomModal
+          isOpen={isAlertAnonymousUser}
+          closeAlert={handleCloseAlertAnonymousUser}
+          join={handleJoinAlertAnonymousUser}
+          errorMessage={errorJoinAnonymousUser}
+        />
         <div className={classes.grid}>
           <Scrollbars
             renderTrackHorizontal={(props) => (
@@ -118,23 +131,31 @@ function Rooms() {
               />
             )}
           >
-            <GridList cols={4} cellHeight={200} spacing={10}>
-              {roomData.map((data, key) => {
+            <AlertDialogSlide
+              isOpen={isOpenAlert}
+              setIsOpen={() => setIsOpenAlert(false)}
+              handleJoin={() => history.push(`/room/${idRoom}`)}
+            />
+            <ImageList cols={4} rowHeight={200} gap={24}>
+              {data.map((data, key) => {
                 return (
-                  <GridListTile key={key}>
+                  <ImageListItem
+                    key={key}
+                    idRoom={data._id}
+                    onClick={handleClickRoom}
+                  >
                     <Room
                       key={key}
                       currentPlayer={data.currentPlayer}
                       maxPlayer={data.maxPlayer}
-                      language={data.language}
-                      point={data.point}
                       roomName={data.roomName}
-                      roomId={data.roomId}
+                      roomId={data._id}
+                      categoryName={data.categoryName}
                     />
-                  </GridListTile>
+                  </ImageListItem>
                 );
               })}
-            </GridList>
+            </ImageList>
           </Scrollbars>
         </div>
 
@@ -156,4 +177,4 @@ function Rooms() {
   );
 }
 
-export default Rooms;
+export default withStyles(style)(Rooms);
