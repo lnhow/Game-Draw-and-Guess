@@ -21,7 +21,7 @@ export const addNewRoom = async (roomId, userId) => {
     return 404;
   }
 
-  if (result.roomStatus !== RoomState.CREATED) {
+  if (result.roomStatus === RoomState.ENDED) {
     return 400; //This game room is already used
   }
 
@@ -64,6 +64,13 @@ export const saveRemovedRoom = (roomId) => {
       _id: mongoose.Types.ObjectId(roomId),
     },
     saveRoomData,
+    (err) => {
+      if (err) {
+        console.log(`Room ${roomId}: Err saving to db. ${err.message}`);
+      } else {
+        console.log(`Room ${roomId}: Saved to DB`);
+      }
+    },
   );
 };
 
@@ -206,7 +213,7 @@ export const getUserInfosInRoom = (roomId) => {
 
 export const getUserBySocketId = (socketId) => {
   const userId = SocketUserServices.getSocketUser(socketId);
-  return getUserInfoById(userId);
+  return getUserById(userId);
 };
 
 export const getRoomBySocketId = (socketId) => {
@@ -317,6 +324,7 @@ const RoomSocketController = {
   getUsersInRoom,
   getUserInfosInRoom,
   getUserBySocketId,
+  getRoomBySocketId,
   getUserById,
   getUserInfoById,
   addPointsToUser,

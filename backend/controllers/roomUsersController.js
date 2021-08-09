@@ -18,8 +18,13 @@ async function saveRoomUserData(roomUserData) {
 
   try {
     await roomUser.save();
+    console.log(
+      `User ${roomUserData.userId} - Room ${roomUserData.roomId}: Saved to DB`,
+    );
   } catch (err) {
-    console.log(err.message);
+    console.log(
+      `User ${roomUserData.userId} - Room ${roomUserData.roomId}: Err saving to db. ${err.message}`,
+    );
   }
 }
 
