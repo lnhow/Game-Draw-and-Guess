@@ -23,6 +23,7 @@ async function findingRoom(req, res) {
     {
       $unwind: '$category',
     },
+    {$sort: {createdAt: -1}},
   ]);
 
   const allRoom = all.map((room) => ({

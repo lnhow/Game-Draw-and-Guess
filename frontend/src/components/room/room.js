@@ -26,6 +26,7 @@ import { updateUser } from '../../features/User/userSlice';
 import jwt from 'jsonwebtoken';
 import GuessJoinRoomModal from '../../common/modal/userJoinModal';
 import CenterScreen from '../../common/centerScreen/index.js';
+import {WAITING,PLAYING } from '../../common/constant/index'
 
 function Rooms({ classes }) {
   const [data, setData] = useState([]);
@@ -156,6 +157,7 @@ function Rooms({ classes }) {
               <Grid container spacing={3}>
                 {data.map((data, key) => {
                   return (
+                    (data.roomStatus === WAITING || data.roomStatus === WAITING) &&
                     <Grid
                       item
                       lg={3}
