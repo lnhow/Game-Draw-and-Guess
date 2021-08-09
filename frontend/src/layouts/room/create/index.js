@@ -33,7 +33,7 @@ const validationSchema = yup.object({
 });
 
 const timePerRoundOptions = [30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
-const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+//const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]; //Feature disabled
 
 function RoomCreate(props) {
   const [categories, setCategories] = useState([]);
@@ -44,7 +44,7 @@ function RoomCreate(props) {
   const formik = useFormik({
     initialValues: {
       roomName: '',
-      maxPlayer: 6,
+      maxPlayer: -1, //Feature disabled
       timePerRound: 30,
       category: '',
     },
@@ -57,16 +57,23 @@ function RoomCreate(props) {
       };
       try {
         const reponses = await RoomApi.create(dataSubmit);
-        setDisplayAlert(<Alert severity="success" onClose={()=>handleCloseAlert(reponses.roomId)}>This is a success-<strong>Click close to enter the game</strong></Alert>);
+        setDisplayAlert(
+          <Alert
+            severity="success"
+            onClose={() => handleCloseAlert(reponses.roomId)}
+          >
+            This is a success-<strong>Click close to enter the game</strong>
+          </Alert>,
+        );
       } catch (error) {
-        console.log(error.message,' test');
+        console.log(error.message, ' test');
         setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
       }
     },
   });
 
   const handleCloseAlert = (roomId) => {
-    history.push(`/room/${roomId}`)
+    history.push(`/room/${roomId}`);
   };
 
   useEffect(() => {
@@ -126,6 +133,7 @@ function RoomCreate(props) {
               </Select>
             </FormControl>
           </Box>
+          {/* Feature Disabled
           <Box className={classes.fieldBox}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="select-max-player">Max Player</InputLabel>
@@ -148,7 +156,7 @@ function RoomCreate(props) {
                 ))}
               </Select>
             </FormControl>
-          </Box>
+          </Box> */}
           <Box className={classes.fieldBox}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="select-time-per-round">
