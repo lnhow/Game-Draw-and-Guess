@@ -10,8 +10,8 @@ import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/email.js';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
-import { usernameValidation } from '../utils/validation.cjs';
 import { changePasswordValidation } from '../utils/validation.cjs';
+import { usernameValidation } from '../utils/validation.cjs';
 
 const authController = {
   register,
@@ -102,6 +102,7 @@ async function login(req, res) {
   const dataToken = {
     userId: user._id,
     username: user.username,
+    avatar: user.avatar,
   };
 
   const token = jwt.sign(dataToken, process.env.TOKEN_SECRET);
@@ -285,27 +286,56 @@ async function anonymousUser(req, res) {
 }
 
 async function updateUser(req, res) {
-  // const { error } = usernameValidation(req.body.username);
-  // if (error)
-  //   return res.status(400).json({
-  //     message: error.details[0].message,
-  //   });
-
-  const user = await usersModel.findOne({ username: req.body.username });
-  if (user)
-    return res.status(403).json({
-      message: 'Username already taken!',
+  //Check validate
+  const { error } = usernameValidation({ username: req.body.username });
+  if (error)
+    return res.status(400).json({
+      message: error.details[0].message,
     });
 
   const token = req.header('auth-token');
   const verified = jwt.verify(token, process.env.TOKEN_SECRET);
   req.user = verified;
 
-  const userUpdated = await usersModel.findOne({
-    _id: req.user.userId,
+  const user = await usersModel.findOne({
+    username: req.body.username,
   });
-  userUpdated.username = req.body.username;
+
+  //If username found not belong to current user, throw error
+  if (user)
+    if (String(user._id) !== req.user.userId)
+      return res.status(403).json({
+        message: 'Username already taken!',
+      });
+
+  const userUpdated = await usersModel.findOne({
+    _id: mongoose.Types.ObjectId(req.user.userId),
+  });
+  if (req.body.username) userUpdated.username = req.body.username;
   if (req.body.avatar) userUpdated.avatar = req.body.avatar;
+
+  let account = null;
+  //Khi co cap nhat nhat password
+  if (req.body.oldpassword) {
+    const account = await accountsModel.findOne({ _id: user.accountId });
+    const validPass = await bcrypt.compare(
+      req.body.oldPassword,
+      account.password,
+    );
+    if (!validPass)
+      return res.status(401).json({
+        message: 'Invalid password',
+      });
+    const { error } = changePasswordValidation(req.body);
+    if (error)
+      return res.status(400).json({
+        message: error.details[0].message,
+      });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
+    account.password = hashPassword;
+  }
 
   const dataToken = {
     avatar: req.body.avatar,
@@ -316,6 +346,7 @@ async function updateUser(req, res) {
   const tokenUpdated = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
   try {
+    if (account) await account.save();
     await userUpdated.save();
     res.status(200).header('auth-token', tokenUpdated).json({
       message: 'User updated',

@@ -38,7 +38,7 @@ const repasswordValidation = (data) => {
 
 const changePasswordValidation = (data) => {
   const schema = Joi.object({
-    oldPassword: Joi.string().required().min(6).max(20),
+    oldpassword: Joi.string().required().min(6).max(20),
     password: Joi.string().required().min(6).max(20),
     passwordConfirm: Joi.any()
       .equal(Joi.ref('password'))
@@ -61,7 +61,7 @@ const createRoomValidation = (data) => {
 
 const usernameValidation = (data) => {
   const schema = Joi.object({
-    username: Joi.string().alphanum().min(3).required(),
+    username: Joi.string().alphanum(),
   });
   return schema.validate(data);
 };
