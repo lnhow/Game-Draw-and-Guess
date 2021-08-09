@@ -75,12 +75,12 @@ const useStyles = (theme) => ({
     backgroundColor: 'white',
   },
   grid: {
-    height: '450px',
-    backgroundColor: '#FEEB75',
-    padding: '20px 50px',
-    borderRadius: '20px',
-    marginTop: '20px',
-    marginBottom: '20px',
+    height: '500px',
+    backgroundColor: theme.palette.background.accent,
+    padding: theme.spacing(2),
+    borderRadius: '16px',
+    margin: theme.spacing(3, 0),
+
   },
 });
 

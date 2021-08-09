@@ -1,5 +1,6 @@
 import gameroomModel from '../models/gameroomModel.cjs';
 import { createRoomValidation } from '../utils/validation.cjs';
+import { getUserInfosInRoom } from '../socket/controllers/room.js';
 import RoomState from '../models/roomStateModel.js';
 
 const roomController = {
@@ -27,7 +28,9 @@ async function findingRoom(req, res) {
   const allRoom = all.map((room) => ({
     _id: room._id,
     roomName: room.roomName,
+    currentPlayer: getUserInfosInRoom(room._id.toString()).length,
     maxPlayer: room.maxPlayer,
+    timePerRound: room.timePerRound,
     categoryName: room.category.categoryName,
     categoryId: room.categoryId,
     roomStatus: room.roomStatus,
