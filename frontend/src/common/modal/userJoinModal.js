@@ -19,6 +19,33 @@ const center = {
   marginRight: 'auto',
 };
 
+const useStyles = makeStyles((theme) => ({
+  btn: {
+    color: 'white',
+    marginBottom: '20px',
+    marginTop: '20px',
+    boxShadow: 'none',
+    textTransform: 'none',
+    fontSize: 18,
+    padding: '3px 30px',
+    border: '4px solid #001B4D',
+    borderRadius: '25px',
+    lineHeight: 1.5,
+    fontFamily: '"Gorditas", cursive',
+    '&:hover': {
+      backgroundColor: '#0069d9',
+      boxShadow: 'none',
+    },
+    '&:active': {
+      boxShadow: 'none',
+      backgroundColor: '#0062cc',
+    },
+    '&:focus': {
+      boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
+    },
+  }
+}));
+
 export default function GuessJoinRoomModal({
   isOpen,
   closeAlert,
@@ -59,13 +86,19 @@ export default function GuessJoinRoomModal({
           />
         </form>
         <div style={center}>
-          <Button variant="contained" color="warning" onClick={closeAlert}>
+          <Button 
+            variant="contained" 
+            color="warning" 
+            onClick={closeAlert}
+            style={{ backgroundColor: '#ff5141', marginRight: '10px'}}
+           >
             cancel
           </Button>
           <Button
             variant="contained"
             color="primary"
             onClick={() => join(value)}
+            style={{ backgroundColor: '#0063cc' }}
           >
             join
           </Button>
