@@ -92,6 +92,7 @@ export default function GuessJoinRoomModal({
             variant="contained"
             color="warning"
             onClick={closeAlert}
+            className={classes.btn}
             style={{ backgroundColor: '#ff5141', marginRight: '10px' }}
           >
             cancel
@@ -100,6 +101,7 @@ export default function GuessJoinRoomModal({
             variant="contained"
             color="primary"
             onClick={() => join(value)}
+            className={classes.btn}
             style={{ backgroundColor: '#0063cc' }}
           >
             join
