@@ -1,11 +1,4 @@
-import {
-  Container,
-  Divider,
-  Grid,
-  Typography,
-  Paper,
-  CssBaseline,
-} from '@material-ui/core';
+import { Container, Divider, Grid, Typography, Paper } from '@material-ui/core';
 import { FuncButton } from '../../common/Button.js';
 import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
@@ -26,7 +19,6 @@ function Home() {
 
   return (
     <Container component="main" className={classes.root}>
-      <CssBaseline />
       <WelcomeBanner />
 
       <div>
