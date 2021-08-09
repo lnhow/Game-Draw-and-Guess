@@ -78,10 +78,17 @@ const handleRoundPlaying = async (io, roomId, room) => {
   while (room.roundTimer > 0) {
     await sleep(ONE_SECOND);
     const correctUsers = RoomSocket.countCorrectUser(roomId);
+    const usersInRoom = room.users.filter((user) => !user.left);
+    const isDrawerLeft =
+      usersInRoom.filter((user) => user.id === room.currentDrawer).length < 1;
 
     RoomSocket.decreaseRoomTimer(roomId);
     io.to(roomId).emit('timer', room.roundTimer);
-    if (room.roundTimer === 0 || correctUsers >= room.users.length - 1) {
+    if (
+      room.roundTimer === 0 ||
+      correctUsers >= usersInRoom.length - 1 ||
+      isDrawerLeft
+    ) {
       break;
     }
   }
