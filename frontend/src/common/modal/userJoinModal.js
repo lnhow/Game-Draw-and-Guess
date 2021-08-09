@@ -1,4 +1,5 @@
 import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import Modal from 'react-modal';
 
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     '&:focus': {
       boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
     },
-  }
+  },
 }));
 
 export default function GuessJoinRoomModal({
@@ -52,6 +53,7 @@ export default function GuessJoinRoomModal({
   join,
   errorMessage,
 }) {
+  const classes = useStyles();
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
@@ -86,12 +88,12 @@ export default function GuessJoinRoomModal({
           />
         </form>
         <div style={center}>
-          <Button 
-            variant="contained" 
-            color="warning" 
+          <Button
+            variant="contained"
+            color="warning"
             onClick={closeAlert}
-            style={{ backgroundColor: '#ff5141', marginRight: '10px'}}
-           >
+            style={{ backgroundColor: '#ff5141', marginRight: '10px' }}
+          >
             cancel
           </Button>
           <Button
