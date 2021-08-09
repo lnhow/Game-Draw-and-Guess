@@ -1,4 +1,11 @@
-import { Container, Grid, CssBaseline, Toolbar } from '@material-ui/core';
+import {
+  Container,
+  Grid,
+  CssBaseline,
+  CircularProgress,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FuncButton } from '../../common/Button.js';
 import Footer from '../../components/footer/index.js';
@@ -10,6 +17,7 @@ import { withStyles } from '@material-ui/core/styles';
 import style from './style';
 import SearchBar from 'material-ui-search-bar';
 import AlertDialogSlide from '../../common/dialog/dialog.js';
+
 import { useHistory } from 'react-router-dom';
 import RoomApi from '../../api/roomApi';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,10 +25,12 @@ import UserApi from '../../api/userApi.js';
 import { updateUser } from '../../features/User/userSlice';
 import jwt from 'jsonwebtoken';
 import GuessJoinRoomModal from '../../common/modal/userJoinModal';
+import CenterScreen from '../../common/centerScreen/index.js';
 
 function Rooms({ classes }) {
   const [data, setData] = useState([]);
   const [searched, setSearched] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [idRoom, setIdRoom] = useState('');
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const history = useHistory();
@@ -55,6 +65,7 @@ function Rooms({ classes }) {
 
       getRooms();
     } else {
+      setIsSearching(true);
       const filteredRows = data.filter((row) => {
         return row.roomName.toLowerCase().includes(searchedVal.toLowerCase());
       });
@@ -64,6 +75,7 @@ function Rooms({ classes }) {
   };
 
   const cancelSearch = () => {
+    setIsSearching(false);
     setSearched('');
     requestSearch(searched);
   };
@@ -140,33 +152,44 @@ function Rooms({ classes }) {
               setIsOpen={() => setIsOpenAlert(false)}
               handleJoin={() => history.push(`/room/${idRoom}`)}
             />
-            <Grid container spacing={3}>
-              {data.map((data, key) => {
-                return (
-                  <Grid
-                    item
-                    lg={3}
-                    md={4}
-                    sm={6}
-                    xs={12}
-                    key={key}
-                    idRoom={data._id}
-                    onClick={handleClickRoom}
-                  >
-                    <RoomListItem
+            {data && data.length > 0 ? (
+              <Grid container spacing={3}>
+                {data.map((data, key) => {
+                  return (
+                    <Grid
+                      item
+                      lg={3}
+                      md={4}
+                      sm={6}
+                      xs={12}
                       key={key}
-                      currentPlayer={data.currentPlayer}
-                      maxPlayer={data.maxPlayer}
-                      timePerRound={data.timePerRound}
-                      roomName={data.roomName}
-                      roomId={data._id}
-                      categoryName={data.categoryName}
-                      roomStatus={data.roomStatus}
-                    />
-                  </Grid>
-                );
-              })}
-            </Grid>
+                      idRoom={data._id}
+                      onClick={handleClickRoom}
+                    >
+                      <RoomListItem
+                        key={key}
+                        currentPlayer={data.currentPlayer}
+                        maxPlayer={data.maxPlayer}
+                        timePerRound={data.timePerRound}
+                        roomName={data.roomName}
+                        roomId={data._id}
+                        categoryName={data.categoryName}
+                        roomStatus={data.roomStatus}
+                      />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            ) : (
+              <CenterScreen>
+                {isSearching ? (
+                  <Typography>Not found</Typography>
+                ) : (
+                  <CircularProgress color="secondary" />
+                )}
+              </CenterScreen>
+            )}
+
             {/* <ImageList cols={4} rowHeight={200} gap={24}>
               {data.map((data, key) => {
                 return (

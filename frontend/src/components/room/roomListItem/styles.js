@@ -18,6 +18,7 @@ export default makeStyles((theme) => ({
     borderRadius: '8px',
     backgroundColor: theme.palette.background,
     overflowX: 'hidden',
+    transition: '0.05s linear',
     '&:hover': {
       color: theme.palette.background.default,
       background: `linear-gradient(-45deg,${theme.palette.primary.main},${theme.palette.secondary.main})`,
