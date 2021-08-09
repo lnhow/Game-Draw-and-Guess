@@ -157,6 +157,7 @@ function Rooms({ classes }) {
                       key={key}
                       currentPlayer={data.currentPlayer}
                       maxPlayer={data.maxPlayer}
+                      timePerRound={data.timePerRound}
                       roomName={data.roomName}
                       roomId={data._id}
                       categoryName={data.categoryName}

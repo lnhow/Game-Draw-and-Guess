@@ -1,12 +1,13 @@
 import React from 'react';
 import { Paper, Typography, Box, Tooltip, Button } from '@material-ui/core';
-import { Category, Person, Games } from '@material-ui/icons';
+import { Category, Person, Games, Timelapse } from '@material-ui/icons';
 import useStyles from './styles';
 
 function RoomListItem({
   roomId,
   currentPlayer,
   maxPlayer,
+  timePerRound,
   roomName,
   categoryName,
   isPrivate,
@@ -33,6 +34,7 @@ function RoomListItem({
             categoryName={categoryName}
             curPlayer={currentPlayer}
             maxPlayer={maxPlayer}
+            timePerRound={timePerRound}
             isPrivate={isPrivate}
             roomStatus={roomStatus}
           />
@@ -47,6 +49,7 @@ function RoomInfo({
   curPlayer = '_',
   maxPlayer = '_',
   roomStatus = '_',
+  timePerRound = '_',
   isPrivate = false,
 }) {
   const classes = useStyles();
@@ -67,6 +70,12 @@ function RoomInfo({
         <Typography variant="body1" className={classes.verticalCenter}>
           <Person />
           <span>{`${curPlayer}/${maxPlayer}`}</span>
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Time per round">
+        <Typography variant="body1" className={classes.verticalCenter}>
+          <Timelapse />
+          <span>{`${timePerRound}`}</span>
         </Typography>
       </Tooltip>
       <Tooltip

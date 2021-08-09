@@ -30,6 +30,7 @@ async function findingRoom(req, res) {
     roomName: room.roomName,
     currentPlayer: getUserInfosInRoom(room._id.toString()).length,
     maxPlayer: room.maxPlayer,
+    timePerRound: room.timePerRound,
     categoryName: room.category.categoryName,
     categoryId: room.categoryId,
     roomStatus: room.roomStatus,
