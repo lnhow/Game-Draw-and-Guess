@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     '&:focus': {
       boxShadow: '0 0 0 0rem rgba(0,123,255,.5)',
     },
-  }
+  },
 }));
 
 export default function GuessJoinRoomModal({
@@ -52,6 +52,7 @@ export default function GuessJoinRoomModal({
   join,
   errorMessage,
 }) {
+  const classes = useStyles();
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
@@ -86,18 +87,20 @@ export default function GuessJoinRoomModal({
           />
         </form>
         <div style={center}>
-          <Button 
-            variant="contained" 
-            color="warning" 
+          <Button
+            variant="contained"
+            color="warning"
             onClick={closeAlert}
-            style={{ backgroundColor: '#ff5141', marginRight: '10px'}}
-           >
+            className={classes.btn}
+            style={{ backgroundColor: '#ff5141', marginRight: '10px' }}
+          >
             cancel
           </Button>
           <Button
             variant="contained"
             color="primary"
             onClick={() => join(value)}
+            className={classes.btn}
             style={{ backgroundColor: '#0063cc' }}
           >
             join

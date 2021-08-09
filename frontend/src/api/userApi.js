@@ -11,7 +11,7 @@ const UserApi = {
     return axiosClient.post(url, { ...params });
   },
   editProfile: (params) => {
-    const url = '/user/edit';
+    const url = '/user/updateUser';
     return axiosClient.post(url, { ...params });
   },
   updatePassword: (params) => {
