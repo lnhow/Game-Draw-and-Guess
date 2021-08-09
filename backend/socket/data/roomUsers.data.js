@@ -36,6 +36,7 @@ const UserRoomServices = {
       socketId: socketId,
       roomId: roomId,
       id: user.id.toString(),
+      avatar: user.avatar,
       username: user.username,
       points: 0,
       correctTime: null,

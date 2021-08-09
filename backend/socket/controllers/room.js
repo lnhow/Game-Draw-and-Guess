@@ -238,6 +238,7 @@ export const getUserInfoById = (userId) => {
   return {
     roomId: user.roomId,
     id: userId,
+    avatar: user.avatar,
     username: user.username,
     points: user.points,
     isCorrect: Boolean(user.correctTime),
