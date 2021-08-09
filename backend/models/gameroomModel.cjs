@@ -24,7 +24,6 @@ const gameroomSchema = new Schema(
   },
 );
 
-
 gameroomSchema.plugin(mongoose_delete, {
   deletedAt: true,
   overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],

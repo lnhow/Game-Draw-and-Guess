@@ -6,8 +6,7 @@ import Room from '../../components/room/room';
 import RoomCreate from '../room/create';
 import RoomSingle from '../room/single';
 import { useSelector } from 'react-redux';
-import Profile from '../../components/profile/userProfile';
-import ProfileEdit from '../../components/profile/editProfile';
+import ProfileEdit from '../../components/profile/profile';
 import Home from '../../layouts/home';
 
 export default function Router() {
@@ -31,9 +30,6 @@ export default function Router() {
         {User.isToken ? <RoomSingle /> : <Redirect to="/login" />}
       </Route>
       <Route exact path="/profile">
-        <Profile />
-      </Route>
-      <Route exact path="/edit">
         <ProfileEdit />
       </Route>
       <Route>

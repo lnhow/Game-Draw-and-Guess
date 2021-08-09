@@ -14,7 +14,6 @@ const categorySchema = new Schema(
   },
 );
 
-
 categorySchema.plugin(mongoose_delete, {
   deletedAt: true,
   overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],

@@ -23,6 +23,19 @@ export const RoomStates = Object.freeze({
   ENDED,
 });
 
+export const avar = [
+  'https://robohash.org/cat?set=set4&size=150x150',
+  'https://robohash.org/64Q.png?set=set4&size=150x150',
+  'https://robohash.org/kitten?set=set4&size=150x150',
+  'https://robohash.org/0UA.png?set=set4&size=150x150',
+  'https://robohash.org/sunny.png?set=set4&size=150x150',
+  'https://robohash.org/z.png?set=set4&size=150x150',
+  'https://robohash.org/1QZ.png?set=set4&size=150x150',
+  'https://robohash.org/hoho.png?set=set4&size=150x150',
+  'https://robohash.org/tcnxmnc.png?set=set4&size=150x150',
+  'https://robohash.org/640.png?set=set4&size=150x150',
+];
+
 export const SpecialMessage = Object.freeze({
   JOIN_ROOM: 0,
   LEFT_ROOM: 1,

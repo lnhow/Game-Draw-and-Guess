@@ -34,7 +34,7 @@ export default function GuessJoinRoomModal({
   }
 
   function afterOpenModal() {
-    subtitle.style.color = '#f00';
+    subtitle.style.color = '#444444';
   }
 
   function closeModal() {
@@ -48,7 +48,6 @@ export default function GuessJoinRoomModal({
         onAfterOpen={afterOpenModal}
         onRequestClose={closeAlert}
         style={customStyles}
-        contentLabel="Example Modal"
       >
         <h1 style={{ color: 'red' }}>{errorMessage}</h1>
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Join as guest</h2>

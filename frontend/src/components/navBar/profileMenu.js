@@ -81,7 +81,7 @@ export default function ProfileMenu({ component, listDropDownItem }) {
                     <AccountCircle />
                     Profile
                   </MenuItem>
-                  <MenuItem component={Link} onClick={handleLogOut}>
+                  <MenuItem component={Link} onClick={handleLogOut} to="/#">
                     <PowerSettingsNew />
                     Logout
                   </MenuItem>

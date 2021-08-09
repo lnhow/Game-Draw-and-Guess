@@ -9,8 +9,8 @@ import {
 import { FuncButton } from '../../common/Button.js';
 import Input from '../../common/inputVer1/input';
 import Footer from '../../components/footer/index.js';
+import WelcomeBanner from '../../components/banner/welcomeBanner.js';
 import { useSelector } from 'react-redux';
-
 import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 
@@ -19,20 +19,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3, 0),
   },
-  navbarTitle: {
-    textDecoration: 'none',
-    color: 'blue',
-    '&:hover': {
-      textDecoration: 'none',
-    },
-  },
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
     gridGap: theme.spacing(3),
     marginLeft: theme.spacing(40),
     marginRight: theme.spacing(20),
-    marginTop: theme.spacing(10),
+    marginTop: theme.spacing(7),
     marginBottom: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
@@ -49,32 +42,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(10),
     width: '300px',
   },
-  welcome: {
-    fontFamily: '"Gorditas", cursive',
-    marginBottom: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    whiteSpace: 'nowrap',
-  },
   description: {
     fontFamily: '"Fredoka One", cursive',
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-  icon: {
-    color: 'white',
-    padding: '0px 5px',
-  },
-  input: {
-    width: '90%',
-  },
   divider: {
     marginLeft: theme.spacing(5),
     width: '4px',
-  },
-  span: {
-    color: 'white',
-    textShadow: '-1px 0 black, 0 1px black, 2px 0 black, 0 -1px black',
   },
   text: {
     fontFamily: '"Roboto", sans-serif',
@@ -82,19 +57,15 @@ const useStyles = makeStyles((theme) => ({
     color: '#616161',
     textAlign: 'center',
   },
+  img: {
+    border: '4px solid #616161',
+    backgroundColor: 'white',
+    borderRadius: '50px',
+    padding: '5px',
+    width: '168px',
+    height: '168px',
+  },
 }));
-
-const intro = {
-  color: '#FFA500',
-  weight: '400',
-  fontSize: 30,
-  textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black',
-};
-
-const gameName = {
-  fontSize: '40px',
-  color: '#800080',
-};
 
 function Home() {
   const classes = useStyles();
@@ -109,20 +80,13 @@ function Home() {
   return (
     <Container component="main" className={classes.root}>
       <CssBaseline />
-      <div>
-        <Typography variant="h5" className={classes.welcome} style={gameName}>
-          WELCOME TO <span className={classes.span}>DRAW&amp;GUESS</span>
-        </Typography>
-        <Typography variant="h6" className={classes.description} style={intro}>
-          A massively multiplayer free to play pictionary game!
-        </Typography>
-      </div>
+      <WelcomeBanner />
 
       <div>
         <div className={classes.container}>
           {user.idLogin ? (
             <Grid>
-              <img src={User.avatar} alt="avatar" />
+              <img src={User.avatar} alt="avatar" className={classes.img} />
               <Typography variant="h6" className={classes.text}>
                 Hello, {User.username}
               </Typography>
@@ -181,20 +145,19 @@ function Home() {
               justifyContent="flex-start"
               alignItems="center"
             >
-            {user.idLogin ? (
+              {user.idLogin ? (
                 <Paper className={classes.paper}>
-                <Typography variant="h6">Quick Play</Typography>
-                <Input
-                  id="roomId"
-                  name="roomId"
-                  value={idRoom}
-                  handleChange={(e) => setIdRoom(e.target.value)}
-                  placeholder="Enter room code"
-                  link={`/room/${idRoom}`}
-                />
-              </Paper>
-              ) : null
-            }
+                  <Typography variant="h6">Quick Play</Typography>
+                  <Input
+                    id="roomId"
+                    name="roomId"
+                    value={idRoom}
+                    handleChange={(e) => setIdRoom(e.target.value)}
+                    placeholder="Enter room code"
+                    link={`/room/${idRoom}`}
+                  />
+                </Paper>
+              ) : null}
             </Grid>
           </Grid>
         </div>
