@@ -284,8 +284,8 @@ async function anonymousUser(req, res) {
   }
 }
 
-async function updateUser(req, res, next) {
-  // const { error } = usernameValidation(req.body);
+async function updateUser(req, res) {
+  // const { error } = usernameValidation(req.body.username);
   // if (error)
   //   return res.status(400).json({
   //     message: error.details[0].message,
@@ -298,25 +298,26 @@ async function updateUser(req, res, next) {
     });
 
   const token = req.header('auth-token');
-  if (!token) return next(res.status(401).send('Access Denied'));
   const verified = jwt.verify(token, process.env.TOKEN_SECRET);
   req.user = verified;
 
-  const userUpdated = await usersModel.findOne({ _id: req.user.userId });
-  console.log(userUpdated);
+  const userUpdated = await usersModel.findOne({
+    _id: req.user.userId,
+  });
   userUpdated.username = req.body.username;
   if (req.body.avatar) userUpdated.avatar = req.body.avatar;
 
   const dataToken = {
     avatar: req.body.avatar,
     username: req.body.username,
+    userId: userUpdated._id,
   };
 
   const tokenUpdated = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
   try {
     await userUpdated.save();
-    res.status(200).json({
+    res.status(200).header('auth-token', tokenUpdated).json({
       message: 'User updated',
       token: tokenUpdated,
     });

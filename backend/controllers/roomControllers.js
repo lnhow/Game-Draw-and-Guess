@@ -23,7 +23,7 @@ async function findingRoom(req, res) {
     {
       $unwind: '$category',
     },
-    {$sort: {createdAt: -1}},
+    { $sort: { createdAt: -1 } },
   ]);
 
   const allRoom = all.map((room) => ({
@@ -42,9 +42,9 @@ async function findingRoom(req, res) {
 }
 
 async function createRoom(req, res) {
-  //const { error } = createRoomValidation(req.body);
+  const { error } = createRoomValidation(req.body);
 
-  //if (error) return res.status(400).json({ message: error.details[0].message });
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   const roomName = req.body.roomName;
   const hostUserId = req.body.hostUserId;
