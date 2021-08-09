@@ -120,7 +120,7 @@ function Login() {
                   }
                   onDoubleClick={(e) => e.preventDefault()}
                 >
-                  Sign In
+                  Log In
                 </Button>
               </Form>
             );
@@ -128,7 +128,7 @@ function Login() {
         </Formik>
         <Grid container justifyContent="flex-end">
           <Grid item>
-            Don't have an account?
+            Don't have an account? &emsp;
             <Link to="/sign-up">Sign Up</Link>
           </Grid>
         </Grid>

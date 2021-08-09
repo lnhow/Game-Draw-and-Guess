@@ -285,11 +285,11 @@ async function anonymousUser(req, res) {
 }
 
 async function updateUser(req, res, next) {
-  const { error } = usernameValidation(req.body);
-  if (error)
-    return res.status(400).json({
-      message: error.details[0].message,
-    });
+  // const { error } = usernameValidation(req.body);
+  // if (error)
+  //   return res.status(400).json({
+  //     message: error.details[0].message,
+  //   });
 
   const user = await usersModel.findOne({ username: req.body.username });
   if (user)
@@ -302,14 +302,23 @@ async function updateUser(req, res, next) {
   const verified = jwt.verify(token, process.env.TOKEN_SECRET);
   req.user = verified;
 
-  const updateUser = await usersModel.findOne({ _id: req.user.userId });
-  updateUser.username = req.body.username;
-  if (req.body.avatar) updateUser.avatar = req.body.avatar;
+  const userUpdated = await usersModel.findOne({ _id: req.user.userId });
+  console.log(userUpdated);
+  userUpdated.username = req.body.username;
+  if (req.body.avatar) userUpdated.avatar = req.body.avatar;
+
+  const dataToken = {
+    avatar: req.body.avatar,
+    username: req.body.username,
+  };
+
+  const tokenUpdated = jwt.sign(dataToken, process.env.TOKEN_SECRET);
 
   try {
-    await updateUser.save();
+    await userUpdated.save();
     res.status(200).json({
       message: 'User updated',
+      token: tokenUpdated,
     });
   } catch (err) {
     res.status(500).json({

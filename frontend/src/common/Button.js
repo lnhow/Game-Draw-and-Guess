@@ -48,6 +48,8 @@ export const FuncButton = (props) => {
         onClick={props.handleClick}
         onSubmit={props.handleSubmit}
         fullWidth
+        type={props.type}
+        disabled={props.disabled}
       >
         {props.name === 'esport' ? (
           <SportsEsportsIcon />

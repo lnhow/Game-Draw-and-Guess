@@ -34,7 +34,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Room = ({ currentPlayer, maxPlayer, roomName, categoryName, isPrivate }) => (
+const Room = ({
+  currentPlayer,
+  maxPlayer,
+  roomName,
+  categoryName,
+  isPrivate,
+}) => (
   <Grid item>
     <Paper className={useStyles().paper}>
       <div className={useStyles().avatar}>

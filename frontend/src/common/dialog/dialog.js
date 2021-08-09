@@ -9,8 +9,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide({isOpen,setIsOpen,handleJoin}) {
-
+export default function AlertDialogSlide({ isOpen, setIsOpen, handleJoin }) {
   return (
     <div>
       <Dialog
@@ -21,7 +20,7 @@ export default function AlertDialogSlide({isOpen,setIsOpen,handleJoin}) {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Do you want to join the room?"}</DialogTitle>
+        <DialogTitle>{'Do you want to join the room?'}</DialogTitle>
         <DialogActions>
           <Button onClick={setIsOpen} color="primary">
             Disagree

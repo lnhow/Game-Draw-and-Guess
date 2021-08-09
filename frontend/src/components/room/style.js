@@ -80,6 +80,7 @@ const useStyles = (theme) => ({
     padding: theme.spacing(2),
     borderRadius: '16px',
     margin: theme.spacing(3, 0),
+
   },
 });
 

@@ -63,8 +63,6 @@ async function createRoom(req, res) {
     roomStatus,
   });
 
-  console.log(gameroom);
-
   try {
     await gameroom.save();
 
