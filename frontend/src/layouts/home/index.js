@@ -62,7 +62,18 @@ function Home() {
                 <Typography variant="h6" className={classes.description}>
                   Easy to play
                 </Typography>
-                <Typography>Game rule .....</Typography>
+                <Typography style={{textAlign: "justify"}}>
+                  1. Drawer draw the word appeared on screen.
+                  <br></br>
+                  2. Guesser guess the word base on the drawing.
+                  <br></br>
+                  3. Number of rounds base on the number of players, when all the players have drawn, 
+                  the game will end.
+                  <br></br>
+                  4. Each round will have a limit time to draw and guess, so be quick!!
+                  <br></br>
+                  5. That's all for now. Having fun :D
+                </Typography>              
               </Paper>
             </Grid>
             <Grid container direction="column">
