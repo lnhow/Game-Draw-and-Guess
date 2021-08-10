@@ -52,9 +52,10 @@ const changePasswordValidation = (data) => {
 const createRoomValidation = (data) => {
   const schema = Joi.object({
     roomName: Joi.string().required().min(6),
-    roomCategory: Joi.string().required(),
+    category: Joi.string().required(),
     maxPlayer: Joi.number().required(),
-    timePerRound: Joi.number().required(),
+    hostUserId: Joi.string().required(),
+    timePerRound: Joi.number().required().min(30).max(180),
   });
   return schema.validate(data);
 };

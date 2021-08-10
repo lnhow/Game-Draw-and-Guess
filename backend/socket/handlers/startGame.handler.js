@@ -11,6 +11,7 @@ const handleStartGame = (io, socket, callback) => {
   const clientCallback = subcribeCallback(callback);
   if (!room) {
     clientCallback('Room do not exist');
+    return;
   }
 
   console.log(`${user.id} want to start game in room ${user.roomId}`);
@@ -19,6 +20,7 @@ const handleStartGame = (io, socket, callback) => {
     isHostStartGame && room.users && room.users.length > 1;
   //More validate
   if (!isRoomValidToStart) {
+    clientCallback('Cannot start game');
     return;
   }
 
