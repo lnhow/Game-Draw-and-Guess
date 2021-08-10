@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    whiteSpace: 'nowrap',
+    whiteSpace: 'normal',
     marginBottom: theme.spacing(1),
     marginLeft: theme.spacing(10),
-    width: '300px',
+    width: '360px',
   },
   description: {
     fontFamily: '"Fredoka One", cursive',
