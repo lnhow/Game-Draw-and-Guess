@@ -2,6 +2,7 @@
  * May need more verification
  */
 import gameroomModel from '../../models/gameroomModel.cjs';
+import authController from '../../controllers/authControllers.js';
 import roomUsersController from '../../controllers/roomUsersController.js';
 import RoomState from '../../models/roomStateModel.js';
 import mongoose from 'mongoose';
@@ -170,6 +171,9 @@ export const removeUserFromRoom = (socketId) => {
     point: user.points ? user.points : 0, //Block falsy values(null)
     drawWordId: user.word,
   });
+
+  //Delete user if they are anonymous (no accountId)
+  authController.deleteAnonymousUser(userId);
 
   RoomUsersServices.removeUserRoom(userId);
   SocketUserServices.removeSocketUser(socketId);

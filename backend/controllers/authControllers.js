@@ -22,6 +22,7 @@ const authController = {
   anonymousUser,
   updateUser,
   changePassword,
+  deleteAnonymousUser,
 };
 
 async function register(req, res) {
@@ -356,6 +357,17 @@ async function updateUser(req, res) {
     res.status(500).json({
       message: err,
     });
+  }
+}
+
+async function deleteAnonymousUser(userId) {
+  try {
+    await usersModel.delete({
+      _id: mongoose.Types.ObjectId(userId),
+      accountId: null,
+    });
+  } catch (err) {
+    console.log(err);
   }
 }
 
