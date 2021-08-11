@@ -21,6 +21,7 @@ export const calcPoints = (room) => {
   }
 
   //Calc points for drawer
-  const drawerPoints = Math.floor(totalRoundPoints / guesserCount);
+  const drawerPoints =
+    guesserCount === 0 ? 0 : Math.floor(totalRoundPoints / guesserCount);
   RoomSocket.addPointsToUser(drawer, drawerPoints);
 };

@@ -167,7 +167,7 @@ export const removeUserFromRoom = (socketId) => {
   roomUsersController.saveRoomUserData({
     userId: userId,
     roomId: user.roomId,
-    point: user.points,
+    point: user.points ? user.points : 0, //Block falsy values(null)
     drawWordId: user.word,
   });
 
@@ -282,7 +282,7 @@ export const countCorrectUser = (roomId) => {
 
 export const addPointsToUser = (userId, additionalPoints) => {
   const user = getUserById(userId);
-  if (user) {
+  if (user && typeof additionalPoints === 'number') {
     RoomUsersServices.setPoints(userId, user.points + additionalPoints);
   }
 };
