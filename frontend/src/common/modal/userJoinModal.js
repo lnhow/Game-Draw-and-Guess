@@ -69,6 +69,12 @@ export default function GuessJoinRoomModal({
     setIsOpen(false);
   }
 
+  function onFormSubmit(e) {
+    e.preventDefault();
+    join(value);
+    return false;
+  }
+
   return (
     <div>
       <Modal
@@ -79,7 +85,7 @@ export default function GuessJoinRoomModal({
       >
         <h1 style={{ color: 'red' }}>{errorMessage}</h1>
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Join as guest</h2>
-        <form>
+        <form onSubmit={onFormSubmit}>
           <label>Username</label>&emsp;
           <input
             value={value}
