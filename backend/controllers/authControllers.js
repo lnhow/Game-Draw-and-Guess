@@ -12,6 +12,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { changePasswordValidation } from '../utils/validation.cjs';
 import { usernameValidation } from '../utils/validation.cjs';
+import UserRoomServices from '../socket/data/roomUsers.data.js';
 
 const authController = {
   register,
@@ -338,8 +339,8 @@ async function updateUser(req, res) {
   }
 
   const dataToken = {
-    avatar: req.body.avatar,
-    username: req.body.username,
+    avatar: userUpdated.avatar,
+    username: userUpdated.username,
     userId: userUpdated._id,
   };
 
