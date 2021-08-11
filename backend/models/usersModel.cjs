@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
 const usersSchema = new Schema(
@@ -10,11 +11,14 @@ const usersSchema = new Schema(
     },
     avatar: String,
     createdAt: Date,
-    isDeleted: Boolean,
-    deletedAt: Date,
   },
   { timestamps: true },
 );
+
+usersSchema.plugin(mongoose_delete, {
+  deletedAt: true,
+  overrideMethods: ['count', 'find', 'findOne', 'findOneAndUpdate', 'update'],
+});
 
 usersSchema.pre('save', async function (next) {
   try {

@@ -6,8 +6,9 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import { Paper, Box } from '@material-ui/core';
+import useStyles from './styles';
 
-import AspectRatioBox from '../../../../../common/aspectRatioBox';
+import AspectRatioBox from '../../../../../../common/aspectRatioBox';
 import DrawToolBar from './toolbar';
 
 const DEFAULT_COLOR = '#000000'; //BLACK
@@ -20,13 +21,14 @@ const DEFAULT_CONFIG = {
 };
 
 function Canvas(props, ref) {
-  const classes = props.classes;
+  const classes = useStyles();
   const sizeConfig = props.sizeConfig ? props.sizeConfig : DEFAULT_CONFIG;
   const submitHandler = props.submitHandler;
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const drawable = props.drawable;
   const [strokeColor, setStrokeColor] = useState(DEFAULT_COLOR);
 
   useEffect(() => {
@@ -81,7 +83,6 @@ function Canvas(props, ref) {
     contextRef.current.moveTo(offsetX, offsetY);
     setIsDrawing(true);
   };
-
   const handleFinishDrawing = () => {
     setIsDrawing(false);
     contextRef.current.closePath();
@@ -97,6 +98,7 @@ function Canvas(props, ref) {
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
   };
+
   //Draw action handlers
   //Handlers--------------------------------------------------
 
@@ -120,25 +122,34 @@ function Canvas(props, ref) {
       style={{ flexDirection: 'row' }}
     >
       <Box display="flex" style={{ height: '100%', flexDirection: 'row' }}>
-        <DrawToolBar
-          onLineWidthChange={handleLineWidthChange}
-          onColorChangeComplete={handleColorChangeComplete}
-          onClearCanvas={handleClearCanvas}
-          width={sizeConfig.CANVAS_TOOLBAR_WIDTH}
-        />
+        {drawable ? (
+          <DrawToolBar
+            onLineWidthChange={handleLineWidthChange}
+            onColorChangeComplete={handleColorChangeComplete}
+            onClearCanvas={handleClearCanvas}
+            width={sizeConfig.CANVAS_TOOLBAR_WIDTH}
+          />
+        ) : (
+          <div></div>
+        )}
+
         <Paper
           elevation={2}
           style={{ height: '100%', width: sizeConfig.CANVAS_WIDTH }}
         >
           <AspectRatioBox ratio={8 / 6}>
             <canvas
-              onTouchStart={handleStartDrawing}
-              onTouchMove={handleDraw}
-              onTouchEnd={handleFinishDrawing}
-              onMouseDown={handleStartDrawing}
-              onMouseMove={handleDraw}
-              onMouseUp={handleFinishDrawing}
-              onMouseOut={handleFinishDrawing}
+              {...(drawable
+                ? {
+                    onTouchStart: handleStartDrawing,
+                    onTouchMove: handleDraw,
+                    onTouchEnd: handleFinishDrawing,
+                    onMouseDown: handleStartDrawing,
+                    onMouseMove: handleDraw,
+                    onMouseUp: handleFinishDrawing,
+                    onMouseOut: handleFinishDrawing,
+                  }
+                : null)}
               ref={canvasRef}
             />
           </AspectRatioBox>

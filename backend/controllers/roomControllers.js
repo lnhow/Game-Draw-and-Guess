@@ -1,5 +1,6 @@
 import gameroomModel from '../models/gameroomModel.cjs';
 import { createRoomValidation } from '../utils/validation.cjs';
+import { getUserInfosInRoom } from '../socket/controllers/room.js';
 import RoomState from '../models/roomStateModel.js';
 
 const roomController = {
@@ -10,33 +11,40 @@ const roomController = {
 };
 
 async function findingRoom(req, res) {
-  try {
-    const all = await gameroomModel.aggregate([
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'categoryId',
-          foreignField: '_id',
-          as: 'category',
-        },
+  const all = await gameroomModel.aggregate([
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: '_id',
+        as: 'category',
       },
-      {
-        $unwind: '$category',
-      },
-    ]);
+    },
+    {
+      $unwind: '$category',
+    },
+    { $sort: { createdAt: -1 } },
+  ]);
 
-    res.status(200).json({
-      rooms: all,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Can't find any room!" });
-  }
+  const allRoom = all.map((room) => ({
+    _id: room._id,
+    roomName: room.roomName,
+    currentPlayer: getUserInfosInRoom(room._id.toString()).length,
+    maxPlayer: room.maxPlayer,
+    timePerRound: room.timePerRound,
+    categoryName: room.category.categoryName,
+    categoryId: room.categoryId,
+    roomStatus: room.roomStatus,
+  }));
+  res.status(200).json({
+    rooms: allRoom,
+  });
 }
 
 async function createRoom(req, res) {
-  //const { error } = createRoomValidation(req.body);
+  const { error } = createRoomValidation(req.body);
 
-  //if (error) return res.status(400).json({ message: error.details[0].message });
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   const roomName = req.body.roomName;
   const hostUserId = req.body.hostUserId;
@@ -55,8 +63,6 @@ async function createRoom(req, res) {
     categoryId,
     roomStatus,
   });
-
-  console.log(gameroom);
 
   try {
     await gameroom.save();

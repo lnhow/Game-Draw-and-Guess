@@ -18,20 +18,21 @@ const InputField = (props) => {
 
   return (
     <FormGroup spacing={3}>
-      <Box mb={2}>
-        <InputLabel shrink>{label}</InputLabel>
-      </Box>
-      <Box mb={2}>
-        <FormControl variant="outlined">
+      {label ?? (
+        <Box mb={2}>
+          <InputLabel shrink>{label}</InputLabel>
+        </Box>
+      )}
+      <Box>
+        <FormControl variant="outlined" fullWidth>
           <InputLabel>{placeholder}</InputLabel>
           <OutlinedInput
             id={name}
+            label={placeholder}
             error={!!isError}
             type={type}
             {...field}
             disabled={disabled}
-            labelWidth={100}
-            style={{ width: '30ch' }}
           />
           {/* <FormHelperText id={name}> */}
           <ErrorMessage name={name} component={FormHelperText} />

@@ -4,7 +4,7 @@ export default makeStyles((theme) => ({
   appBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.palette.primary.main,
+    background: `linear-gradient(-45deg,${theme.palette.primary.main} 40%,${theme.palette.secondary.main})`,
   },
   heading: {
     color: 'white',
@@ -17,7 +17,8 @@ export default makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   avatar: {
-    color: theme.palette.getContrastText(theme.palette.secondary.main),
-    backgroundColor: theme.palette.secondary.main,
+    border: '3px solid #616161',
+    backgroundColor: 'white',
+    padding: '2px',
   },
 }));

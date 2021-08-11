@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom';
 import useStyles from './styles.js';
 import ProfileMenu from './profileMenu';
 import { useSelector } from 'react-redux';
+import { ConsoleLog } from '../../helpers/functions.js';
 
 function Navbar() {
-  const User = useSelector((state) => state.user)
-  console.log('Username: ',User)
+  const User = useSelector((state) => state.user);
+  ConsoleLog('Username: ', User);
+
   const classes = useStyles();
   const user = {
-    idLogin:User.isLogin,
-    name:User.username
+    idLogin: User.isLogin,
+    name: User.username,
+    avatar: User.avatar,
   };
-  
 
   return (
     <header>
@@ -49,10 +51,8 @@ function UserToolbar({ classes, user }) {
               <Avatar
                 className={classes.avatar}
                 alt={user.name}
-                src={user.imageUrl}
-              >
-                {user.name.charAt(0)}
-              </Avatar>
+                src={user.avatar}
+              ></Avatar>
               <Typography className={classes.heading} variant="body2">
                 {user.name}
               </Typography>
@@ -60,7 +60,12 @@ function UserToolbar({ classes, user }) {
           }
         />
       ) : (
-        <Button component={Link} to="/login" variant="outlined">
+        <Button
+          component={Link}
+          to="/login"
+          color="secondary"
+          variant="contained"
+        >
           Login
         </Button>
       )}

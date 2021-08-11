@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Draw & Guess",
+  "name": "Draw and Guess",
   "icons": [
     {
       "src": "favicon.ico",

@@ -16,9 +16,10 @@ import * as yup from 'yup';
 import useStyles from './styles';
 import CategoryApi from '../../../api/categoryApi';
 import RoomApi from '../../../api/roomApi';
-import { CREATED } from '../../../common/constant';
 import { useSelector } from 'react-redux';
 import Alert from '../../../common/alert';
+import { useHistory } from 'react-router-dom';
+import { ConsoleLog } from '../../../helpers/functions';
 
 const validationSchema = yup.object({
   roomName: yup
@@ -32,18 +33,20 @@ const validationSchema = yup.object({
 });
 
 const timePerRoundOptions = [30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
-const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+const DEFAULT_TIME_PER_ROUND = timePerRoundOptions[2];
+//const maxPlayerOptions = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]; //Feature disabled
 
 function RoomCreate(props) {
   const [categories, setCategories] = useState([]);
   const [displayAlert, setDisplayAlert] = useState('');
+  const history = useHistory();
   const classes = useStyles();
   const User = useSelector((state) => state.user);
   const formik = useFormik({
     initialValues: {
       roomName: '',
-      maxPlayer: 6,
-      timePerRound: 30,
+      maxPlayer: -1, //Feature disabled
+      timePerRound: DEFAULT_TIME_PER_ROUND,
       category: '',
     },
     validationSchema: validationSchema,
@@ -51,20 +54,26 @@ function RoomCreate(props) {
       const dataSubmit = {
         ...values,
         hostUserId: User.id,
-        roomStatus: CREATED,
       };
       try {
         const reponses = await RoomApi.create(dataSubmit);
-        setDisplayAlert(<Alert onClose={handleCloseAlert} />);
-        console.log(reponses);
+        setDisplayAlert(
+          <Alert
+            severity="success"
+            onClose={() => handleCloseAlert(reponses.roomId)}
+          >
+            This is a success-<strong>Click close to enter the game</strong>
+          </Alert>,
+        );
       } catch (error) {
-        console.log(error);
+        ConsoleLog(error);
+        setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
       }
     },
   });
 
-  const handleCloseAlert = () => {
-    console.log('click redirect page');
+  const handleCloseAlert = (roomId) => {
+    history.push(`/room/${roomId}`);
   };
 
   useEffect(() => {
@@ -73,7 +82,7 @@ function RoomCreate(props) {
         const reponses = await CategoryApi.get();
         setCategories(reponses.categories);
       } catch (error) {
-        console.log(error);
+        ConsoleLog(error);
       }
     }
 
@@ -124,6 +133,7 @@ function RoomCreate(props) {
               </Select>
             </FormControl>
           </Box>
+          {/* Feature Disabled
           <Box className={classes.fieldBox}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="select-max-player">Max Player</InputLabel>
@@ -146,7 +156,7 @@ function RoomCreate(props) {
                 ))}
               </Select>
             </FormControl>
-          </Box>
+          </Box> */}
           <Box className={classes.fieldBox}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="select-time-per-round">

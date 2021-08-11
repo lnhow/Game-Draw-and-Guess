@@ -33,7 +33,7 @@ async function createCategory(req, res) {
 
   try {
     await category.save();
-    res.status(200).json({ message: 'create success' });
+    res.status(201).json({ message: 'create success' });
   } catch (err) {
     res.status(500).json({
       message: err,
@@ -48,7 +48,7 @@ async function updateCategory(req, res) {
     return res.status(400).json({ message: 'no data' });
 
   const category = await categoryModel.findById(categoriesId);
-  if (!category) return res.status(400).json({ message: 'no data' });
+  if (!category) return res.status(404).json({ message: 'no data' });
   category.categoryName = categoryName;
 
   try {

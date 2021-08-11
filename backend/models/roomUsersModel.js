@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const roomUsersSchema = new Schema(
@@ -12,10 +12,16 @@ const roomUsersSchema = new Schema(
       ref: 'gamerooms',
     },
     point: Number,
+    wordDrawId: {
+      type: Schema.Types.ObjectId,
+      ref: 'words',
+    },
   },
   {
     timestamps: true, //Auto create createdAt & updatedAt
   },
 );
 
-module.exports = mongoose.model('roomusers', roomUsersSchema);
+const RoomUsersModel = mongoose.model('roomusers', roomUsersSchema);
+
+export default RoomUsersModel;

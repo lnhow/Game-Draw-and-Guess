@@ -8,6 +8,7 @@ import {
   Container,
   Box,
 } from '@material-ui/core';
+import { ConsoleLog } from '../../helpers/functions.js';
 import { Formik, FastField, Form } from 'formik';
 import * as yup from 'yup';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -24,11 +25,14 @@ import { useHistory } from 'react-router-dom';
 import InputPassword from '../../common/inputPassword/inputPassword.js';
 
 const LoginSchema = yup.object().shape({
-  email: yup.string().email('not an email').required('Email not empty'),
+  email: yup
+    .string()
+    .email('Please enter an email')
+    .required('Email must not be empty'),
   password: yup
     .string()
-    .min(6, 'password min 6')
-    .max(20, 'password max 20')
+    .min(6, 'Password have to contains at least 6 characters')
+    .max(20, 'Password max length is 20')
     .required('Password is required'),
 });
 
@@ -52,19 +56,21 @@ function Login() {
           isLogin: true,
           id: infoUser.payload.userId,
           username: infoUser.payload.username,
+          isToken: true,
         }),
       );
       await localStorage.setItem('user', reponses.token);
+      await localStorage.setItem('isLogin', true);
 
       setMessageConflictDataSever('');
       actions.resetForm({
         email: '',
         password: '',
       });
-      history.push('/home');
+      history.push('/');
     } catch (error) {
-      setMessageConflictDataSever(error?.['response']?.data?.msg);
-      console.log({ error: error.message });
+      setMessageConflictDataSever(error?.['response']?.data?.message);
+      ConsoleLog({ error: error.message });
     }
   };
 
@@ -77,9 +83,11 @@ function Login() {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Box my={2}>
-          <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
-        </Box>
+        {messageConflictDataSever ?? (
+          <Box my={2}>
+            <h3 style={{ color: 'red' }}>{messageConflictDataSever}</h3>
+          </Box>
+        )}
         <Formik
           initialValues={initialValues}
           onSubmit={(values, actions) => handleSubmit(values, actions)}
@@ -87,7 +95,7 @@ function Login() {
         >
           {(formikProps) => {
             return (
-              <Form>
+              <Form className={classes.form}>
                 <FastField
                   name="email"
                   component={InputField}
@@ -113,7 +121,7 @@ function Login() {
                   }
                   onDoubleClick={(e) => e.preventDefault()}
                 >
-                  Sign In
+                  Log In
                 </Button>
               </Form>
             );
@@ -121,7 +129,7 @@ function Login() {
         </Formik>
         <Grid container justifyContent="flex-end">
           <Grid item>
-            Don't have an account?
+            Don't have an account? &emsp;
             <Link to="/sign-up">Sign Up</Link>
           </Grid>
         </Grid>

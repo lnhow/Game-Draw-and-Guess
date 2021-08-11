@@ -23,24 +23,25 @@ const InputPassword = (props) => {
 
   return (
     <FormGroup spacing={3}>
-      <Box mb={2}>
-        <InputLabel shrink>{label}</InputLabel>
-      </Box>
-
-      <Box mb={2}>
-        <FormControl variant="outlined">
+      {label ?? (
+        <Box mb={2}>
+          <InputLabel shrink>{label}</InputLabel>
+        </Box>
+      )}
+      <Box>
+        <FormControl variant="outlined" fullWidth>
           <InputLabel>{placeholder}</InputLabel>
           <OutlinedInput
             id={name}
-            helperText={<ErrorMessage name={name} />}
             error={!!isError}
+            label={placeholder}
             type={showPassword ? 'text' : 'password'}
             {...field}
             disabled={disabled}
             endAdornment={
               <InputAdornment position="end" visibility="hidden">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label="Toggle password visibility"
                   onClick={() => setShowPassword(!showPassword)}
                   onMouseDown={(e) => e.preventDefault()}
                   edge="end"
@@ -49,7 +50,6 @@ const InputPassword = (props) => {
                 </IconButton>
               </InputAdornment>
             }
-            labelWidth={70}
           />
           <FormHelperText id={name}>
             <ErrorMessage name={name} />
@@ -64,7 +64,6 @@ InputPassword.propTypes = {
   field: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
 
-  
   disabled: PropTypes.bool,
   label: PropTypes.string,
   placeholder: PropTypes.string,

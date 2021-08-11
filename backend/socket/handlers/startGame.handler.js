@@ -1,8 +1,31 @@
-import gameroomModel from '../models/gameroomModel.cjs';
-// var $ = require('jquery');
+import RoomSocket from '../controllers/room.js';
+import { subcribeCallback } from '../../utils/helpers.js';
+import HandleGameController from '../controllers/game.js';
 
-const handleStartGame = () => {
-  //Check if host send command startGame
+const handleStartGame = (io, socket, callback) => {
+  const user = RoomSocket.getUserBySocketId(socket.id);
+  if (!user) {
+    return;
+  }
+  const room = RoomSocket.getRoom(user.roomId);
+  const clientCallback = subcribeCallback(callback);
+  if (!room) {
+    clientCallback('Room do not exist');
+    return;
+  }
+
+  console.log(`${user.id} want to start game in room ${user.roomId}`);
+  const isHostStartGame = user.id === room.hostUserId;
+  const isRoomValidToStart =
+    isHostStartGame && room.users && room.users.length > 1;
+  //More validate
+  if (!isRoomValidToStart) {
+    clientCallback('Cannot start game');
+    return;
+  }
+
+  HandleGameController(io, user.roomId);
+
   //Check room contains more 2 user, else throw err msg
   //Update room status: PLAYING, no more new user can join
   //Get random word by room category & assign to users
@@ -25,25 +48,4 @@ const handleStartGame = () => {
   // Kick users
 };
 
-const RoundTimer = (io, socket) => {
-  const roomId = '60fe2664ef197c52240d1087';
-
-  let result = gameroomModel.findOne({ _id: roomId });
-
-  //server-side
-  var counter = result.timePerRound;
-  var TimerCountdown = setInterval(function () {
-    io.emit('timer', counter);
-    counter--;
-    if (counter === 0) {
-      io.emit('timer', "Time's up!!");
-      clearInterval(TimerCountdown);
-    }
-  }, 1000);
-
-  //client-side
-  //socket.on('timer', function (count) {
-  //  $('#counter').html(count);
-  //});
-};
 export default handleStartGame;

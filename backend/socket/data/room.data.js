@@ -41,10 +41,20 @@ const RoomServices = {
       category: room.category.toString(),
       timePerRound: room.timePerRound,
       hostUserId: room.hostUserId.toString(),
-      currentRound: 0,
+      currentRound: -1,
+      roundTimer: null,
+      currentDrawWord: '',
+      currentDrawer: null,
       status: RoomState.WAITING,
       users: [],
     });
+  },
+
+  updateRoomState(roomId, roomState) {
+    const room = roomMap.get(roomId);
+    if (room) {
+      room.status = roomState;
+    }
   },
 
   removeRoom(roomId) {
@@ -81,7 +91,7 @@ const RoomServices = {
       return false;
     }
 
-    return room.users.map((user) => user.id);
+    return room.users.filter((user) => !user.left).map((user) => user.id);
   },
 
   roomGetUser(roomId, userId) {
@@ -91,7 +101,33 @@ const RoomServices = {
     }
 
     const user = room.users.find((user) => user.id === userId);
-    return user ? user.id : null;
+    return user && !user.left ? user.id : null;
+  },
+
+  roomSetDrawInfo(roomId, drawerId, drawWord) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.currentDrawer = drawerId;
+    room.currentDrawWord = drawWord;
+  },
+
+  roomGetDrawerUser(roomId) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return null;
+    }
+    return room.currentDrawer;
+  },
+
+  roomGetDrawWord(roomId) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return null;
+    }
+    return room.currentDrawWord;
   },
 
   roomRemoveUser(roomId, userId) {
@@ -101,11 +137,38 @@ const RoomServices = {
     }
 
     const user = room.users.find((user) => user.id === userId);
-    if (!user) {
+    if (user) {
       user.left = true;
       return true;
     }
     return false;
+  },
+
+  roomSetTimer(roomId, timer) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.roundTimer = timer;
+  },
+
+  roomDecreaseTimer(roomId, value) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.roundTimer -= value;
+  },
+
+  roomSetCurrentRound(roomId, currentRound) {
+    const room = this.getRoom(roomId);
+    if (!room) {
+      return false;
+    }
+
+    room.currentRound = currentRound;
   },
 };
 

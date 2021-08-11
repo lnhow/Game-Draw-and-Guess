@@ -5,6 +5,6 @@ export default makeStyles((theme) => ({
     height: '100%',
     textAlign: 'center',
     color: theme.palette.text.primary,
-    overflowY: 'scroll',
+    overflowY: 'auto',
   },
 }));
