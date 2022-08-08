@@ -9,7 +9,7 @@
     "start": "nodemon index.js",
     "prettier": "prettier --write .",
     "prepare": "cd .. && husky install backend/.husky",
-    "pre-commit": "pretty-quick --staged"
+    "disabled:pre-commit": "pretty-quick --staged"
   },
   "keywords": [],
   "author": "",

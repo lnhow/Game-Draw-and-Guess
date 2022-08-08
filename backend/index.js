@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import socketIoConfig from './socket/index.socket.js';
 
 dotenv.config();
-const port = process.env.PORT ? process.env.PORT : process.env.DEFAULT_PORT;
+const port = process.env.PORT ? process.env.PORT : 5000;
 
 const server = http.createServer(app);
 socketIoConfig(server);

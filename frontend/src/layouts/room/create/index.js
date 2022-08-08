@@ -39,6 +39,7 @@ const DEFAULT_TIME_PER_ROUND = timePerRoundOptions[2];
 function RoomCreate(props) {
   const [categories, setCategories] = useState([]);
   const [displayAlert, setDisplayAlert] = useState('');
+  const [createdRoomId, setCreatedRoomId] = useState('');
   const history = useHistory();
   const classes = useStyles();
   const User = useSelector((state) => state.user);
@@ -57,14 +58,8 @@ function RoomCreate(props) {
       };
       try {
         const reponses = await RoomApi.create(dataSubmit);
-        setDisplayAlert(
-          <Alert
-            severity="success"
-            onClose={() => handleCloseAlert(reponses.roomId)}
-          >
-            This is a success-<strong>Click close to enter the game</strong>
-          </Alert>,
-        );
+        setDisplayAlert('');
+        setCreatedRoomId(reponses.roomId);
       } catch (error) {
         ConsoleLog(error);
         setDisplayAlert(<Alert severity="error">{error.message}</Alert>);
@@ -72,7 +67,7 @@ function RoomCreate(props) {
     },
   });
 
-  const handleCloseAlert = (roomId) => {
+  const navigateToRoom = (roomId) => {
     history.push(`/room/${roomId}`);
   };
 
@@ -92,105 +87,128 @@ function RoomCreate(props) {
   return (
     <Container component="main" maxWidth="xs">
       {displayAlert}
-      <Paper className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          Create new room
-        </Typography>
-        <form onSubmit={formik.handleSubmit} className={classes.form}>
+      {createdRoomId !== '' ? (
+        <Paper className={classes.paper}>
+          <Typography variant="h5">Created successfully!</Typography>
           <Box className={classes.fieldBox}>
-            <TextField
+            <Button
+              color="primary"
+              variant="contained"
               fullWidth
-              id="roomName"
-              name="roomName"
-              label="Room Name (Min. 6 characters)"
-              variant="outlined"
-              value={formik.values.roomName}
-              onChange={formik.handleChange}
-              error={formik.touched.roomName && Boolean(formik.errors.roomName)}
-              helperText={formik.touched.roomName && formik.errors.roomName}
-            />
-          </Box>
-          <Box className={classes.fieldBox}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="select-category">Room Category</InputLabel>
-              <Select
-                fullWidth
-                id="category"
-                name="category"
-                label="Room Category"
-                labelId="select-category"
-                value={formik.values.category}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.category && Boolean(formik.errors.category)
-                }
-              >
-                {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-          {/* Feature Disabled
-          <Box className={classes.fieldBox}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="select-max-player">Max Player</InputLabel>
-              <Select
-                fullWidth
-                id="max-player"
-                name="maxPlayer"
-                label="Max Player"
-                labelId="select-max-player"
-                value={formik.values.maxPlayer}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.maxPlayer && Boolean(formik.errors.maxPlayer)
-                }
-              >
-                {maxPlayerOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box> */}
-          <Box className={classes.fieldBox}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="select-time-per-round">
-                Time per round (in seconds)
-              </InputLabel>
-              <Select
-                fullWidth
-                id="time-per-round"
-                name="timePerRound"
-                label="Time per round (in seconds)"
-                labelId="select-time=per-round"
-                value={formik.values.timePerRound}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.timePerRound &&
-                  Boolean(formik.errors.timePerRound)
-                }
-              >
-                {timePerRoundOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
-          <Box className={classes.fieldBox}>
-            <Button color="primary" variant="contained" fullWidth type="submit">
-              Create
+              onClick={() => navigateToRoom(createdRoomId)}
+            >
+              Join room
             </Button>
           </Box>
-        </form>
-      </Paper>
+        </Paper>
+      ) : (
+        <Paper className={classes.paper}>
+          <Typography component="h1" variant="h5">
+            Create new room
+          </Typography>
+          <form onSubmit={formik.handleSubmit} className={classes.form}>
+            <Box className={classes.fieldBox}>
+              <TextField
+                fullWidth
+                id="roomName"
+                name="roomName"
+                label="Room Name (Min. 6 characters)"
+                variant="outlined"
+                value={formik.values.roomName}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.roomName && Boolean(formik.errors.roomName)
+                }
+                helperText={formik.touched.roomName && formik.errors.roomName}
+              />
+            </Box>
+            <Box className={classes.fieldBox}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="select-category">Room Category</InputLabel>
+                <Select
+                  fullWidth
+                  id="category"
+                  name="category"
+                  label="Room Category"
+                  labelId="select-category"
+                  value={formik.values.category}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.category && Boolean(formik.errors.category)
+                  }
+                >
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+            {/* Feature Disabled
+            <Box className={classes.fieldBox}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="select-max-player">Max Player</InputLabel>
+                <Select
+                  fullWidth
+                  id="max-player"
+                  name="maxPlayer"
+                  label="Max Player"
+                  labelId="select-max-player"
+                  value={formik.values.maxPlayer}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.maxPlayer && Boolean(formik.errors.maxPlayer)
+                  }
+                >
+                  {maxPlayerOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box> */}
+            <Box className={classes.fieldBox}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="select-time-per-round">
+                  Time per round (in seconds)
+                </InputLabel>
+                <Select
+                  fullWidth
+                  id="time-per-round"
+                  name="timePerRound"
+                  label="Time per round (in seconds)"
+                  labelId="select-time=per-round"
+                  value={formik.values.timePerRound}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.timePerRound &&
+                    Boolean(formik.errors.timePerRound)
+                  }
+                >
+                  {timePerRoundOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box className={classes.fieldBox}>
+              <Button
+                color="primary"
+                variant="contained"
+                fullWidth
+                type="submit"
+              >
+                Create
+              </Button>
+            </Box>
+          </form>
+        </Paper>
+      )}
     </Container>
   );
 }

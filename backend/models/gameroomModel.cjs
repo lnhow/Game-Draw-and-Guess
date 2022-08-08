@@ -12,7 +12,6 @@ const gameroomSchema = new Schema(
     },
     roomName: {
       type: Schema.Types.String,
-      unique: true,
     },
     maxPlayer: Number,
     timePerRound: Number,
